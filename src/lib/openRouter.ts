@@ -33,17 +33,17 @@ export const generateAbout = async (cvData: {
   const messages: OpenRouterMessage[] = [
     {
       role: 'system',
-      content: 'Tu es un expert en rédaction de CV professionnels. Tu rédiges des descriptions concises, professionnelles et impactantes en français.'
+      content: 'Tu es un expert en rédaction de CV professionnels. Tu rédiges des descriptions concises, professionnelles et impactantes en français, à la PREMIÈRE PERSONNE (je, me, mon, ma, mes).'
     },
     {
       role: 'user',
-      content: `Rédige une section "À propos" professionnelle de 3-4 phrases pour ${cvData.firstName} ${cvData.lastName}.
+      content: `Rédige une section "À propos" professionnelle de 3-4 phrases à la PREMIÈRE PERSONNE (utilise "je", "me", "mon", "ma", "mes") pour ${cvData.firstName} ${cvData.lastName}.
       
 Expériences: ${cvData.experiences.map(e => `${e.position} chez ${e.company}`).join(', ') || 'Aucune expérience'}
 Formation: ${cvData.education.map(e => `${e.degree} à ${e.school}`).join(', ') || 'Aucune formation'}
 Compétences principales: ${cvData.skills.slice(0, 5).map(s => s.name).join(', ') || 'Aucune compétence'}
 
-La description doit être professionnelle, concise et mettre en valeur le profil. Réponds uniquement avec le texte de la description, sans titre ni formatage.`
+IMPORTANT: La description DOIT être écrite à la première personne (exemple: "Je suis...", "Mon expérience...", "Mes compétences..."). Ne pas utiliser la troisième personne. La description doit être professionnelle, concise et mettre en valeur le profil. Réponds uniquement avec le texte de la description, sans titre ni formatage.`
     }
   ];
 

@@ -1,6 +1,6 @@
 # CV Builder Pro 🚀
 
-Une application web moderne et intuitive pour créer des CV professionnels en quelques minutes. Exportez votre CV en PDF haute qualité, choisissez parmi **28+ templates élégants**, le tout **100% gratuitement** et **sans inscription**.
+Une application web moderne et intuitive pour créer des CV professionnels en quelques minutes. Exportez votre CV en **PDF** ou **Word**, partagez-le via un lien unique, choisissez parmi **30+ templates élégants**, le tout **100% gratuitement** et **sans inscription**.
 
 ![CV Builder Pro](https://img.shields.io/badge/Status-Active-success)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -11,11 +11,12 @@ Une application web moderne et intuitive pour créer des CV professionnels en qu
 ## ✨ Fonctionnalités Principales
 
 ### 🎨 Templates & Design
-- **28+ Templates Professionnels** - Large sélection de designs modernes, élégants et créatifs
+- **30+ Templates Professionnels** - Large sélection de designs modernes, élégants et créatifs
 - **12 Thèmes de Couleurs** - Personnalisez votre CV avec des palettes de couleurs variées
 - **Catégories de Templates** - Minimaliste, Professionnel, Créatif, Avec Photo, Moderne, Classique
 - **Prévisualisation en Temps Réel** - Voyez votre CV se construire au fur et à mesure
 - **Aperçu Responsive** - Visualisez votre CV avant téléchargement
+- **Nouveaux Templates** - Moderne Minimal, Colorful, et bien d'autres
 
 ### 📝 Création de CV
 - **Interface Intuitive** - Processus guidé étape par étape
@@ -32,9 +33,13 @@ Une application web moderne et intuitive pour créer des CV professionnels en qu
 
 ### 📄 Export & Partage
 - **Export PDF Haute Qualité** - Téléchargez votre CV en PDF professionnel
+- **Export Word (.docx)** - Téléchargez votre CV en format Word éditable
 - **Format A4 Standard** - Dimensions parfaites pour impression
 - **Gestion Multi-pages** - Support automatique des CVs multi-pages
-- **Nom de Fichier Personnalisé** - Format : `Prénom_Nom_CV.pdf`
+- **Nom de Fichier Personnalisé** - Format : `Prénom_Nom_CV.pdf` ou `.docx`
+- **Partage via Lien Unique** - Partagez votre CV avec un lien sécurisé
+- **Expiration Automatique** - Les liens expirent après 30 jours
+- **Compteur de Vues** - Suivez le nombre de personnes qui ont vu votre CV
 
 ### 🎯 Galerie & Découverte
 - **Galerie de Modèles** - Parcourez 20+ exemples de CVs par secteur
@@ -55,6 +60,13 @@ Une application web moderne et intuitive pour créer des CV professionnels en qu
 - **Typewriter Effect** - Animation d'écriture sur la page d'accueil
 - **Compteurs Animés** - Statistiques animées (templates, gratuit, PDF)
 - **Transitions Douces** - Expérience utilisateur optimisée
+
+### 📊 Statistiques & Analytics
+- **Statistiques d'Utilisation** - Suivez votre activité sur la plateforme
+- **CVs Créés** - Nombre total de CVs que vous avez créés
+- **Exports Réalisés** - Nombre de PDFs et documents Word exportés
+- **CVs Partagés** - Nombre de liens de partage créés
+- **Templates Préférés** - Découvrez vos templates et thèmes les plus utilisés
 
 ### 🔒 Sécurité & Performance
 - **API Protégée** - Clé API sécurisée via proxy backend ou variables d'environnement
@@ -161,6 +173,8 @@ Voir `SECURITY.md` et `SETUP_API.md` pour plus de détails.
 ### Bibliothèques Utilitaires
 - **jsPDF** - Génération de PDF
 - **html2canvas** - Capture d'écran pour PDF
+- **docx** - Génération de documents Word
+- **file-saver** - Téléchargement de fichiers
 - **Lucide React** - Icônes modernes
 - **Sonner** - Notifications toast
 - **date-fns** - Manipulation de dates
@@ -178,7 +192,7 @@ cv-craft-pro/
 │   └── package.json
 ├── src/
 │   ├── components/         # Composants React
-│   │   ├── templates/      # 28+ templates de CV
+│   │   ├── templates/      # 30+ templates de CV
 │   │   ├── ui/             # Composants UI réutilisables
 │   │   ├── CVPreview.tsx   # Aperçu du CV
 │   │   ├── CVPreviewWrapper.tsx
@@ -188,6 +202,7 @@ cv-craft-pro/
 │   │   ├── Index.tsx       # Page d'accueil
 │   │   ├── CVCreate.tsx    # Création de CV
 │   │   ├── Gallery.tsx     # Galerie de modèles
+│   │   ├── Share.tsx       # Page de partage
 │   │   └── NotFound.tsx
 │   ├── lib/                # Utilitaires
 │   │   ├── openRouter.ts   # Intégration API IA
@@ -195,6 +210,9 @@ cv-craft-pro/
 │   │   ├── themeConfig.ts  # Configuration des thèmes
 │   │   ├── draftStorage.ts # Gestion des brouillons
 │   │   ├── ratingStorage.ts # Gestion des notes
+│   │   ├── shareStorage.ts  # Gestion du partage
+│   │   ├── usageStats.ts   # Statistiques d'utilisation
+│   │   ├── wordExport.ts   # Export Word
 │   │   └── cvUtils.ts      # Utilitaires CV
 │   ├── hooks/              # Hooks personnalisés
 │   └── App.tsx             # Composant principal
@@ -206,16 +224,16 @@ cv-craft-pro/
 
 ## 🎨 Templates Disponibles
 
-L'application propose **28+ templates professionnels** organisés en catégories :
+L'application propose **30+ templates professionnels** organisés en catégories :
 
 ### Minimaliste
-- Minimal, Clean, Bronzor
+- Minimal, Clean, Bronzor, Modern Minimal
 
 ### Professionnel
 - Executive, Professional, Elegant, Corporate, Sidebar, Dark Sidebar
 
 ### Créatif
-- Creative, Bold
+- Creative, Bold, Colorful
 
 ### Moderne
 - Modern, Tech, Two Column, Timeline, Gradient
@@ -245,7 +263,10 @@ Chaque template supporte **12 thèmes de couleurs** différents pour une personn
 4. **Sélectionnez un thème** de couleurs
 5. **Prévisualisez** votre CV en temps réel
 6. **Sauvegardez** votre brouillon (automatique ou manuel)
-7. **Téléchargez** votre CV en PDF
+7. **Exportez** votre CV :
+   - **PDF** : Pour impression et envoi par email
+   - **Word (.docx)** : Pour édition ultérieure dans Microsoft Word
+8. **Partagez** votre CV via un lien unique (valide 30 jours)
 
 ### Utiliser la Galerie
 
@@ -263,6 +284,26 @@ Chaque template supporte **12 thèmes de couleurs** différents pour une personn
 - Cliquez sur **"Brouillons"** pour voir tous vos CVs sauvegardés
 - Cliquez sur un brouillon pour le charger et continuer votre travail
 - Supprimez les brouillons inutiles pour libérer de l'espace
+
+### Partager votre CV
+
+1. Cliquez sur le bouton **"Partager"** après avoir complété votre CV
+2. Un lien unique sera généré automatiquement
+3. **Copiez le lien** et partagez-le avec qui vous voulez
+4. Le lien est **valide pendant 30 jours**
+5. Consultez le **nombre de vues** de votre CV partagé
+6. Les personnes avec le lien peuvent **visualiser et télécharger** votre CV en PDF
+
+### Consulter vos Statistiques
+
+1. Cliquez sur l'icône **graphique** dans la barre d'outils
+2. Consultez vos statistiques d'utilisation :
+   - Nombre de CVs créés
+   - Nombre de PDFs exportés
+   - Nombre de documents Word exportés
+   - Nombre de CVs partagés
+   - Template le plus utilisé
+   - Thème le plus utilisé
 
 ## 🔒 Sécurité
 
@@ -327,12 +368,15 @@ Pour toute question ou suggestion :
 
 ## 🎯 Roadmap
 
-- [ ] Export en Word (.docx)
-- [ ] Partage de CV via lien unique
-- [ ] Templates supplémentaires
+- [x] Export en Word (.docx) ✅
+- [x] Partage de CV via lien unique ✅
+- [x] Templates supplémentaires ✅
+- [x] Statistiques d'utilisation ✅
+- [ ] Export en Word avec styles avancés
+- [ ] Partage avec mot de passe
 - [ ] Mode sombre
 - [ ] Multi-langues
-- [ ] Statistiques d'utilisation
+- [ ] Intégration LinkedIn pour import automatique
 
 ---
 
