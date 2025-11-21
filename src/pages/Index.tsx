@@ -64,52 +64,67 @@ const Index = () => {
       <section className="relative py-24 md:py-32 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-foreground/10" />
         
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 border border-border px-4 py-2 rounded-full mb-8 text-sm font-medium">
-              <Sparkles className="w-4 h-4" />
-              100% Gratuit - Sans Inscription
+        <div className="container mx-auto px-6" style={{ maxWidth: '1200px' }}>
+          <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 items-center">
+            {/* Left Column - Text Content */}
+            <div className="order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2 border border-border px-4 py-2 rounded-full mb-8 text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                100% Gratuit - Sans Inscription
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight">
+                Créez votre CV<br />
+                professionnel en<br />
+                <span className="relative inline-block">
+                  quelques minutes
+                  <div className="absolute bottom-2 left-0 w-full h-3 bg-foreground/10 -z-10" />
+                </span>
+              </h1>
+              <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+                Des outils intuitifs, des designs modernes et un export PDF instantané. 
+                Créez un CV qui vous démarque en 2025.
+              </p>
+              
+              {/* Stats */}
+              <div className="flex gap-8 mb-10 pb-10 border-b border-border">
+                {stats.map((stat, index) => (
+                  <div key={index}>
+                    <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/create')}
+                  className="bg-primary hover:bg-primary/90 font-medium text-base px-8 h-12"
+                >
+                  Commencer Maintenant
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => navigate('/gallery')}
+                  className="font-medium text-base px-8 h-12 border-border hover:bg-accent"
+                >
+                  Voir les Modèles
+                </Button>
+              </div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight">
-              Créez votre CV<br />
-              professionnel en<br />
-              <span className="relative inline-block">
-                quelques minutes
-                <div className="absolute bottom-2 left-0 w-full h-3 bg-foreground/10 -z-10" />
-              </span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-10 max-w-2xl leading-relaxed">
-              Des outils intuitifs, des designs modernes et un export PDF instantané. 
-              Créez un CV qui vous démarque en 2025.
-            </p>
-            
-            {/* Stats */}
-            <div className="flex gap-8 mb-10 pb-10 border-b border-border">
-              {stats.map((stat, index) => (
-                <div key={index}>
-                  <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/create')}
-                className="bg-primary hover:bg-primary/90 font-medium text-base px-8 h-12"
-              >
-                Commencer Maintenant
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => navigate('/gallery')}
-                className="font-medium text-base px-8 h-12 border-border hover:bg-accent"
-              >
-                Voir les Modèles
-              </Button>
+
+            {/* Right Column - Mockup Image */}
+            <div className="order-1 lg:order-2 flex items-center justify-center">
+              <div className="w-full h-full flex items-center justify-center">
+                <img 
+                  src="/A_digital_advertisement_displays_CV_Builder_Pro_20.png" 
+                  alt="CV Builder Pro - Aperçu de l'application"
+                  className="w-full h-auto max-w-full object-contain"
+                  loading="eager"
+                />
+              </div>
             </div>
           </div>
         </div>

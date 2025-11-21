@@ -112,8 +112,7 @@ export const TemplateAzurill = ({ cvData }: TemplateAzurillProps) => {
               <img 
                 src={cvData.photo} 
                 alt="Profile" 
-                className="w-32 h-32 rounded-full object-cover border-4"
-                style={{ borderColor: colors.light }}
+                className="w-32 h-32 rounded-full object-cover"
               />
             </div>
           )}

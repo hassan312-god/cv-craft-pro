@@ -2,107 +2,19 @@ import { Card } from "@/components/ui/card";
 import { CVData } from "@/pages/CVCreate";
 import { Mail, Phone, MapPin, Linkedin, Github, Twitter, Globe } from "lucide-react";
 import { formatDate } from "@/lib/cvUtils";
+import { getThemeColors, getThemeFont } from "@/lib/themeConfig";
 
 interface TemplateModernProps {
   cvData: CVData;
 }
 
 export const TemplateModern = ({ cvData }: TemplateModernProps) => {
-  const getThemeColors = (theme: string) => {
-    const themes = {
-      'minimalist-black': {
-        primary: 'rgb(23, 23, 23)',
-        secondary: 'rgb(64, 64, 64)',
-        text: 'rgb(23, 23, 23)',
-        light: 'rgb(245, 245, 245)',
-        accent: 'rgb(23, 23, 23)'
-      },
-      'elegant-dark': {
-        primary: 'rgb(30, 41, 59)',
-        secondary: 'rgb(51, 65, 85)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(248, 250, 252)',
-        accent: 'rgb(100, 116, 139)'
-      },
-      'professional-blue': {
-        primary: 'rgb(37, 99, 235)',
-        secondary: 'rgb(59, 130, 246)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(241, 245, 249)',
-        accent: 'rgb(37, 99, 235)'
-      },
-      'modern-gray': {
-        primary: 'rgb(75, 85, 99)',
-        secondary: 'rgb(107, 114, 128)',
-        text: 'rgb(31, 41, 55)',
-        light: 'rgb(249, 250, 251)',
-        accent: 'rgb(75, 85, 99)'
-      },
-      'creative-gradient': {
-        primary: 'rgb(168, 85, 247)',
-        secondary: 'rgb(236, 72, 153)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(250, 245, 255)',
-        accent: 'rgb(168, 85, 247)'
-      },
-      'ocean-blue': {
-        primary: 'rgb(14, 165, 233)',
-        secondary: 'rgb(6, 182, 212)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(224, 242, 254)',
-        accent: 'rgb(14, 165, 233)'
-      },
-      'forest-green': {
-        primary: 'rgb(22, 163, 74)',
-        secondary: 'rgb(16, 185, 129)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(220, 252, 231)',
-        accent: 'rgb(22, 163, 74)'
-      },
-      'sunset-orange': {
-        primary: 'rgb(249, 115, 22)',
-        secondary: 'rgb(239, 68, 68)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(255, 237, 213)',
-        accent: 'rgb(249, 115, 22)'
-      },
-      'royal-purple': {
-        primary: 'rgb(147, 51, 234)',
-        secondary: 'rgb(99, 102, 241)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(243, 232, 255)',
-        accent: 'rgb(147, 51, 234)'
-      },
-      'coral-pink': {
-        primary: 'rgb(244, 63, 94)',
-        secondary: 'rgb(251, 113, 133)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(255, 228, 230)',
-        accent: 'rgb(244, 63, 94)'
-      },
-      'midnight-blue': {
-        primary: 'rgb(15, 23, 42)',
-        secondary: 'rgb(30, 58, 138)',
-        text: 'rgb(248, 250, 252)',
-        light: 'rgb(241, 245, 249)',
-        accent: 'rgb(59, 130, 246)'
-      },
-      'emerald-green': {
-        primary: 'rgb(16, 185, 129)',
-        secondary: 'rgb(5, 150, 105)',
-        text: 'rgb(30, 41, 59)',
-        light: 'rgb(209, 250, 229)',
-        accent: 'rgb(16, 185, 129)'
-      }
-    };
-    return themes[theme as keyof typeof themes] || themes['minimalist-black'];
-  };
-
-  const colors = getThemeColors(cvData.theme);
+  const colors = getThemeColors(cvData.theme || 'minimalist-black');
+  const fontFamily = getThemeFont(cvData.theme || 'minimalist-black');
 
   return (
     <Card className="overflow-hidden border border-border">
-      <div className="bg-card" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <div className="bg-card" style={{ fontFamily }}>
         {/* Header with colored bar */}
         <div 
           className="h-2 w-full"

@@ -33,8 +33,7 @@ export const TemplatePhotoCompact = ({ cvData }: { cvData: CVData }) => {
             <img 
               src={cvData.photo} 
               alt="Photo de profil" 
-              className="w-24 h-24 object-cover rounded-lg border-2"
-              style={{ borderColor: colors.accent }}
+              className="w-24 h-24 object-cover rounded-lg"
             />
           )}
           <div className="flex-1">

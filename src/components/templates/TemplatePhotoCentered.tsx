@@ -106,7 +106,7 @@ export const TemplatePhotoCentered = ({ cvData }: { cvData: CVData }) => {
               <img 
                 src={cvData.photo} 
                 alt="Profile" 
-                className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-2xl"
+                className="w-40 h-40 rounded-full object-cover"
               />
             </div>
           )}

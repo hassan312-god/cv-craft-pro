@@ -74,7 +74,7 @@ export const TemplatePhotoSidebar = ({ cvData }: { cvData: CVData }) => {
               <img 
                 src={cvData.photo} 
                 alt="Profile" 
-                className="w-40 h-40 rounded-full object-cover border-4 border-white/20 shadow-xl"
+                className="w-40 h-40 rounded-full object-cover"
               />
             </div>
           )}

@@ -11,6 +11,7 @@ import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
 import { generateAbout, generateExperienceDescription, generateEducationDescription } from "@/lib/openRouter";
 import { getTemplateComponent } from "@/lib/templateConfig";
+import { allThemes } from "@/lib/themeConfig";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -1005,31 +1006,19 @@ const CVCreate = () => {
                   <div>
                     <h3 className="text-lg font-bold text-foreground mb-4">Choisir un thème</h3>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[
-                      { id: 'minimalist-black', name: 'Minimaliste Noir', color: 'bg-black' },
-                      { id: 'elegant-dark', name: 'Élégant Sombre', color: 'bg-slate-800' },
-                      { id: 'professional-blue', name: 'Professionnel Bleu', color: 'bg-blue-600' },
-                      { id: 'modern-gray', name: 'Moderne Gris', color: 'bg-gray-600' },
-                      { id: 'creative-gradient', name: 'Créatif Gradient', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
-                      { id: 'ocean-blue', name: 'Bleu Océan', color: 'bg-gradient-to-r from-blue-400 to-cyan-500' },
-                      { id: 'forest-green', name: 'Vert Forêt', color: 'bg-gradient-to-r from-green-600 to-emerald-600' },
-                      { id: 'sunset-orange', name: 'Orange Coucher', color: 'bg-gradient-to-r from-orange-500 to-red-500' },
-                      { id: 'royal-purple', name: 'Violet Royal', color: 'bg-gradient-to-r from-purple-600 to-indigo-600' },
-                      { id: 'coral-pink', name: 'Rose Corail', color: 'bg-gradient-to-r from-pink-400 to-rose-500' },
-                      { id: 'midnight-blue', name: 'Bleu Minuit', color: 'bg-gradient-to-r from-slate-900 to-blue-900' },
-                      { id: 'emerald-green', name: 'Vert Émeraude', color: 'bg-gradient-to-r from-emerald-500 to-teal-500' }
-                    ].map((theme) => (
+                    {allThemes.map((theme) => (
                       <button
                         key={theme.id}
                         onClick={() => updateField('theme', theme.id)}
                         className={`p-4 rounded-lg border transition-all ${
                           cvData.theme === theme.id 
-                            ? 'border-foreground bg-accent' 
-                            : 'border-border hover:border-foreground/50'
+                            ? 'border-primary ring-2 ring-primary ring-offset-2 bg-accent' 
+                            : 'border-border hover:border-primary/50'
                         }`}
                       >
-                        <div className={`w-full h-24 ${theme.color} rounded mb-3`} />
-                        <p className="font-medium text-foreground">{theme.name}</p>
+                        <div className={`w-full h-24 ${theme.previewColor} rounded mb-3`} />
+                        <p className="font-medium text-foreground mb-1">{theme.name}</p>
+                        <p className="text-xs text-muted-foreground">{theme.fontFamily.split(',')[0]}</p>
                       </button>
                     ))}
                   </div>
@@ -1088,7 +1077,7 @@ const CVCreate = () => {
           {showPreview && (
             <div className="hidden lg:block" ref={cvPreviewVisibleRef}>
               <div className="sticky top-24">
-                <CVPreview cvData={cvData} />
+                <CVPreview key={`${cvData.theme}-${cvData.template}`} cvData={cvData} />
               </div>
             </div>
           )}

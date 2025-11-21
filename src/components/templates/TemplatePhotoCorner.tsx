@@ -56,8 +56,7 @@ export const TemplatePhotoCorner = ({ cvData }: { cvData: CVData }) => {
             <img 
               src={cvData.photo} 
               alt="Profile" 
-              className="w-32 h-32 rounded-lg object-cover border-4 shadow-xl"
-              style={{ borderColor: colors.accent }}
+              className="w-32 h-32 rounded-lg object-cover"
             />
           </div>
         )}

@@ -119,7 +119,7 @@ export const TemplatePhotoModern = ({ cvData }: { cvData: CVData }) => {
                 <img 
                   src={cvData.photo} 
                   alt="Photo de profil" 
-                  className="w-32 h-32 object-cover rounded-full border-4 border-white shadow-lg"
+                  className="w-32 h-32 object-cover rounded-full"
                 />
               </div>
             )}

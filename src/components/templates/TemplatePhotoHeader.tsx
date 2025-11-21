@@ -57,7 +57,7 @@ export const TemplatePhotoHeader = ({ cvData }: { cvData: CVData }) => {
               <img 
                 src={cvData.photo} 
                 alt="Profile" 
-                className="w-32 h-32 rounded-lg object-cover border-4 border-white shadow-lg flex-shrink-0"
+                className="w-32 h-32 rounded-lg object-cover flex-shrink-0"
               />
             )}
             <div className="flex-1">
