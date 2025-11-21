@@ -33,12 +33,21 @@ const Index = () => {
               CV Builder Pro
             </div>
           </div>
-          <Button 
-            onClick={() => navigate('/create')} 
-            className="bg-primary hover:bg-primary/90 font-medium"
-          >
-            Créer mon CV
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => navigate('/gallery')} 
+              variant="outline"
+              className="font-medium"
+            >
+              Modèles
+            </Button>
+            <Button 
+              onClick={() => navigate('/create')} 
+              className="bg-primary hover:bg-primary/90 font-medium"
+            >
+              Créer mon CV
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -71,9 +80,10 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
+                onClick={() => navigate('/gallery')}
                 className="font-medium text-base px-8 h-12 border-border hover:bg-accent"
               >
-                Voir un Exemple
+                Voir les Modèles
               </Button>
             </div>
           </div>

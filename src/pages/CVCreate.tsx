@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Download, Eye, Plus, Trash2, User, Briefcase, GraduationCap, Award, Palette, Upload, X, Sparkles, Loader2 } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
@@ -57,10 +57,14 @@ export interface CVData {
 
 const CVCreate = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   
-  const [cvData, setCvData] = useState<CVData>({
+  // Check if we have preloaded CV data from gallery
+  const preloadedData = location.state?.cvData as CVData | undefined;
+  
+  const [cvData, setCvData] = useState<CVData>(preloadedData || {
     firstName: "",
     lastName: "",
     email: "",
@@ -78,6 +82,13 @@ const CVCreate = () => {
     theme: "minimalist-black",
     template: "minimal"
   });
+
+  // Show toast when loading from gallery
+  useEffect(() => {
+    if (preloadedData) {
+      toast.success("Modèle chargé avec succès ! Personnalisez-le à votre guise.");
+    }
+  }, [preloadedData]);
 
   const updateField = (field: keyof CVData, value: any) => {
     setCvData(prev => ({ ...prev, [field]: value }));
