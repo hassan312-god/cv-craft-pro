@@ -1,21 +1,124 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Eye } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ArrowLeft, Eye, Search, X, Star, TrendingUp } from "lucide-react";
 import { exampleCVs, cvCategories, CVCategory } from "@/lib/exampleCVData";
 import { CVPreview } from "@/components/CVPreview";
 import { CVData } from "@/pages/CVCreate";
+import { StarRating } from "@/components/StarRating";
+import { getAverageRating, addRating, getAllAverageRatings } from "@/lib/ratingStorage";
+import { toast } from "sonner";
+
+type SortOption = "default" | "rating" | "popularity";
 
 const Gallery = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<CVCategory | "all">("all");
   const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sortBy, setSortBy] = useState<SortOption>("default");
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [ratingTemplateId, setRatingTemplateId] = useState<string | null>(null);
+  const [userRating, setUserRating] = useState<number>(0);
+  const [ratings, setRatings] = useState<Record<string, { average: number; count: number }>>({});
 
-  const filteredCVs = Object.entries(exampleCVs).filter(([_, cvExample]) => 
-    selectedCategory === "all" || cvExample.category === selectedCategory
-  );
+  // Fonction de recherche
+  const matchesSearch = (templateId: string, cvExample: typeof exampleCVs[string]): boolean => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase().trim();
+    const cvData = cvExample.data;
+    
+    // Recherche dans le nom complet
+    const fullName = `${cvData.firstName} ${cvData.lastName}`.toLowerCase();
+    if (fullName.includes(query)) return true;
+    
+    // Recherche dans le prénom ou nom séparément
+    if (cvData.firstName.toLowerCase().includes(query) || 
+        cvData.lastName.toLowerCase().includes(query)) return true;
+    
+    // Recherche dans le thème
+    if (cvExample.colorTheme.toLowerCase().includes(query)) return true;
+    
+    // Recherche dans la position
+    const position = cvData.experiences[0]?.position?.toLowerCase() || "";
+    if (position.includes(query)) return true;
+    
+    // Recherche dans l'entreprise
+    const company = cvData.experiences[0]?.company?.toLowerCase() || "";
+    if (company.includes(query)) return true;
+    
+    // Recherche dans les compétences
+    const skills = cvData.skills.map(s => s.name.toLowerCase()).join(" ");
+    if (skills.includes(query)) return true;
+    
+    // Recherche dans la description
+    const about = cvData.about?.toLowerCase() || "";
+    if (about.includes(query)) return true;
+    
+    // Recherche dans la formation
+    const education = cvData.education.map(e => 
+      `${e.degree} ${e.school}`.toLowerCase()
+    ).join(" ");
+    if (education.includes(query)) return true;
+    
+    return false;
+  };
+
+  // Charger les notes au montage
+  useEffect(() => {
+    setRatings(getAllAverageRatings());
+  }, []);
+
+  const filteredCVs = Object.entries(exampleCVs).filter(([templateId, cvExample]) => {
+    // Filtre par catégorie
+    const categoryMatch = selectedCategory === "all" || cvExample.category === selectedCategory;
+    
+    // Filtre par recherche
+    const searchMatch = matchesSearch(templateId, cvExample);
+    
+    return categoryMatch && searchMatch;
+  });
+
+  // Trier les CVs
+  const sortedCVs = [...filteredCVs].sort(([idA], [idB]) => {
+    if (sortBy === "rating") {
+      const ratingA = ratings[idA]?.average || 0;
+      const ratingB = ratings[idB]?.average || 0;
+      return ratingB - ratingA;
+    } else if (sortBy === "popularity") {
+      const countA = ratings[idA]?.count || 0;
+      const countB = ratings[idB]?.count || 0;
+      return countB - countA;
+    }
+    return 0; // Ordre par défaut
+  });
+
+  const handleOpenRatingModal = (templateId: string) => {
+    setRatingTemplateId(templateId);
+    setUserRating(0);
+    setRatingModalOpen(true);
+  };
+
+  const handleSubmitRating = () => {
+    if (!ratingTemplateId || userRating === 0) {
+      toast.error("Veuillez sélectionner une note");
+      return;
+    }
+
+    if (addRating(ratingTemplateId, userRating)) {
+      toast.success("Merci pour votre note !");
+      setRatings(getAllAverageRatings());
+      setRatingModalOpen(false);
+      setRatingTemplateId(null);
+      setUserRating(0);
+    } else {
+      toast.error("Erreur lors de l'ajout de la note");
+    }
+  };
 
   const handleUseTemplate = (templateId: string) => {
     navigate('/create', { state: { cvData: exampleCVs[templateId].data } });
@@ -63,8 +166,37 @@ const Gallery = () => {
             Cliquez sur un exemple pour le personnaliser.
           </p>
 
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Rechercher par nom, poste, entreprise, compétence..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-10 h-12 text-base"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+            {searchQuery && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {filteredCVs.length} résultat{filteredCVs.length > 1 ? 's' : ''} trouvé{filteredCVs.length > 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
+
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center mb-4">
             <Button
               variant={selectedCategory === "all" ? "default" : "outline"}
               onClick={() => setSelectedCategory("all")}
@@ -86,12 +218,43 @@ const Gallery = () => {
               );
             })}
           </div>
+
+          {/* Sort Options */}
+          <div className="flex flex-wrap gap-2 justify-center items-center">
+            <span className="text-sm text-muted-foreground">Trier par:</span>
+            <Button
+              variant={sortBy === "default" ? "default" : "outline"}
+              onClick={() => setSortBy("default")}
+              size="sm"
+            >
+              Par défaut
+            </Button>
+            <Button
+              variant={sortBy === "rating" ? "default" : "outline"}
+              onClick={() => setSortBy("rating")}
+              size="sm"
+              className="gap-1"
+            >
+              <Star className="w-3 h-3" />
+              Note
+            </Button>
+            <Button
+              variant={sortBy === "popularity" ? "default" : "outline"}
+              onClick={() => setSortBy("popularity")}
+              size="sm"
+              className="gap-1"
+            >
+              <TrendingUp className="w-3 h-3" />
+              Popularité
+            </Button>
+          </div>
         </div>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredCVs.map(([templateId, cvExample]) => {
+          {sortedCVs.map(([templateId, cvExample]) => {
             const cvData = cvExample.data;
+            const templateRating = ratings[templateId] || { average: 0, count: 0 };
             
             return (
               <Card key={templateId} className="overflow-hidden border-border flex flex-col">
@@ -103,12 +266,29 @@ const Gallery = () => {
                       {cvCategories[cvExample.category]}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <span className="font-medium text-foreground">
                       {cvData.firstName} {cvData.lastName}
                     </span>
                     <span>•</span>
                     <span className="truncate">{cvData.experiences[0]?.position}</span>
+                  </div>
+                  {/* Rating Display */}
+                  <div className="flex items-center justify-between mt-2">
+                    <StarRating 
+                      rating={templateRating.average} 
+                      showValue={true}
+                      count={templateRating.count}
+                      size="sm"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleOpenRatingModal(templateId)}
+                      className="h-6 px-2 text-xs"
+                    >
+                      Noter
+                    </Button>
                   </div>
                 </div>
 
@@ -147,7 +327,24 @@ const Gallery = () => {
 
         {filteredCVs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Aucun modèle trouvé dans cette catégorie.</p>
+            <p className="text-muted-foreground">
+              {searchQuery 
+                ? `Aucun modèle trouvé pour "${searchQuery}"${selectedCategory !== "all" ? ` dans la catégorie ${cvCategories[selectedCategory]}` : ""}.`
+                : `Aucun modèle trouvé dans la catégorie ${selectedCategory !== "all" ? cvCategories[selectedCategory] : ""}.`
+              }
+            </p>
+            {searchQuery && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                }}
+                className="mt-4"
+              >
+                Réinitialiser les filtres
+              </Button>
+            )}
           </div>
         )}
 
@@ -184,6 +381,46 @@ const Gallery = () => {
               <CVPreview cvData={previewCVData} />
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Rating Modal */}
+      <Dialog open={ratingModalOpen} onOpenChange={setRatingModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Noter ce modèle</DialogTitle>
+            <DialogDescription>
+              {ratingTemplateId && exampleCVs[ratingTemplateId]?.colorTheme}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6">
+            <div className="flex justify-center mb-4">
+              <StarRating
+                rating={userRating}
+                onRatingChange={setUserRating}
+                interactive={true}
+                size="lg"
+                showValue={true}
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRatingModalOpen(false);
+                  setUserRating(0);
+                }}
+              >
+                Annuler
+              </Button>
+              <Button
+                onClick={handleSubmitRating}
+                disabled={userRating === 0}
+              >
+                Envoyer
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

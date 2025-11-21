@@ -4,14 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin } from "lucide-react";
+import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin, Save, FolderOpen, Clock } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
 import { generateAbout, generateExperienceDescription, generateEducationDescription } from "@/lib/openRouter";
 import { getTemplateComponent } from "@/lib/templateConfig";
 import { allThemes } from "@/lib/themeConfig";
+import { saveDraft, getAllDrafts, getDraft, deleteDraft, formatDraftDate, Draft } from "@/lib/draftStorage";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -66,6 +68,9 @@ const CVCreate = () => {
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
+  const [showDraftsModal, setShowDraftsModal] = useState(false);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
   
@@ -103,6 +108,33 @@ const CVCreate = () => {
       toast.success("Modèle chargé avec succès ! Personnalisez-le à votre guise.");
     }
   }, [preloadedData]);
+
+  // Sauvegarde automatique toutes les 30 secondes
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      // Ne sauvegarder que si au moins un champ est rempli
+      if (cvData.firstName || cvData.lastName || cvData.email || cvData.experiences.length > 0) {
+        try {
+          const draftId = saveDraft(cvData, currentDraftId || undefined);
+          if (!currentDraftId) {
+            setCurrentDraftId(draftId);
+          }
+        } catch (error) {
+          // Erreur silencieuse pour la sauvegarde automatique
+          console.error('Erreur sauvegarde automatique:', error);
+        }
+      }
+    }, 30000); // 30 secondes
+
+    return () => clearInterval(autoSaveInterval);
+  }, [cvData, currentDraftId]);
+
+  // Charger les brouillons quand le modal s'ouvre
+  useEffect(() => {
+    if (showDraftsModal) {
+      setDrafts(getAllDrafts());
+    }
+  }, [showDraftsModal]);
 
   const updateField = (field: keyof CVData, value: any) => {
     setCvData(prev => ({ ...prev, [field]: value }));
@@ -1029,15 +1061,35 @@ const CVCreate = () => {
 
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between pt-6 border-t border-border">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                className="font-medium"
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Précédent
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  className="font-medium"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleSaveDraft}
+                  className="font-medium"
+                  title="Sauvegarder le brouillon"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Sauvegarder
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDraftsModal(true)}
+                  className="font-medium"
+                  title="Voir les brouillons sauvegardés"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Brouillons
+                </Button>
+              </div>
               
               <div className="text-sm text-muted-foreground">
                 Étape {currentStep + 1} sur {steps.length}
@@ -1112,6 +1164,72 @@ const CVCreate = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal des brouillons */}
+      <Dialog open={showDraftsModal} onOpenChange={setShowDraftsModal}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Mes brouillons</DialogTitle>
+            <DialogDescription>
+              Vos CVs sauvegardés. Cliquez sur un brouillon pour le charger.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {drafts.length === 0 ? (
+            <div className="text-center py-12">
+              <FolderOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">Aucun brouillon sauvegardé</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Vos brouillons seront sauvegardés automatiquement toutes les 30 secondes
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2 mt-4">
+              {drafts.map((draft) => (
+                <Card
+                  key={draft.id}
+                  className={`p-4 cursor-pointer transition-all hover:bg-accent ${
+                    currentDraftId === draft.id ? 'border-primary bg-accent' : ''
+                  }`}
+                  onClick={() => handleLoadDraft(draft)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground mb-1">
+                        {draft.name}
+                      </h3>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {formatDraftDate(draft.updatedAt)}
+                        </span>
+                        {draft.data.firstName || draft.data.lastName ? (
+                          <span>
+                            {draft.data.firstName} {draft.data.lastName}
+                          </span>
+                        ) : null}
+                        {draft.data.experiences.length > 0 && (
+                          <span className="truncate">
+                            {draft.data.experiences[0].position}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => handleDeleteDraft(draft.id, e)}
+                      className="flex-shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
