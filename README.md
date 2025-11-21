@@ -1,73 +1,156 @@
-# Welcome to your Lovable project
+# CV Craft Pro 🚀
 
-## Project info
+Une application web moderne et intuitive pour créer des CV professionnels en quelques minutes. Exportez votre CV en PDF haute qualité, choisissez parmi 22+ templates élégants, le tout gratuitement et sans inscription.
 
-**URL**: https://lovable.dev/projects/e8dae5fc-dd4d-4253-9bd4-efa6e2c7c341
+![CV Craft Pro](https://img.shields.io/badge/Status-Active-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![React](https://img.shields.io/badge/React-18.3-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
 
-## How can I edit this code?
+## ✨ Fonctionnalités
 
-There are several ways of editing your application.
+- 🎨 **22+ Templates Professionnels** - Choisissez parmi une large sélection de designs modernes et élégants
+- 📝 **Création Intuitive** - Interface simple et guidée pour remplir vos informations
+- 📄 **Export PDF** - Téléchargez votre CV en haute qualité, prêt à envoyer
+- 🎯 **100% Gratuit** - Aucun coût, aucune inscription requise
+- 🔄 **Prévisualisation en Temps Réel** - Voyez votre CV se construire au fur et à mesure
+- 📸 **Upload de Photo** - Ajoutez votre photo professionnelle
+- 💼 **Sections Complètes** - Expériences, formations, compétences, liens sociaux
+- 🎨 **Personnalisation** - Thèmes et couleurs adaptables à votre secteur
 
-**Use Lovable**
+## 🚀 Démarrage Rapide
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e8dae5fc-dd4d-4253-9bd4-efa6e2c7c341) and start prompting.
+### Prérequis
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js (version 18 ou supérieure)
+- npm ou yarn
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Cloner le repository
+git clone https://github.com/hassan312-god/cv-craft-pro.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Naviguer vers le dossier du projet
+cd cv-craft-pro
 
-Follow these steps:
+# Installer les dépendances
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Lancer le serveur de développement
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+L'application sera accessible sur `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Scripts Disponibles
 
-**Use GitHub Codespaces**
+```bash
+# Développement
+npm run dev
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Build de production
+npm run build
 
-## What technologies are used for this project?
+# Build de développement
+npm run build:dev
 
-This project is built with:
+# Prévisualiser le build
+npm run preview
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Linter
+npm run lint
+```
 
-## How can I deploy this project?
+## 🛠️ Technologies Utilisées
 
-Simply open [Lovable](https://lovable.dev/projects/e8dae5fc-dd4d-4253-9bd4-efa6e2c7c341) and click on Share -> Publish.
+- **React 18** - Bibliothèque UI
+- **TypeScript** - Typage statique
+- **Vite** - Build tool rapide
+- **Tailwind CSS** - Framework CSS utilitaire
+- **shadcn/ui** - Composants UI modernes
+- **React Router** - Navigation
+- **React Hook Form** - Gestion de formulaires
+- **Zod** - Validation de schémas
 
-## Can I connect a custom domain to my Lovable project?
+## 📁 Structure du Projet
 
-Yes, you can!
+```
+cv-craft-pro/
+├── public/              # Assets statiques
+├── src/
+│   ├── components/      # Composants React
+│   │   ├── templates/   # 22+ templates de CV
+│   │   └── ui/          # Composants UI réutilisables
+│   ├── pages/           # Pages de l'application
+│   ├── hooks/           # Hooks personnalisés
+│   ├── lib/             # Utilitaires et helpers
+│   └── App.tsx          # Composant principal
+├── package.json
+└── README.md
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🎨 Templates Disponibles
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+L'application propose 22+ templates professionnels incluant :
+
+- **TemplateMinimal** - Design épuré et minimaliste
+- **TemplateModern** - Style contemporain
+- **TemplateClassic** - Look traditionnel et professionnel
+- **TemplateCreative** - Pour les métiers créatifs
+- **TemplateTech** - Parfait pour les développeurs
+- **TemplateExecutive** - Pour les postes de direction
+- **TemplateProfessional** - Style corporate
+- **TemplateElegant** - Design raffiné
+- **TemplateBold** - Mise en page audacieuse
+- **TemplateClean** - Interface claire et aérée
+- Et bien d'autres...
+
+## 📝 Utilisation
+
+1. **Accédez à l'application** et cliquez sur "Créer mon CV"
+2. **Remplissez vos informations** :
+   - Informations personnelles
+   - Photo (optionnelle)
+   - À propos
+   - Expériences professionnelles
+   - Formations
+   - Compétences
+   - Liens sociaux (LinkedIn, GitHub, Portfolio)
+3. **Choisissez un template** qui correspond à votre style
+4. **Prévisualisez** votre CV en temps réel
+5. **Téléchargez** votre CV en PDF
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Pour contribuer :
+
+1. Fork le projet
+2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+## 📄 License
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 👤 Auteur
+
+**Hassan**
+
+- GitHub: [@hassan312-god](https://github.com/hassan312-god)
+
+## 🙏 Remerciements
+
+- [shadcn/ui](https://ui.shadcn.com/) pour les composants UI
+- [Lucide Icons](https://lucide.dev/) pour les icônes
+- La communauté open source
+
+## 📞 Support
+
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une [issue](https://github.com/hassan312-god/cv-craft-pro/issues) sur GitHub.
+
+---
+
+⭐ Si ce projet vous a aidé, n'hésitez pas à lui donner une étoile !
