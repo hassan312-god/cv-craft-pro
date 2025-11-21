@@ -10,6 +10,14 @@
       "destination": "/api/:path*"
     }
   ],
+  "functions": {
+    "api/webhook.ts": {
+      "maxDuration": 30
+    },
+    "api/webhook-test.ts": {
+      "maxDuration": 10
+    }
+  },
   "headers": [
     {
       "source": "/api/(.*)",

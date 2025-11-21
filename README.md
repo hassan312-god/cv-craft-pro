@@ -8,6 +8,8 @@ Une application web moderne et intuitive pour créer des CV professionnels en qu
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-black)
 
+🌐 **Site en ligne :** [https://cv-craft-pro.vercel.app](https://cv-craft-pro.vercel.app)
+
 ## ✨ Fonctionnalités Principales
 
 ### 🎨 Templates & Design
@@ -134,6 +136,8 @@ Le projet est pré-configuré pour Vercel. Voir `DEPLOY_VERCEL.md` pour les inst
 2. Importez le projet sur [Vercel](https://vercel.com)
 3. Configurez la variable d'environnement `OPENROUTER_API_KEY` dans le dashboard Vercel
 4. Déployez !
+
+**URL de production :** https://cv-craft-pro.vercel.app
 
 **Via CLI :**
 ```bash
@@ -322,6 +326,7 @@ Voir `SECURITY.md` pour les détails complets.
 - `.env` - Variables locales (jamais commitées)
 - `OPENROUTER_API_KEY` - Clé API OpenRouter
 - `VITE_API_URL` - URL du proxy backend (optionnel)
+- `WEBHOOK_SECRET` - Secret pour vérifier les webhooks GitHub (optionnel)
 
 ## 🤝 Contribution
 
@@ -365,6 +370,7 @@ Pour toute question ou suggestion :
 - Consultez la documentation dans les fichiers `*.md`
 - Voir `DEPLOY_VERCEL.md` pour le déploiement
 - Voir `SECURITY.md` pour la sécurité
+- Voir `docs/WEBHOOK_SETUP.md` pour la configuration des webhooks
 
 ## 🎯 Roadmap
 
