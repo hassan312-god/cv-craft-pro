@@ -4,9 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Download, Eye, Plus, Trash2, User, Briefcase, GraduationCap, Award, Palette, Upload, X, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
@@ -58,10 +57,9 @@ export interface CVData {
 const CVCreate = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showPreview, setShowPreview] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   
-  // Check if we have preloaded CV data from gallery
   const preloadedData = location.state?.cvData as CVData | undefined;
   
   const [cvData, setCvData] = useState<CVData>(preloadedData || {
@@ -83,7 +81,14 @@ const CVCreate = () => {
     template: "minimal"
   });
 
-  // Show toast when loading from gallery
+  const steps = [
+    { id: 0, title: "Informations Personnelles", icon: "user" },
+    { id: 1, title: "Expériences Professionnelles", icon: "briefcase" },
+    { id: 2, title: "Formation", icon: "graduation" },
+    { id: 3, title: "Compétences", icon: "award" },
+    { id: 4, title: "Thème & Template", icon: "palette" }
+  ];
+
   useEffect(() => {
     if (preloadedData) {
       toast.success("Modèle chargé avec succès ! Personnalisez-le à votre guise.");
@@ -97,27 +102,20 @@ const CVCreate = () => {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Vérifier le type de fichier
       if (!file.type.startsWith('image/')) {
         toast.error("Veuillez sélectionner une image");
         return;
       }
-      
-      // Vérifier la taille (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error("L'image est trop grande (max 5MB)");
         return;
       }
-
       const reader = new FileReader();
       reader.onloadend = () => {
-        const result = reader.result as string;
-        updateField('photo', result);
+        updateField('photo', reader.result as string);
         toast.success("Photo téléchargée avec succès");
       };
-      reader.onerror = () => {
-        toast.error("Erreur lors du chargement de l'image");
-      };
+      reader.onerror = () => toast.error("Erreur lors du chargement de l'image");
       reader.readAsDataURL(file);
     }
   };
@@ -212,7 +210,6 @@ const CVCreate = () => {
     toast.success("Téléchargement du PDF en cours...", {
       description: "Votre CV sera téléchargé dans quelques instants"
     });
-    // PDF generation logic will be implemented
   };
 
   const handleGenerateAbout = async () => {
@@ -228,9 +225,7 @@ const CVCreate = () => {
       updateField('about', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
-      toast.error("Erreur lors de la génération", {
-        description: "Veuillez réessayer"
-      });
+      toast.error("Erreur lors de la génération");
     } finally {
       setIsGenerating(null);
     }
@@ -240,19 +235,12 @@ const CVCreate = () => {
     setIsGenerating(`exp-${expId}`);
     const exp = cvData.experiences.find(e => e.id === expId);
     if (!exp) return;
-
     try {
-      const generated = await generateExperienceDescription(
-        exp.position,
-        exp.company,
-        exp.description
-      );
+      const generated = await generateExperienceDescription(exp.position, exp.company, exp.description);
       updateExperience(expId, 'description', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
-      toast.error("Erreur lors de la génération", {
-        description: "Veuillez réessayer"
-      });
+      toast.error("Erreur lors de la génération");
     } finally {
       setIsGenerating(null);
     }
@@ -262,20 +250,28 @@ const CVCreate = () => {
     setIsGenerating(`edu-${eduId}`);
     const edu = cvData.education.find(e => e.id === eduId);
     if (!edu) return;
-
     try {
-      const generated = await generateEducationDescription(
-        edu.degree,
-        edu.school
-      );
+      const generated = await generateEducationDescription(edu.degree, edu.school);
       updateEducation(eduId, 'description', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
-      toast.error("Erreur lors de la génération", {
-        description: "Veuillez réessayer"
-      });
+      toast.error("Erreur lors de la génération");
     } finally {
       setIsGenerating(null);
+    }
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -289,57 +285,49 @@ const CVCreate = () => {
             Retour
           </Button>
           <h1 className="text-xl font-bold text-foreground tracking-tight">Créer mon CV</h1>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowPreview(!showPreview)}
-              className="font-medium"
-            >
-              <Eye className="mr-2 w-4 h-4" />
-              {showPreview ? "Masquer" : "Aperçu"}
-            </Button>
-            <Button 
-              onClick={handleDownloadPDF} 
-              className="bg-primary hover:bg-primary/90 font-medium"
-            >
-              <Download className="mr-2 w-4 h-4" />
-              PDF
-            </Button>
-          </div>
+          <Button 
+            onClick={handleDownloadPDF} 
+            className="bg-primary hover:bg-primary/90 font-medium"
+          >
+            <Download className="mr-2 w-4 h-4" />
+            PDF
+          </Button>
         </div>
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        <div className={`grid ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-8`}>
+        <div className="grid lg:grid-cols-[1fr_500px] gap-8">
           {/* Form Section */}
           <div className="space-y-6">
-            <Tabs defaultValue="personal" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 bg-muted border border-border">
-                <TabsTrigger value="personal" className="data-[state=active]:bg-background">
-                  <User className="w-4 h-4 mr-2" />
-                  Infos
-                </TabsTrigger>
-                <TabsTrigger value="experience" className="data-[state=active]:bg-background">
-                  <Briefcase className="w-4 h-4 mr-2" />
-                  Expérience
-                </TabsTrigger>
-                <TabsTrigger value="education" className="data-[state=active]:bg-background">
-                  <GraduationCap className="w-4 h-4 mr-2" />
-                  Formation
-                </TabsTrigger>
-                <TabsTrigger value="skills" className="data-[state=active]:bg-background">
-                  <Award className="w-4 h-4 mr-2" />
-                  Compétences
-                </TabsTrigger>
-                <TabsTrigger value="theme" className="data-[state=active]:bg-background">
-                  <Palette className="w-4 h-4 mr-2" />
-                  Thème
-                </TabsTrigger>
-              </TabsList>
+            {/* Progress Steps */}
+            <div className="flex items-center justify-between mb-8">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center flex-1">
+                  <button
+                    onClick={() => setCurrentStep(index)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                      currentStep === index 
+                        ? 'bg-primary text-primary-foreground scale-110' 
+                        : currentStep > index
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                  {index < steps.length - 1 && (
+                    <div className={`flex-1 h-1 mx-2 ${currentStep > index ? 'bg-primary' : 'bg-muted'}`} />
+                  )}
+                </div>
+              ))}
+            </div>
 
-              <TabsContent value="personal" className="space-y-4">
-                <Card className="p-6 border-border">
-                  <h2 className="text-2xl font-bold mb-6 text-foreground tracking-tight">Informations Personnelles</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-2">{steps[currentStep].title}</h2>
+
+            {/* Step 0: Personal Info */}
+            {currentStep === 0 && (
+              <Card className="p-6 border-border">
+                <div className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">Prénom</Label>
@@ -395,67 +383,39 @@ const CVCreate = () => {
                             <label htmlFor="photo" className="cursor-pointer">
                               <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                               <p className="text-sm font-medium mb-1">Cliquez pour télécharger une photo</p>
-                              <p className="text-xs text-muted-foreground">
-                                JPG, PNG (max 5MB)
-                              </p>
+                              <p className="text-xs text-muted-foreground">JPG, PNG (max 5MB)</p>
+                              <input 
+                                type="file" 
+                                id="photo"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                className="hidden"
+                              />
                             </label>
-                            <Input 
-                              id="photo"
-                              type="file"
-                              accept="image/*"
-                              onChange={handlePhotoUpload}
-                              className="hidden"
-                            />
                           </div>
                         ) : (
                           <div className="relative inline-block">
                             <img 
                               src={cvData.photo} 
-                              alt="Preview" 
-                              className="w-32 h-32 rounded-lg object-cover border-2 border-border shadow-sm"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                                toast.error("Erreur lors du chargement de l'image");
-                              }}
+                              alt="Photo de profil" 
+                              className="w-32 h-32 object-cover rounded-lg border-2 border-border"
                             />
                             <Button
                               type="button"
-                              variant="destructive"
                               size="icon"
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                              variant="destructive"
+                              className="absolute -top-2 -right-2 rounded-full w-6 h-6"
                               onClick={handlePhotoRemove}
                             >
                               <X className="w-3 h-3" />
                             </Button>
-                            <div className="mt-2">
-                              <label htmlFor="photo-change" className="cursor-pointer">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  asChild
-                                >
-                                  <span>
-                                    <Upload className="w-3 h-3 mr-1" />
-                                    Changer
-                                  </span>
-                                </Button>
-                              </label>
-                              <Input 
-                                id="photo-change"
-                                type="file"
-                                accept="image/*"
-                                onChange={handlePhotoUpload}
-                                className="hidden"
-                              />
-                            </div>
                           </div>
                         )}
                       </div>
                     </div>
                     <div className="md:col-span-2">
                       <div className="flex items-center justify-between mb-2">
-                        <Label htmlFor="about">À propos</Label>
+                        <Label htmlFor="about">À propos de moi</Label>
                         <Button
                           type="button"
                           variant="outline"
@@ -480,13 +440,13 @@ const CVCreate = () => {
                         id="about"
                         value={cvData.about}
                         onChange={(e) => updateField('about', e.target.value)}
-                        placeholder="Présentez-vous en quelques lignes..."
+                        placeholder="Décrivez-vous en quelques lignes..."
                         rows={4}
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label>Réseaux Sociaux</Label>
-                      <div className="grid md:grid-cols-2 gap-3 mt-2">
+                      <Label>Réseaux sociaux</Label>
+                      <div className="space-y-2 mt-2">
                         <Input 
                           value={cvData.linkedin}
                           onChange={(e) => updateField('linkedin', e.target.value)}
@@ -510,258 +470,267 @@ const CVCreate = () => {
                       </div>
                     </div>
                   </div>
-                </Card>
-              </TabsContent>
+                </div>
+              </Card>
+            )}
 
-              <TabsContent value="experience" className="space-y-4">
-                <Card className="p-6 border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-foreground tracking-tight">Expériences Professionnelles</h2>
-                    <Button onClick={addExperience} size="sm" variant="outline" className="font-medium">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter
-                    </Button>
-                  </div>
-                  <div className="space-y-6">
-                    {cvData.experiences.map((exp) => (
-                      <div key={exp.id} className="border border-border rounded-lg p-4 relative">
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeExperience(exp.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                        <div className="grid md:grid-cols-2 gap-3">
-                          <div>
-                            <Label>Entreprise</Label>
-                            <Input 
-                              value={exp.company}
-                              onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                              placeholder="Nom de l'entreprise"
-                            />
+            {/* Step 1: Experience */}
+            {currentStep === 1 && (
+              <Card className="p-6 border-border">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Expériences Professionnelles</h3>
+                  <Button onClick={addExperience} size="sm" variant="outline" className="font-medium">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter
+                  </Button>
+                </div>
+                <div className="space-y-6">
+                  {cvData.experiences.map((exp) => (
+                    <div key={exp.id} className="border border-border rounded-lg p-4 relative">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => removeExperience(exp.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <Label>Entreprise</Label>
+                          <Input 
+                            value={exp.company}
+                            onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                            placeholder="Nom de l'entreprise"
+                          />
+                        </div>
+                        <div>
+                          <Label>Poste</Label>
+                          <Input 
+                            value={exp.position}
+                            onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                            placeholder="Intitulé du poste"
+                          />
+                        </div>
+                        <div>
+                          <Label>Date de début</Label>
+                          <Input 
+                            type="month"
+                            value={exp.startDate}
+                            onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label>Date de fin</Label>
+                          <Input 
+                            type="month"
+                            value={exp.endDate}
+                            onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <Label>Description</Label>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleGenerateExperienceDescription(exp.id)}
+                              disabled={isGenerating === `exp-${exp.id}` || !exp.position || !exp.company}
+                            >
+                              {isGenerating === `exp-${exp.id}` ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                                  Génération...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-3 h-3 mr-2" />
+                                  Générer avec IA
+                                </>
+                              )}
+                            </Button>
                           </div>
-                          <div>
-                            <Label>Poste</Label>
-                            <Input 
-                              value={exp.position}
-                              onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                              placeholder="Intitulé du poste"
-                            />
-                          </div>
-                          <div>
-                            <Label>Date de début</Label>
-                            <Input 
-                              type="month"
-                              value={exp.startDate}
-                              onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label>Date de fin</Label>
-                            <Input 
-                              type="month"
-                              value={exp.endDate}
-                              onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <div className="flex items-center justify-between mb-2">
-                              <Label>Description</Label>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleGenerateExperienceDescription(exp.id)}
-                                disabled={isGenerating === `exp-${exp.id}` || !exp.position || !exp.company}
-                              >
-                                {isGenerating === `exp-${exp.id}` ? (
-                                  <>
-                                    <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                                    Génération...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Sparkles className="w-3 h-3 mr-2" />
-                                    Générer avec IA
-                                  </>
-                                )}
-                              </Button>
-                            </div>
-                            <Textarea 
-                              value={exp.description}
-                              onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
-                              placeholder="Décrivez vos missions et réalisations..."
-                              rows={3}
-                            />
-                          </div>
+                          <Textarea 
+                            value={exp.description}
+                            onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                            placeholder="Décrivez vos missions et réalisations..."
+                            rows={3}
+                          />
                         </div>
                       </div>
-                    ))}
-                    {cvData.experiences.length === 0 && (
-                      <p className="text-muted-foreground text-center py-8">
-                        Aucune expérience ajoutée. Cliquez sur "Ajouter" pour commencer.
-                      </p>
-                    )}
-                  </div>
-                </Card>
-              </TabsContent>
+                    </div>
+                  ))}
+                  {cvData.experiences.length === 0 && (
+                    <p className="text-muted-foreground text-center py-8">
+                      Aucune expérience ajoutée. Cliquez sur "Ajouter" pour commencer.
+                    </p>
+                  )}
+                </div>
+              </Card>
+            )}
 
-              <TabsContent value="education" className="space-y-4">
-                <Card className="p-6 border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-foreground tracking-tight">Formation</h2>
-                    <Button onClick={addEducation} size="sm" variant="outline" className="font-medium">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter
-                    </Button>
-                  </div>
-                  <div className="space-y-6">
-                    {cvData.education.map((edu) => (
-                      <div key={edu.id} className="border border-border rounded-lg p-4 relative">
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeEducation(edu.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                        <div className="grid md:grid-cols-2 gap-3">
-                          <div>
-                            <Label>Établissement</Label>
-                            <Input 
-                              value={edu.school}
-                              onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                              placeholder="Nom de l'école/université"
-                            />
+            {/* Step 2: Education */}
+            {currentStep === 2 && (
+              <Card className="p-6 border-border">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Formation</h3>
+                  <Button onClick={addEducation} size="sm" variant="outline" className="font-medium">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter
+                  </Button>
+                </div>
+                <div className="space-y-6">
+                  {cvData.education.map((edu) => (
+                    <div key={edu.id} className="border border-border rounded-lg p-4 relative">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => removeEducation(edu.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <Label>Établissement</Label>
+                          <Input 
+                            value={edu.school}
+                            onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
+                            placeholder="Nom de l'école/université"
+                          />
+                        </div>
+                        <div>
+                          <Label>Diplôme</Label>
+                          <Input 
+                            value={edu.degree}
+                            onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                            placeholder="Nom du diplôme"
+                          />
+                        </div>
+                        <div>
+                          <Label>Date de début</Label>
+                          <Input 
+                            type="month"
+                            value={edu.startDate}
+                            onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label>Date de fin</Label>
+                          <Input 
+                            type="month"
+                            value={edu.endDate}
+                            onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <div className="flex items-center justify-between mb-2">
+                            <Label>Description</Label>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleGenerateEducationDescription(edu.id)}
+                              disabled={isGenerating === `edu-${edu.id}` || !edu.degree || !edu.school}
+                            >
+                              {isGenerating === `edu-${edu.id}` ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                                  Génération...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-3 h-3 mr-2" />
+                                  Générer avec IA
+                                </>
+                              )}
+                            </Button>
                           </div>
-                          <div>
-                            <Label>Diplôme</Label>
-                            <Input 
-                              value={edu.degree}
-                              onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                              placeholder="Nom du diplôme"
-                            />
-                          </div>
-                          <div>
-                            <Label>Date de début</Label>
-                            <Input 
-                              type="month"
-                              value={edu.startDate}
-                              onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label>Date de fin</Label>
-                            <Input 
-                              type="month"
-                              value={edu.endDate}
-                              onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <div className="flex items-center justify-between mb-2">
-                              <Label>Description</Label>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleGenerateEducationDescription(edu.id)}
-                                disabled={isGenerating === `edu-${edu.id}` || !edu.degree || !edu.school}
-                              >
-                                {isGenerating === `edu-${edu.id}` ? (
-                                  <>
-                                    <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                                    Génération...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Sparkles className="w-3 h-3 mr-2" />
-                                    Générer avec IA
-                                  </>
-                                )}
-                              </Button>
-                            </div>
-                            <Textarea 
-                              value={edu.description}
-                              onChange={(e) => updateEducation(edu.id, 'description', e.target.value)}
-                              placeholder="Décrivez votre parcours..."
-                              rows={3}
-                            />
-                          </div>
+                          <Textarea 
+                            value={edu.description}
+                            onChange={(e) => updateEducation(edu.id, 'description', e.target.value)}
+                            placeholder="Décrivez votre parcours..."
+                            rows={3}
+                          />
                         </div>
                       </div>
-                    ))}
-                    {cvData.education.length === 0 && (
-                      <p className="text-muted-foreground text-center py-8">
-                        Aucune formation ajoutée. Cliquez sur "Ajouter" pour commencer.
-                      </p>
-                    )}
-                  </div>
-                </Card>
-              </TabsContent>
+                    </div>
+                  ))}
+                  {cvData.education.length === 0 && (
+                    <p className="text-muted-foreground text-center py-8">
+                      Aucune formation ajoutée. Cliquez sur "Ajouter" pour commencer.
+                    </p>
+                  )}
+                </div>
+              </Card>
+            )}
 
-              <TabsContent value="skills" className="space-y-4">
-                <Card className="p-6 border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-foreground tracking-tight">Compétences</h2>
-                    <Button onClick={addSkill} size="sm" variant="outline" className="font-medium">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {cvData.skills.map((skill) => (
-                      <div key={skill.id} className="border border-border rounded-lg p-4 relative">
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeSkill(skill.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                        <div className="grid md:grid-cols-2 gap-3">
-                          <div>
-                            <Label>Nom de la compétence</Label>
-                            <Input 
-                              value={skill.name}
-                              onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                              placeholder="Ex: JavaScript, Design, Management..."
-                            />
-                          </div>
-                          <div>
-                            <Label>Niveau (0-100%)</Label>
-                            <Input 
-                              type="number"
-                              min="0"
-                              max="100"
-                              value={skill.level}
-                              onChange={(e) => updateSkill(skill.id, 'level', parseInt(e.target.value))}
-                            />
-                          </div>
+            {/* Step 3: Skills */}
+            {currentStep === 3 && (
+              <Card className="p-6 border-border">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Compétences</h3>
+                  <Button onClick={addSkill} size="sm" variant="outline" className="font-medium">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter
+                  </Button>
+                </div>
+                <div className="space-y-4">
+                  {cvData.skills.map((skill) => (
+                    <div key={skill.id} className="border border-border rounded-lg p-4 relative">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => removeSkill(skill.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <Label>Nom de la compétence</Label>
+                          <Input 
+                            value={skill.name}
+                            onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
+                            placeholder="Ex: JavaScript, Design, Management..."
+                          />
+                        </div>
+                        <div>
+                          <Label>Niveau (0-100%)</Label>
+                          <Input 
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={skill.level}
+                            onChange={(e) => updateSkill(skill.id, 'level', parseInt(e.target.value))}
+                          />
                         </div>
                       </div>
-                    ))}
-                    {cvData.skills.length === 0 && (
-                      <p className="text-muted-foreground text-center py-8">
-                        Aucune compétence ajoutée. Cliquez sur "Ajouter" pour commencer.
-                      </p>
-                    )}
-                  </div>
-                </Card>
-              </TabsContent>
+                    </div>
+                  ))}
+                  {cvData.skills.length === 0 && (
+                    <p className="text-muted-foreground text-center py-8">
+                      Aucune compétence ajoutée. Cliquez sur "Ajouter" pour commencer.
+                    </p>
+                  )}
+                </div>
+              </Card>
+            )}
 
-              <TabsContent value="theme" className="space-y-4">
-                <Card className="p-6 border-border">
+            {/* Step 4: Theme */}
+            {currentStep === 4 && (
+              <Card className="p-6 border-border space-y-6">
+                <div>
+                  <h3 className="text-lg font-bold text-foreground mb-4">Choisir un Template</h3>
                   <TemplateSelector 
                     selectedTemplate={cvData.template || 'minimal'}
                     onSelectTemplate={(templateId) => updateField('template', templateId)}
                   />
-                  
-                  <h2 className="text-2xl font-bold mb-6 text-foreground tracking-tight">Choisir un thème</h2>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-bold text-foreground mb-4">Choisir un thème</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     {[
                       { id: 'minimalist-black', name: 'Minimaliste Noir', color: 'bg-black' },
@@ -784,17 +753,52 @@ const CVCreate = () => {
                       </button>
                     ))}
                   </div>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                </div>
+              </Card>
+            )}
+
+            {/* Navigation Buttons */}
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="font-medium"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Précédent
+              </Button>
+              
+              <div className="text-sm text-muted-foreground">
+                Étape {currentStep + 1} sur {steps.length}
+              </div>
+
+              {currentStep < steps.length - 1 ? (
+                <Button
+                  onClick={nextStep}
+                  className="font-medium bg-primary hover:bg-primary/90"
+                >
+                  Suivant
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleDownloadPDF}
+                  className="font-medium bg-primary hover:bg-primary/90"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Télécharger PDF
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Preview Section */}
-          {showPreview && (
-            <div className="lg:sticky lg:top-24">
+          {/* Fixed Preview Section */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
               <CVPreview cvData={cvData} />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
