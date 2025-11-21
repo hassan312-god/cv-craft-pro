@@ -2,6 +2,10 @@ import { TemplateDarkSidebar } from "@/components/templates/TemplateDarkSidebar"
 import { TemplateAzurill } from "@/components/templates/TemplateAzurill";
 import { TemplateBronzor } from "@/components/templates/TemplateBronzor";
 import { TemplateChikorita } from "@/components/templates/TemplateChikorita";
+import { TemplateCorporate } from "@/components/templates/TemplateCorporate";
+import { TemplateGradient } from "@/components/templates/TemplateGradient";
+import { TemplateCompact } from "@/components/templates/TemplateCompact";
+import { TemplatePhotoBanner } from "@/components/templates/TemplatePhotoBanner";
 
 // Template 1 - Minimal
 import { TemplateMinimal } from "@/components/templates/TemplateMinimal";
@@ -257,6 +261,38 @@ export const templateConfig: TemplateConfigItem[] = [
     component: TemplatePhotoCompact,
     preview: '/templates/photo-compact.png',
     description: 'Layout compact avec photo carrée',
+    category: 'with-photo'
+  },
+  {
+    id: 'corporate',
+    name: 'Corporate',
+    component: TemplateCorporate,
+    preview: '/templates/corporate.png',
+    description: 'Style corporate avec barre colorée',
+    category: 'professional'
+  },
+  {
+    id: 'gradient',
+    name: 'Gradient',
+    component: TemplateGradient,
+    preview: '/templates/gradient.png',
+    description: 'Header avec dégradé moderne',
+    category: 'modern'
+  },
+  {
+    id: 'compact',
+    name: 'Compact',
+    component: TemplateCompact,
+    preview: '/templates/compact.png',
+    description: 'Layout compact deux colonnes',
+    category: 'minimalist'
+  },
+  {
+    id: 'photo-banner',
+    name: 'Photo Banner',
+    component: TemplatePhotoBanner,
+    preview: '/templates/photo-banner.png',
+    description: 'Banner avec photo et gradient',
     category: 'with-photo'
   }
 ];

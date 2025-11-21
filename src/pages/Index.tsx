@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Palette, CheckCircle2, ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -23,11 +24,174 @@ const Index = () => {
     }
   ];
 
-  const stats = [
-    { value: "5+", label: "Modèles Professionnels" },
-    { value: "100%", label: "Gratuit" },
-    { value: "PDF", label: "Export Haute Qualité" }
-  ];
+  // Animation typewriter pour le titre avec plusieurs phrases et couleurs aléatoires
+  const TypewriterText = () => {
+    const phrases = [
+      "Créez votre CV professionnel en quelques minutes",
+      "Designez un CV moderne qui vous démarque",
+      "Générez votre CV en PDF haute qualité",
+      "Personnalisez votre CV avec nos templates",
+      "Exportez votre CV professionnel instantanément"
+    ];
+    
+    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [charIndex, setCharIndex] = useState(0);
+    const [wordColors, setWordColors] = useState<Record<number, string>>({});
+
+    // Générer des couleurs aléatoires pour certains mots
+    const generateWordColors = (text: string) => {
+      const words = text.split(' ');
+      const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899', '#06b6d4'];
+      const newColors: Record<number, string> = {};
+      
+      // Colorier aléatoirement 30-40% des mots
+      words.forEach((_, index) => {
+        if (Math.random() < 0.35) {
+          newColors[index] = colors[Math.floor(Math.random() * colors.length)];
+        }
+      });
+      
+      return newColors;
+    };
+
+    useEffect(() => {
+      const currentPhrase = phrases[currentPhraseIndex];
+      const typingSpeed = isDeleting ? 30 : 100;
+      const pauseTime = isDeleting ? 500 : 2000;
+
+      let pauseTimer: NodeJS.Timeout | null = null;
+
+      const timer = setTimeout(() => {
+        if (!isDeleting && charIndex < currentPhrase.length) {
+          setDisplayedText(currentPhrase.slice(0, charIndex + 1));
+          setCharIndex(prev => prev + 1);
+        } else if (!isDeleting && charIndex === currentPhrase.length) {
+          pauseTimer = setTimeout(() => setIsDeleting(true), pauseTime);
+        } else if (isDeleting && charIndex > 0) {
+          setDisplayedText(currentPhrase.slice(0, charIndex - 1));
+          setCharIndex(prev => prev - 1);
+        } else if (isDeleting && charIndex === 0) {
+          setIsDeleting(false);
+          // Passer à la phrase suivante
+          const nextIndex = (currentPhraseIndex + 1) % phrases.length;
+          setCurrentPhraseIndex(nextIndex);
+          setWordColors(generateWordColors(phrases[nextIndex]));
+        }
+      }, typingSpeed);
+
+      return () => {
+        clearTimeout(timer);
+        if (pauseTimer) clearTimeout(pauseTimer);
+      };
+    }, [charIndex, isDeleting, currentPhraseIndex, phrases]);
+
+    // Générer les couleurs au chargement initial
+    useEffect(() => {
+      setWordColors(generateWordColors(phrases[0]));
+    }, []);
+
+    // Rendre le texte avec les couleurs appliquées
+    const renderColoredText = () => {
+      const words = displayedText.split(' ');
+      return words.map((word, index) => {
+        const color = wordColors[index];
+        return (
+          <span key={index} style={color ? { color } : {}}>
+            {word}
+            {index < words.length - 1 ? ' ' : ''}
+          </span>
+        );
+      });
+    };
+
+    return (
+      <span className="inline-block">
+        {renderColoredText()}
+        <span className="animate-pulse inline-block w-0.5 h-8 bg-foreground ml-1 align-middle">|</span>
+      </span>
+    );
+  };
+
+  // Composants d'animation pour les stats
+  const AnimatedCount = ({ value, label }: { value: string; label: string }) => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      let start = 0;
+      const end = parseInt(value);
+      const timer = setInterval(() => {
+        start += 1;
+        setCount(start);
+        if (start === end) clearInterval(timer);
+      }, 40);
+
+      return () => clearInterval(timer);
+    }, [value]);
+
+    return (
+      <div className="text-center">
+        <h2 className="text-4xl font-bold transform transition-all duration-300 hover:scale-110">
+          {count}+
+        </h2>
+        <p className="text-muted-foreground">{label}</p>
+      </div>
+    );
+  };
+
+  const AnimatedPercentSmooth = () => {
+    const [percent, setPercent] = useState(0);
+
+    useEffect(() => {
+      let start = 0;
+      let end = 100;
+      let duration = 1500;
+      let interval = 10;
+      let increment = end / (duration / interval);
+
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= end) {
+          start = end;
+          setPercent(Math.floor(start));
+          clearInterval(timer);
+        } else {
+          setPercent(Math.floor(start));
+        }
+      }, interval);
+
+      return () => clearInterval(timer);
+    }, []);
+
+    return (
+      <div className="text-center">
+        <h2 className="text-4xl font-bold">
+          {percent}%
+        </h2>
+        <p className="text-muted-foreground">Gratuit</p>
+      </div>
+    );
+  };
+
+  const AnimatedPDF = () => {
+    const [show, setShow] = useState(false);
+
+    useEffect(() => {
+      setTimeout(() => setShow(true), 200);
+    }, []);
+
+    return (
+      <div
+        className={`text-center transform transition-all duration-500 ${
+          show ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+        }`}
+      >
+        <h2 className="text-4xl font-bold">PDF</h2>
+        <p className="text-muted-foreground">Export Haute Qualité</p>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,7 +202,7 @@ const Index = () => {
             <div className="text-2xl font-bold text-foreground tracking-tight">
               CV Builder Pro
             </div>
-            <div className="hidden sm:block px-3 py-1 bg-muted text-xs font-medium rounded-full">
+            <div className="hidden sm:block px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
               2025
             </div>
           </div>
@@ -72,13 +236,8 @@ const Index = () => {
                 <Sparkles className="w-4 h-4" />
                 100% Gratuit - Sans Inscription
               </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight">
-                Créez votre CV<br />
-                professionnel en<br />
-                <span className="relative inline-block">
-                  quelques minutes
-                  <div className="absolute bottom-2 left-0 w-full h-3 bg-foreground/10 -z-10" />
-                </span>
+              <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight" style={{ minHeight: '200px' }}>
+                <TypewriterText />
               </h1>
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
                 Des outils intuitifs, des designs modernes et un export PDF instantané. 
@@ -87,12 +246,9 @@ const Index = () => {
               
               {/* Stats */}
               <div className="flex gap-8 mb-10 pb-10 border-b border-border">
-                {stats.map((stat, index) => (
-                  <div key={index}>
-                    <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
+                <AnimatedCount value="5" label="Modèles Professionnels" />
+                <AnimatedPercentSmooth />
+                <AnimatedPDF />
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -212,8 +368,8 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-foreground text-background relative overflow-hidden border-t border-border">
-        <div className="absolute inset-0 opacity-5" style={{ 
+      <section className="py-24 bg-primary text-primary-foreground relative overflow-hidden border-t border-primary/20">
+        <div className="absolute inset-0 opacity-10" style={{ 
           backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
           backgroundSize: '32px 32px' 
         }} />
@@ -223,13 +379,13 @@ const Index = () => {
             <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
               Prêt à créer votre<br />CV parfait ?
             </h2>
-            <p className="text-lg mb-10 opacity-80 leading-relaxed">
+            <p className="text-lg mb-10 opacity-90 leading-relaxed">
               Rejoignez des milliers de professionnels qui créent leur CV avec notre outil en 2025
             </p>
             <Button 
               size="lg"
               onClick={() => navigate('/create')}
-              className="bg-background text-foreground hover:bg-background/90 font-medium text-base px-8 h-12"
+              className="bg-background text-primary hover:bg-background/90 font-medium text-base px-8 h-12"
             >
               Commencer Gratuitement
               <ArrowRight className="ml-2 w-4 h-4" />

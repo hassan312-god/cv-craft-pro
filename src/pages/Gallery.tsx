@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Eye } from "lucide-react";
 import { exampleCVs, cvCategories, CVCategory } from "@/lib/exampleCVData";
 import { CVPreview } from "@/components/CVPreview";
+import { CVData } from "@/pages/CVCreate";
 
 const Gallery = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<CVCategory | "all">("all");
+  const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null);
 
   const filteredCVs = Object.entries(exampleCVs).filter(([_, cvExample]) => 
     selectedCategory === "all" || cvExample.category === selectedCategory
@@ -17,6 +20,12 @@ const Gallery = () => {
   const handleUseTemplate = (templateId: string) => {
     navigate('/create', { state: { cvData: exampleCVs[templateId].data } });
   };
+
+  const handlePreview = (templateId: string) => {
+    setPreviewTemplateId(templateId);
+  };
+
+  const previewCVData = previewTemplateId ? exampleCVs[previewTemplateId]?.data : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,9 +135,7 @@ const Gallery = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => {
-                      window.open(`/create?preview=${templateId}`, '_blank');
-                    }}
+                    onClick={() => handlePreview(templateId)}
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
@@ -163,6 +170,22 @@ const Gallery = () => {
           </Card>
         </div>
       </main>
+
+      {/* Preview Modal */}
+      <Dialog open={previewTemplateId !== null} onOpenChange={(open) => !open && setPreviewTemplateId(null)}>
+        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto p-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+            <DialogTitle>
+              Aperçu - {previewTemplateId && exampleCVs[previewTemplateId]?.colorTheme}
+            </DialogTitle>
+          </DialogHeader>
+          {previewCVData && (
+            <div className="flex justify-center items-start p-6 bg-muted/30 min-h-[500px]">
+              <CVPreview cvData={previewCVData} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

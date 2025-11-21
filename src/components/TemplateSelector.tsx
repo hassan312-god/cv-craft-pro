@@ -17,7 +17,7 @@ const getExampleCVData = (templateId: string): CVData => ({
   email: "jean.dupont@email.com",
   phone: "+33 6 12 34 56 78",
   address: "Paris, France",
-  photo: (templateId.includes('photo') || templateId === 'azurill' || templateId === 'chikorita') ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" : "",
+  photo: (templateId.includes('photo') || templateId === 'azurill' || templateId === 'chikorita' || templateId === 'photo-banner') ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" : "",
   about: "Développeur passionné avec 5 ans d'expérience en développement web et mobile.",
   experiences: [
     {
