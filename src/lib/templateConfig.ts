@@ -31,139 +31,233 @@ import { TemplatePhotoCentered } from "@/components/templates/TemplatePhotoCente
 import { TemplatePhotoLarge } from "@/components/templates/TemplatePhotoLarge";
 import { TemplatePhotoCorner } from "@/components/templates/TemplatePhotoCorner";
 
-export const templateConfig = [
+// Additional Templates
+import { TemplateSidebar } from "@/components/templates/TemplateSidebar";
+import { TemplateTwoColumn } from "@/components/templates/TemplateTwoColumn";
+import { TemplateTimeline } from "@/components/templates/TemplateTimeline";
+import { TemplatePhotoModern } from "@/components/templates/TemplatePhotoModern";
+import { TemplatePhotoCompact } from "@/components/templates/TemplatePhotoCompact";
+
+export type TemplateCategory = 
+  | "all"
+  | "minimalist"
+  | "professional"
+  | "creative"
+  | "with-photo"
+  | "modern"
+  | "classic";
+
+export interface TemplateConfigItem {
+  id: string;
+  name: string;
+  component: any;
+  preview: string;
+  description: string;
+  category: TemplateCategory;
+}
+
+export const templateCategories: Record<TemplateCategory, string> = {
+  all: "Tous",
+  minimalist: "Minimaliste",
+  professional: "Professionnel",
+  creative: "Créatif",
+  "with-photo": "Avec Photo",
+  modern: "Moderne",
+  classic: "Classique"
+};
+
+export const templateConfig: TemplateConfigItem[] = [
   {
     id: 'minimal',
     name: 'Minimal',
     component: TemplateMinimal,
     preview: '/templates/minimal.png',
-    description: 'Design épuré et minimaliste'
+    description: 'Design épuré et minimaliste',
+    category: 'minimalist'
   },
   {
     id: 'executive',
     name: 'Executive',
     component: TemplateExecutive,
     preview: '/templates/executive.png',
-    description: 'Style professionnel pour cadres'
+    description: 'Style professionnel pour cadres',
+    category: 'professional'
   },
   {
     id: 'creative',
     name: 'Créatif',
     component: TemplateCreative,
     preview: '/templates/creative.png',
-    description: 'Design créatif et coloré'
+    description: 'Design créatif et coloré',
+    category: 'creative'
   },
   {
     id: 'modern',
     name: 'Moderne',
     component: TemplateModernNew,
     preview: '/templates/modern.png',
-    description: 'Mise en page contemporaine'
+    description: 'Mise en page contemporaine',
+    category: 'modern'
   },
   {
     id: 'professional',
     name: 'Professionnel',
     component: TemplateProfessional,
     preview: '/templates/professional.png',
-    description: 'Style corporate classique'
+    description: 'Style corporate classique',
+    category: 'professional'
   },
   {
     id: 'elegant',
     name: 'Élégant',
     component: TemplateElegant,
     preview: '/templates/elegant.png',
-    description: 'Design raffiné et élégant'
+    description: 'Design raffiné et élégant',
+    category: 'professional'
   },
   {
     id: 'tech',
     name: 'Tech',
     component: TemplateTech,
     preview: '/templates/tech.png',
-    description: 'Parfait pour les développeurs'
+    description: 'Parfait pour les développeurs',
+    category: 'modern'
   },
   {
     id: 'classic',
     name: 'Classique',
     component: TemplateClassic,
     preview: '/templates/classic.png',
-    description: 'Mise en page traditionnelle'
+    description: 'Mise en page traditionnelle',
+    category: 'classic'
   },
   {
     id: 'bold',
     name: 'Bold',
     component: TemplateBold,
     preview: '/templates/bold.png',
-    description: 'Design audacieux et impactant'
+    description: 'Design audacieux et impactant',
+    category: 'creative'
   },
   {
     id: 'clean',
     name: 'Clean',
     component: TemplateClean,
     preview: '/templates/clean.png',
-    description: 'Interface claire et lisible'
+    description: 'Interface claire et lisible',
+    category: 'minimalist'
   },
   {
     id: 'dark-sidebar',
     name: 'Sidebar Sombre',
     component: TemplateDarkSidebar,
     preview: '/templates/dark-sidebar.png',
-    description: 'Sidebar gris foncé professionnel'
+    description: 'Sidebar gris foncé professionnel',
+    category: 'professional'
   },
   {
     id: 'azurill',
     name: 'Azurill',
     component: TemplateAzurill,
     preview: '/templates/azurill.png',
-    description: 'Header centré avec photo'
+    description: 'Header centré avec photo',
+    category: 'with-photo'
   },
   {
     id: 'bronzor',
     name: 'Bronzor',
     component: TemplateBronzor,
     preview: '/templates/bronzor.png',
-    description: 'Minimaliste deux colonnes'
+    description: 'Minimaliste deux colonnes',
+    category: 'minimalist'
   },
   {
     id: 'chikorita',
     name: 'Chikorita',
     component: TemplateChikorita,
     preview: '/templates/chikorita.png',
-    description: 'Sidebar colorée moderne'
+    description: 'Sidebar colorée moderne',
+    category: 'with-photo'
   },
   {
     id: 'photo-header',
     name: 'Photo Header',
     component: TemplatePhotoHeader,
     preview: '/templates/photo-header.png',
-    description: 'Photo dans le header à gauche'
+    description: 'Photo dans le header à gauche',
+    category: 'with-photo'
   },
   {
     id: 'photo-sidebar',
     name: 'Photo Sidebar',
     component: TemplatePhotoSidebar,
     preview: '/templates/photo-sidebar.png',
-    description: 'Photo circulaire dans la sidebar'
+    description: 'Photo circulaire dans la sidebar',
+    category: 'with-photo'
   },
   {
     id: 'photo-centered',
     name: 'Photo Centrée',
     component: TemplatePhotoCentered,
     preview: '/templates/photo-centered.png',
-    description: 'Photo centrée avec gradient'
+    description: 'Photo centrée avec gradient',
+    category: 'with-photo'
   },
   {
     id: 'photo-large',
     name: 'Photo Large',
     component: TemplatePhotoLarge,
     preview: '/templates/photo-large.png',
-    description: 'Photo en grand format en header'
+    description: 'Photo en grand format en header',
+    category: 'with-photo'
   },
   {
     id: 'photo-corner',
     name: 'Photo Coin',
     component: TemplatePhotoCorner,
     preview: '/templates/photo-corner.png',
-    description: 'Photo dans le coin supérieur droit'
+    description: 'Photo dans le coin supérieur droit',
+    category: 'with-photo'
+  },
+  {
+    id: 'sidebar',
+    name: 'Sidebar',
+    component: TemplateSidebar,
+    preview: '/templates/sidebar.png',
+    description: 'Layout avec sidebar professionnel',
+    category: 'professional'
+  },
+  {
+    id: 'two-column',
+    name: 'Deux Colonnes',
+    component: TemplateTwoColumn,
+    preview: '/templates/two-column.png',
+    description: 'Mise en page deux colonnes équilibrée',
+    category: 'modern'
+  },
+  {
+    id: 'timeline',
+    name: 'Timeline',
+    component: TemplateTimeline,
+    preview: '/templates/timeline.png',
+    description: 'Design chronologique avec timeline',
+    category: 'modern'
+  },
+  {
+    id: 'photo-modern',
+    name: 'Photo Moderne',
+    component: TemplatePhotoModern,
+    preview: '/templates/photo-modern.png',
+    description: 'Header moderne avec photo circulaire',
+    category: 'with-photo'
+  },
+  {
+    id: 'photo-compact',
+    name: 'Photo Compact',
+    component: TemplatePhotoCompact,
+    preview: '/templates/photo-compact.png',
+    description: 'Layout compact avec photo carrée',
+    category: 'with-photo'
   }
 ];
 

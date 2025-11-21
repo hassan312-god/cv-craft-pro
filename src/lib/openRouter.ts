@@ -123,7 +123,7 @@ Format: 3-4 puces décrivant les responsabilités et réalisations principales. 
 };
 
 /**
- * Génère une description pour une formation
+ * Génère une description pour une formation (exactement 5 mots)
  */
 export const generateEducationDescription = async (
   degree: string,
@@ -132,13 +132,13 @@ export const generateEducationDescription = async (
   const messages: OpenRouterMessage[] = [
     {
       role: 'system',
-      content: 'Tu es un expert en rédaction de CV professionnels. Tu rédiges des descriptions de formations concises et professionnelles en français.'
+      content: 'Tu es un expert en rédaction de CV professionnels. Tu génères des descriptions de formations très courtes et professionnelles en français, exactement 5 mots.'
     },
     {
       role: 'user',
-      content: `Rédige une brève description (2-3 phrases) pour la formation ${degree} à ${school}. 
+      content: `Génère une description de EXACTEMENT 5 MOTS pour la formation ${degree} à ${school}. 
       
-La description doit mettre en valeur les compétences acquises et la pertinence de la formation. Réponds uniquement avec le texte, sans formatage.`
+La description doit mettre en valeur les compétences acquises ou la pertinence de la formation. Réponds UNIQUEMENT avec exactement 5 mots, sans ponctuation finale, sans formatage, sans phrases complètes.`
     }
   ];
 
@@ -155,7 +155,7 @@ La description doit mettre en valeur les compétences acquises et la pertinence 
         model: 'openai/gpt-4o-mini',
         messages: messages,
         temperature: 0.7,
-        max_tokens: 150
+        max_tokens: 20
       })
     });
 
@@ -164,7 +164,18 @@ La description doit mettre en valeur les compétences acquises et la pertinence 
     }
 
     const data: OpenRouterResponse = await response.json();
-    return data.choices[0]?.message?.content?.trim() || '';
+    let description = data.choices[0]?.message?.content?.trim() || '';
+    
+    // S'assurer qu'on a exactement 5 mots
+    const words = description.split(/\s+/).filter(w => w.length > 0);
+    if (words.length > 5) {
+      description = words.slice(0, 5).join(' ');
+    } else if (words.length < 5 && words.length > 0) {
+      // Si moins de 5 mots, on garde ce qui a été généré
+      description = words.join(' ');
+    }
+    
+    return description;
   } catch (error) {
     console.error('Error generating education description:', error);
     throw error;

@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
 import { generateAbout, generateExperienceDescription, generateEducationDescription } from "@/lib/openRouter";
+import { getTemplateComponent } from "@/lib/templateConfig";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export interface Experience {
   id: string;
@@ -58,7 +61,12 @@ const CVCreate = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
+  const [showPreview, setShowPreview] = useState(true);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const cvPreviewRef = useRef<HTMLDivElement>(null);
+  const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
   
   const preloadedData = location.state?.cvData as CVData | undefined;
   
@@ -123,6 +131,87 @@ const CVCreate = () => {
   const handlePhotoRemove = () => {
     updateField('photo', '');
     toast.success("Photo supprimée");
+  };
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("La géolocalisation n'est pas supportée par votre navigateur");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          
+          // Utiliser l'API Nominatim d'OpenStreetMap pour une adresse complète et précise
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=fr`
+          );
+          const data = await response.json();
+          
+          if (data && data.address) {
+            const addr = data.address;
+            const addressParts = [];
+            
+            // Construire l'adresse de manière précise
+            if (addr.house_number) addressParts.push(addr.house_number);
+            if (addr.road) addressParts.push(addr.road);
+            if (addr.postcode) addressParts.push(addr.postcode);
+            if (addr.city || addr.town || addr.village || addr.municipality) {
+              addressParts.push(addr.city || addr.town || addr.village || addr.municipality);
+            }
+            if (addr.country) addressParts.push(addr.country);
+            
+            if (addressParts.length > 0) {
+              const fullAddress = addressParts.join(', ');
+              updateField('address', fullAddress);
+              toast.success("Adresse précise détectée avec succès !");
+            } else {
+              // Fallback si pas assez de détails
+              const fallbackParts = [];
+              if (addr.city || addr.town || addr.village) {
+                fallbackParts.push(addr.city || addr.town || addr.village);
+              }
+              if (addr.postcode) fallbackParts.push(addr.postcode);
+              if (addr.country) fallbackParts.push(addr.country);
+              
+              if (fallbackParts.length > 0) {
+                updateField('address', fallbackParts.join(', '));
+                toast.success("Position détectée avec succès !");
+              } else {
+                toast.error("Impossible de déterminer une adresse précise");
+              }
+            }
+          } else {
+            toast.error("Impossible de déterminer votre position");
+          }
+        } catch (error) {
+          console.error('Erreur géolocalisation:', error);
+          toast.error("Erreur lors de la récupération de l'adresse");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        setIsLocating(false);
+        if (error.code === error.PERMISSION_DENIED) {
+          toast.error("Permission de géolocalisation refusée. Veuillez autoriser l'accès à votre position.");
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          toast.error("Position indisponible. Vérifiez votre connexion GPS.");
+        } else if (error.code === error.TIMEOUT) {
+          toast.error("Délai d'attente dépassé. Réessayez.");
+        } else {
+          toast.error("Erreur lors de la géolocalisation");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   const addExperience = () => {
@@ -206,10 +295,142 @@ const CVCreate = () => {
     }));
   };
 
-  const handleDownloadPDF = () => {
-    toast.success("Téléchargement du PDF en cours...", {
-      description: "Votre CV sera téléchargé dans quelques instants"
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    toast.loading("Génération du PDF en cours...", {
+      id: "pdf-download"
     });
+
+    try {
+      // Créer un conteneur temporaire pour le PDF (sans scaling)
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'fixed';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '0';
+      tempContainer.style.width = '794px';
+      tempContainer.style.backgroundColor = 'white';
+      tempContainer.style.zIndex = '-1';
+      document.body.appendChild(tempContainer);
+
+      // Rendre le template directement dans le conteneur temporaire
+      const template = cvData.template || 'minimal';
+      const TemplateComponent = getTemplateComponent(template);
+      
+      // Utiliser React pour rendre le composant
+      const React = await import('react');
+      const ReactDOM = await import('react-dom/client');
+      const root = ReactDOM.createRoot(tempContainer);
+      
+      root.render(React.createElement(TemplateComponent, { cvData }));
+      
+      // Attendre que le contenu soit rendu
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Trouver le conteneur CV réel (sans wrapper de scaling)
+      const cvElement = tempContainer.querySelector('div[style*="794px"]') || 
+                       tempContainer.firstElementChild as HTMLElement;
+      
+      if (!cvElement) {
+        throw new Error("Impossible de trouver le contenu du CV");
+      }
+
+      // S'assurer que l'élément est visible pour html2canvas
+      (cvElement as HTMLElement).style.display = 'block';
+      (cvElement as HTMLElement).style.visibility = 'visible';
+      (cvElement as HTMLElement).style.position = 'relative';
+
+      // Générer le canvas
+      const canvas = await html2canvas(cvElement as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        allowTaint: true,
+        width: 794,
+        height: (cvElement as HTMLElement).scrollHeight || 1123,
+        scrollX: 0,
+        scrollY: 0
+      });
+
+      // Nettoyer l'élément temporaire
+      root.unmount();
+      document.body.removeChild(tempContainer);
+
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error("Canvas vide - le CV n'a pas pu être capturé");
+      }
+
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      
+      // Dimensions A4 en mm
+      const pdfWidth = 210; // A4 width in mm
+      const pdfHeight = 297; // A4 height in mm
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      // Créer le PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Si le contenu tient sur une page (avec une petite marge de 5mm)
+      if (imgHeight <= pdfHeight + 5) {
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      } else {
+        // Contenu sur plusieurs pages - découper intelligemment
+        const pageHeight = pdfHeight;
+        let totalHeight = imgHeight;
+        let yOffset = 0;
+        let pageNumber = 0;
+        
+        while (totalHeight > 0) {
+          if (pageNumber > 0) {
+            pdf.addPage();
+          }
+          
+          // Calculer la hauteur à afficher sur cette page
+          const heightOnPage = Math.min(totalHeight, pageHeight);
+          
+          // Calculer la position Y dans l'image source
+          const sourceY = (yOffset / imgHeight) * canvas.height;
+          const sourceHeight = (heightOnPage / imgHeight) * canvas.height;
+          
+          // Créer un canvas temporaire pour cette page
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = sourceHeight;
+          const ctx = pageCanvas.getContext('2d');
+          
+          if (ctx) {
+            ctx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
+            const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
+            pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, heightOnPage);
+          }
+          
+          totalHeight -= pageHeight;
+          yOffset += pageHeight;
+          pageNumber++;
+          
+          // Éviter les pages presque vides (moins de 20mm de contenu)
+          if (totalHeight > 0 && totalHeight < 20) {
+            break;
+          }
+        }
+      }
+      
+      // Télécharger le PDF
+      const filename = `${cvData.firstName || 'CV'}_${cvData.lastName || 'Pro'}_CV.pdf`;
+      pdf.save(filename);
+      
+      toast.success("PDF téléchargé avec succès !", {
+        id: "pdf-download"
+      });
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      toast.error(`Erreur lors de la génération du PDF: ${error instanceof Error ? error.message : 'Erreur inconnue'}`, {
+        id: "pdf-download"
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleGenerateAbout = async () => {
@@ -285,18 +506,47 @@ const CVCreate = () => {
             Retour
           </Button>
           <h1 className="text-xl font-bold text-foreground tracking-tight">Créer mon CV</h1>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setShowPreview(!showPreview)} 
+              className="font-medium"
+            >
+              {showPreview ? (
+                <>
+                  <EyeOff className="mr-2 w-4 h-4" />
+                  Masquer Aperçu
+                </>
+              ) : (
+                <>
+                  <Eye className="mr-2 w-4 h-4" />
+                  Aperçu
+                </>
+              )}
+            </Button>
           <Button 
             onClick={handleDownloadPDF} 
+            disabled={isDownloading}
             className="bg-primary hover:bg-primary/90 font-medium"
           >
-            <Download className="mr-2 w-4 h-4" />
-            PDF
+            {isDownloading ? (
+              <>
+                <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                Génération...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 w-4 h-4" />
+                PDF
+              </>
+            )}
           </Button>
+          </div>
         </div>
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-[1fr_500px] gap-8">
+        <div className={`grid gap-8 ${showPreview ? 'lg:grid-cols-[1fr_500px]' : 'lg:grid-cols-1'}`}>
           {/* Form Section */}
           <div className="space-y-6">
             {/* Progress Steps */}
@@ -367,7 +617,29 @@ const CVCreate = () => {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label htmlFor="address">Adresse</Label>
+                      <div className="flex items-center justify-between mb-2">
+                        <Label htmlFor="address">Adresse</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleGetLocation}
+                          disabled={isLocating}
+                          className="text-xs"
+                        >
+                          {isLocating ? (
+                            <>
+                              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                              Localisation...
+                            </>
+                          ) : (
+                            <>
+                              <MapPin className="w-3 h-3 mr-2" />
+                              Localiser
+                            </>
+                          )}
+                        </Button>
+                      </div>
                       <Input 
                         id="address"
                         value={cvData.address}
@@ -484,7 +756,7 @@ const CVCreate = () => {
                     Ajouter
                   </Button>
                 </div>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {cvData.experiences.map((exp) => (
                     <div key={exp.id} className="border border-border rounded-lg p-4 relative">
                       <Button 
@@ -495,7 +767,7 @@ const CVCreate = () => {
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
-                      <div className="grid md:grid-cols-2 gap-3">
+                      <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label>Entreprise</Label>
                           <Input 
@@ -580,7 +852,7 @@ const CVCreate = () => {
                     Ajouter
                   </Button>
                 </div>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {cvData.education.map((edu) => (
                     <div key={edu.id} className="border border-border rounded-lg p-4 relative">
                       <Button 
@@ -591,7 +863,7 @@ const CVCreate = () => {
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
-                      <div className="grid md:grid-cols-2 gap-3">
+                      <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label>Établissement</Label>
                           <Input 
@@ -687,7 +959,7 @@ const CVCreate = () => {
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
-                      <div className="grid md:grid-cols-2 gap-3">
+                      <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label>Nom de la compétence</Label>
                           <Input 
@@ -720,24 +992,32 @@ const CVCreate = () => {
 
             {/* Step 4: Theme */}
             {currentStep === 4 && (
-              <Card className="p-6 border-border space-y-6">
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-4">Choisir un Template</h3>
-                  <TemplateSelector 
-                    selectedTemplate={cvData.template || 'minimal'}
-                    onSelectTemplate={(templateId) => updateField('template', templateId)}
-                  />
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-4">Choisir un thème</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
+              <Card className="p-6 border-border">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground mb-4">Choisir un Template</h3>
+                    <TemplateSelector 
+                      selectedTemplate={cvData.template || 'minimal'}
+                      onSelectTemplate={(templateId) => updateField('template', templateId)}
+                    />
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground mb-4">Choisir un thème</h3>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[
                       { id: 'minimalist-black', name: 'Minimaliste Noir', color: 'bg-black' },
                       { id: 'elegant-dark', name: 'Élégant Sombre', color: 'bg-slate-800' },
                       { id: 'professional-blue', name: 'Professionnel Bleu', color: 'bg-blue-600' },
                       { id: 'modern-gray', name: 'Moderne Gris', color: 'bg-gray-600' },
-                      { id: 'creative-gradient', name: 'Créatif Gradient', color: 'bg-gradient-to-r from-purple-500 to-pink-500' }
+                      { id: 'creative-gradient', name: 'Créatif Gradient', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
+                      { id: 'ocean-blue', name: 'Bleu Océan', color: 'bg-gradient-to-r from-blue-400 to-cyan-500' },
+                      { id: 'forest-green', name: 'Vert Forêt', color: 'bg-gradient-to-r from-green-600 to-emerald-600' },
+                      { id: 'sunset-orange', name: 'Orange Coucher', color: 'bg-gradient-to-r from-orange-500 to-red-500' },
+                      { id: 'royal-purple', name: 'Violet Royal', color: 'bg-gradient-to-r from-purple-600 to-indigo-600' },
+                      { id: 'coral-pink', name: 'Rose Corail', color: 'bg-gradient-to-r from-pink-400 to-rose-500' },
+                      { id: 'midnight-blue', name: 'Bleu Minuit', color: 'bg-gradient-to-r from-slate-900 to-blue-900' },
+                      { id: 'emerald-green', name: 'Vert Émeraude', color: 'bg-gradient-to-r from-emerald-500 to-teal-500' }
                     ].map((theme) => (
                       <button
                         key={theme.id}
@@ -752,6 +1032,7 @@ const CVCreate = () => {
                         <p className="font-medium text-foreground">{theme.name}</p>
                       </button>
                     ))}
+                  </div>
                   </div>
                 </div>
               </Card>
@@ -784,19 +1065,60 @@ const CVCreate = () => {
               ) : (
                 <Button
                   onClick={handleDownloadPDF}
+                  disabled={isDownloading}
                   className="font-medium bg-primary hover:bg-primary/90"
                 >
-                  <Download className="w-4 h-4 mr-2" />
-                  Télécharger PDF
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Génération...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 mr-2" />
+                      Télécharger PDF
+                    </>
+                  )}
                 </Button>
               )}
             </div>
           </div>
 
           {/* Fixed Preview Section */}
-          <div className="hidden lg:block">
-            <div className="sticky top-24">
-              <CVPreview cvData={cvData} />
+          {showPreview && (
+            <div className="hidden lg:block" ref={cvPreviewVisibleRef}>
+              <div className="sticky top-24">
+                <CVPreview cvData={cvData} />
+              </div>
+            </div>
+          )}
+          
+          {/* Hidden preview for PDF generation - full size A4 without scaling */}
+          <div 
+            className="fixed -left-[9999px] top-0 pointer-events-none" 
+            ref={cvPreviewRef}
+            style={{ 
+              visibility: 'hidden',
+              position: 'absolute',
+              left: '-9999px',
+              top: '0',
+              zIndex: -1
+            }}
+          >
+            <div 
+              style={{ 
+                width: '794px', 
+                minHeight: '1123px',
+                backgroundColor: 'white',
+                padding: '0',
+                position: 'relative'
+              }}
+            >
+              {(() => {
+                const template = cvData.template || 'minimal';
+                const TemplateComponent = getTemplateComponent(template);
+                return <TemplateComponent cvData={cvData} />;
+              })()}
             </div>
           </div>
         </div>

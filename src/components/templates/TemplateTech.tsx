@@ -50,6 +50,69 @@ export const TemplateTech = ({ cvData }: { cvData: CVData }) => {
         accent: 'rgb(16, 185, 129)',
         bg: 'rgb(17, 24, 39)',
         bgText: 'rgb(255, 255, 255)'
+      },
+      'ocean-blue': {
+        primary: 'rgb(14, 165, 233)',
+        secondary: 'rgb(6, 182, 212)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(224, 242, 254)',
+        accent: 'rgb(14, 165, 233)',
+        bg: 'rgb(14, 165, 233)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'forest-green': {
+        primary: 'rgb(22, 163, 74)',
+        secondary: 'rgb(16, 185, 129)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(220, 252, 231)',
+        accent: 'rgb(22, 163, 74)',
+        bg: 'rgb(22, 163, 74)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'sunset-orange': {
+        primary: 'rgb(249, 115, 22)',
+        secondary: 'rgb(239, 68, 68)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(255, 237, 213)',
+        accent: 'rgb(249, 115, 22)',
+        bg: 'rgb(249, 115, 22)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'royal-purple': {
+        primary: 'rgb(147, 51, 234)',
+        secondary: 'rgb(99, 102, 241)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(243, 232, 255)',
+        accent: 'rgb(147, 51, 234)',
+        bg: 'rgb(147, 51, 234)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'coral-pink': {
+        primary: 'rgb(244, 63, 94)',
+        secondary: 'rgb(251, 113, 133)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(255, 228, 230)',
+        accent: 'rgb(244, 63, 94)',
+        bg: 'rgb(244, 63, 94)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'midnight-blue': {
+        primary: 'rgb(15, 23, 42)',
+        secondary: 'rgb(30, 58, 138)',
+        text: 'rgb(248, 250, 252)',
+        light: 'rgb(241, 245, 249)',
+        accent: 'rgb(59, 130, 246)',
+        bg: 'rgb(15, 23, 42)',
+        bgText: 'rgb(255, 255, 255)'
+      },
+      'emerald-green': {
+        primary: 'rgb(16, 185, 129)',
+        secondary: 'rgb(5, 150, 105)',
+        text: 'rgb(30, 41, 59)',
+        light: 'rgb(209, 250, 229)',
+        accent: 'rgb(16, 185, 129)',
+        bg: 'rgb(16, 185, 129)',
+        bgText: 'rgb(255, 255, 255)'
       }
     };
     return themes[theme as keyof typeof themes] || themes['creative-gradient'];
@@ -65,9 +128,24 @@ export const TemplateTech = ({ cvData }: { cvData: CVData }) => {
             {safeValue(cvData.firstName)} {safeValue(cvData.lastName)}
           </h1>
           <div className="flex flex-wrap gap-4 text-sm mt-3 text-green-400">
-            {cvData.email && <span>{safeValue(cvData.email)}</span>}
-            {cvData.phone && <span>{safeValue(cvData.phone)}</span>}
-            {cvData.address && <span>{safeValue(cvData.address)}</span>}
+            {cvData.email && (
+              <span className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                {safeValue(cvData.email)}
+              </span>
+            )}
+            {cvData.phone && (
+              <span className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                {safeValue(cvData.phone)}
+              </span>
+            )}
+            {cvData.address && (
+              <span className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                {safeValue(cvData.address)}
+              </span>
+            )}
           </div>
         </div>
 
