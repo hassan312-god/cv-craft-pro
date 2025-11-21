@@ -1,0 +1,76 @@
+name: Build with Grunt
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Grunt CLI globally
+      run: npm install -g grunt-cli
+
+    - name: Install Grunt locally
+      run: npm install --save-dev grunt
+
+    - name: Create Gruntfile.js if not exists
+      run: |
+        if [ ! -f Gruntfile.js ]; then
+          cat > Gruntfile.js << 'EOF'
+        module.exports = function(grunt) {
+          grunt.initConfig({
+            clean: {
+              dist: ['dist/**/*']
+            },
+            copy: {
+              main: {
+                files: [
+                  { expand: true, cwd: 'src/', src: ['**/*'], dest: 'dist/' }
+                ]
+              }
+            }
+          });
+
+          grunt.loadNpmTasks('grunt-contrib-clean');
+          grunt.loadNpmTasks('grunt-contrib-copy');
+
+          grunt.registerTask('default', ['clean', 'copy']);
+        };
+        EOF
+        fi
+
+    - name: Install Grunt plugins
+      run: |
+        npm install --save-dev grunt-contrib-clean grunt-contrib-copy
+
+    - name: Run Grunt build
+      run: grunt
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: grunt-build-${{ matrix.node-version }}
+        path: dist/
+        retention-days: 7
+

@@ -1,0 +1,61 @@
+name: Build with Webpack
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Webpack and CLI
+      run: |
+        npm install --save-dev webpack webpack-cli
+
+    - name: Create webpack.config.js if not exists
+      run: |
+        if [ ! -f webpack.config.js ]; then
+          cat > webpack.config.js << 'EOF'
+        const path = require('path');
+
+        module.exports = {
+          entry: './src/index.js',
+          output: {
+            filename: 'bundle.js',
+            path: path.resolve(__dirname, 'dist'),
+          },
+          mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+        };
+        EOF
+        fi
+
+    - name: Run Webpack build
+      run: npx webpack --mode production
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: webpack-build-${{ matrix.node-version }}
+        path: dist/
+        retention-days: 7
+
