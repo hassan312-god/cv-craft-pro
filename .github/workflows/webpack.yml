@@ -1,11 +1,8 @@
 name: Build with Webpack
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
   workflow_dispatch:
+    # Désactivé par défaut - activer manuellement si nécessaire
 
 jobs:
   build:
@@ -32,27 +29,22 @@ jobs:
       run: |
         npm install --save-dev webpack webpack-cli
 
-    - name: Create webpack.config.js if not exists
+    - name: Check if webpack.config.js exists
+      id: check_webpack
       run: |
-        if [ ! -f webpack.config.js ]; then
-          cat > webpack.config.js << 'EOF'
-        const path = require('path');
-
-        module.exports = {
-          entry: './src/index.js',
-          output: {
-            filename: 'bundle.js',
-            path: path.resolve(__dirname, 'dist'),
-          },
-          mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-        };
-        EOF
+        if [ -f webpack.config.js ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ webpack.config.js not found. This workflow requires a webpack.config.js to run."
         fi
 
     - name: Run Webpack build
+      if: steps.check_webpack.outputs.exists == 'true'
       run: npx webpack --mode production
 
     - name: Upload build artifacts
+      if: steps.check_webpack.outputs.exists == 'true'
       uses: actions/upload-artifact@v4
       with:
         name: webpack-build-${{ matrix.node-version }}

@@ -1,11 +1,8 @@
 name: Build with Gulp
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
   workflow_dispatch:
+    # Désactivé par défaut - activer manuellement si nécessaire
 
 jobs:
   build:
@@ -34,32 +31,22 @@ jobs:
     - name: Install Gulp locally
       run: npm install --save-dev gulp
 
-    - name: Create gulpfile.js if not exists
+    - name: Check if gulpfile.js exists
+      id: check_gulpfile
       run: |
-        if [ ! -f gulpfile.js ]; then
-          cat > gulpfile.js << 'EOF'
-        const { src, dest, series, parallel } = require('gulp');
-        const del = require('del');
-
-        function clean() {
-          return del(['dist/**/*']);
-        }
-
-        function build() {
-          return src('src/**/*')
-            .pipe(dest('dist/'));
-        }
-
-        exports.clean = clean;
-        exports.build = build;
-        exports.default = series(clean, build);
-        EOF
+        if [ -f gulpfile.js ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "⚠️ gulpfile.js not found. This workflow requires a gulpfile.js to run."
         fi
 
     - name: Run Gulp build
+      if: steps.check_gulpfile.outputs.exists == 'true'
       run: gulp build
 
     - name: Upload build artifacts
+      if: steps.check_gulpfile.outputs.exists == 'true'
       uses: actions/upload-artifact@v4
       with:
         name: gulp-build-${{ matrix.node-version }}
