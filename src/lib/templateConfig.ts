@@ -6,6 +6,8 @@ import { TemplateCorporate } from "@/components/templates/TemplateCorporate";
 import { TemplateGradient } from "@/components/templates/TemplateGradient";
 import { TemplateCompact } from "@/components/templates/TemplateCompact";
 import { TemplatePhotoBanner } from "@/components/templates/TemplatePhotoBanner";
+import { TemplateModernMinimal } from "@/components/templates/TemplateModernMinimal";
+import { TemplateColorful } from "@/components/templates/TemplateColorful";
 
 // Template 1 - Minimal
 import { TemplateMinimal } from "@/components/templates/TemplateMinimal";
@@ -294,6 +296,22 @@ export const templateConfig: TemplateConfigItem[] = [
     preview: '/templates/photo-banner.png',
     description: 'Banner avec photo et gradient',
     category: 'with-photo'
+  },
+  {
+    id: 'modern-minimal',
+    name: 'Moderne Minimal',
+    component: TemplateModernMinimal,
+    preview: '/templates/modern-minimal.png',
+    description: 'Design moderne avec ligne décorative',
+    category: 'minimalist'
+  },
+  {
+    id: 'colorful',
+    name: 'Coloré',
+    component: TemplateColorful,
+    preview: '/templates/colorful.png',
+    description: 'Header coloré avec icônes',
+    category: 'creative'
   }
 ];
 

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin, Save, FolderOpen, Clock } from "lucide-react";
+import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin, Save, FolderOpen, Clock, FileText, Share2, BarChart3 } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
@@ -14,6 +14,9 @@ import { generateAbout, generateExperienceDescription, generateEducationDescript
 import { getTemplateComponent } from "@/lib/templateConfig";
 import { allThemes } from "@/lib/themeConfig";
 import { saveDraft, getAllDrafts, getDraft, deleteDraft, formatDraftDate, Draft } from "@/lib/draftStorage";
+import { exportToWord } from "@/lib/wordExport";
+import { saveSharedCV, getShareUrl, formatExpiryDate } from "@/lib/shareStorage";
+import { incrementCVsCreated, incrementPDFsExported, incrementWordsExported, incrementSharesCreated, recordTemplateUsage, recordThemeUsage, getUsageStats } from "@/lib/usageStats";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -68,8 +71,12 @@ const CVCreate = () => {
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isExportingWord, setIsExportingWord] = useState(false);
   const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
   const [showDraftsModal, setShowDraftsModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [showStatsModal, setShowStatsModal] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
@@ -106,8 +113,22 @@ const CVCreate = () => {
   useEffect(() => {
     if (preloadedData) {
       toast.success("Modèle chargé avec succès ! Personnalisez-le à votre guise.");
+      incrementCVsCreated();
+    } else if (cvData.firstName || cvData.lastName) {
+      // Compter comme création si on a au moins un nom
+      incrementCVsCreated();
     }
   }, [preloadedData]);
+
+  // Enregistrer l'utilisation du template et thème
+  useEffect(() => {
+    if (cvData.template) {
+      recordTemplateUsage(cvData.template);
+    }
+    if (cvData.theme) {
+      recordThemeUsage(cvData.theme);
+    }
+  }, [cvData.template, cvData.theme]);
 
   // Sauvegarde automatique toutes les 30 secondes
   useEffect(() => {
@@ -461,9 +482,54 @@ const CVCreate = () => {
       toast.error(`Erreur lors de la génération du PDF: ${error instanceof Error ? error.message : 'Erreur inconnue'}`, {
         id: "pdf-download"
       });
+      incrementPDFsExported();
     } finally {
       setIsDownloading(false);
+      toast.dismiss("pdf-download");
     }
+  };
+
+  // Export en Word
+  const handleExportWord = async () => {
+    setIsExportingWord(true);
+    toast.loading("Génération du document Word...", {
+      id: "word-export"
+    });
+
+    try {
+      await exportToWord(cvData);
+      incrementWordsExported();
+      toast.success("Document Word téléchargé avec succès !", {
+        id: "word-export"
+      });
+    } catch (error) {
+      console.error('Erreur lors de l\'export Word:', error);
+      toast.error("Erreur lors de l'export Word. Veuillez réessayer.", {
+        id: "word-export"
+      });
+    } finally {
+      setIsExportingWord(false);
+    }
+  };
+
+  // Partager le CV
+  const handleShareCV = () => {
+    try {
+      const shareId = saveSharedCV(cvData);
+      const url = getShareUrl(shareId);
+      setShareUrl(url);
+      setShowShareModal(true);
+      incrementSharesCreated();
+      toast.success("Lien de partage créé !");
+    } catch (error) {
+      console.error('Erreur lors du partage:', error);
+      toast.error("Erreur lors de la création du lien de partage");
+    }
+  };
+
+  const copyShareUrl = () => {
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Lien copié dans le presse-papiers !");
   };
 
   const handleGenerateAbout = async () => {
@@ -1104,23 +1170,60 @@ const CVCreate = () => {
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button
-                  onClick={handleDownloadPDF}
-                  disabled={isDownloading}
-                  className="font-medium bg-primary hover:bg-primary/90"
-                >
-                  {isDownloading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Génération...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Télécharger PDF
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleDownloadPDF}
+                    disabled={isDownloading}
+                    className="font-medium bg-primary hover:bg-primary/90"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Génération...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        PDF
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleExportWord}
+                    disabled={isExportingWord}
+                    variant="outline"
+                    className="font-medium"
+                  >
+                    {isExportingWord ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Génération...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="w-4 h-4 mr-2" />
+                        Word
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleShareCV}
+                    variant="outline"
+                    className="font-medium"
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Partager
+                  </Button>
+                  <Button
+                    onClick={() => setShowStatsModal(true)}
+                    variant="outline"
+                    size="icon"
+                    className="font-medium"
+                    title="Statistiques"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -1228,6 +1331,106 @@ const CVCreate = () => {
               ))}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de partage */}
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Partager votre CV</DialogTitle>
+            <DialogDescription>
+              Partagez ce lien pour permettre à d'autres de voir votre CV
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex gap-2 mb-4">
+              <Input
+                value={shareUrl}
+                readOnly
+                className="flex-1"
+              />
+              <Button onClick={copyShareUrl} variant="outline">
+                Copier
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Ce lien sera valide pendant 30 jours. Toute personne avec ce lien pourra voir votre CV.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal des statistiques */}
+      <Dialog open={showStatsModal} onOpenChange={setShowStatsModal}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Statistiques d'utilisation</DialogTitle>
+            <DialogDescription>
+              Vos statistiques d'utilisation de CV Builder Pro
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {(() => {
+              const stats = getUsageStats();
+              return (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card className="p-4">
+                      <div className="text-2xl font-bold text-foreground mb-1">
+                        {stats.totalCVsCreated}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        CVs créés
+                      </div>
+                    </Card>
+                    <Card className="p-4">
+                      <div className="text-2xl font-bold text-foreground mb-1">
+                        {stats.totalPDFsExported}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        PDFs exportés
+                      </div>
+                    </Card>
+                    <Card className="p-4">
+                      <div className="text-2xl font-bold text-foreground mb-1">
+                        {stats.totalWordsExported}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Documents Word exportés
+                      </div>
+                    </Card>
+                    <Card className="p-4">
+                      <div className="text-2xl font-bold text-foreground mb-1">
+                        {stats.totalSharesCreated}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        CVs partagés
+                      </div>
+                    </Card>
+                  </div>
+                  
+                  {stats.mostUsedTemplate && (
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-2">Template le plus utilisé</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {stats.mostUsedTemplate} ({stats.templatesUsed[stats.mostUsedTemplate]} fois)
+                      </p>
+                    </div>
+                  )}
+                  
+                  {stats.mostUsedTheme && (
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-2">Thème le plus utilisé</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {stats.mostUsedTheme} ({stats.themesUsed[stats.mostUsedTheme]} fois)
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
