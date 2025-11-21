@@ -595,6 +595,51 @@ const CVCreate = () => {
     }
   };
 
+  // Fonction pour sauvegarder manuellement un brouillon
+  const handleSaveDraft = () => {
+    try {
+      const draftId = saveDraft(cvData, currentDraftId || undefined);
+      if (!currentDraftId) {
+        setCurrentDraftId(draftId);
+      }
+      toast.success("Brouillon sauvegardé avec succès !");
+      // Rafraîchir la liste des brouillons
+      setDrafts(getAllDrafts());
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      toast.error("Erreur lors de la sauvegarde du brouillon");
+    }
+  };
+
+  // Fonction pour charger un brouillon
+  const handleLoadDraft = (draft: Draft) => {
+    try {
+      setCvData(draft.data);
+      setCurrentDraftId(draft.id);
+      setShowDraftsModal(false);
+      toast.success("Brouillon chargé avec succès !");
+    } catch (error) {
+      console.error('Erreur lors du chargement:', error);
+      toast.error("Erreur lors du chargement du brouillon");
+    }
+  };
+
+  // Fonction pour supprimer un brouillon
+  const handleDeleteDraft = (draftId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Empêcher le clic de se propager au Card
+    try {
+      deleteDraft(draftId);
+      if (currentDraftId === draftId) {
+        setCurrentDraftId(null);
+      }
+      setDrafts(getAllDrafts());
+      toast.success("Brouillon supprimé");
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error("Erreur lors de la suppression du brouillon");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}

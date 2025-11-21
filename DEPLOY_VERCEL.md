@@ -36,10 +36,13 @@ git push origin main
    Cliquez sur **"Environment Variables"** et ajoutez :
    
    ```
-   OPENROUTER_API_KEY = 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
+   VITE_OPENROUTER_API_KEY = sk-or-v1-votre-cle-api-ici
    ```
    
-   ⚠️ **Sélectionnez tous les environnements** (Production, Preview, Development)
+   ⚠️ **IMPORTANT :** 
+   - Le nom doit commencer par `VITE_` pour être accessible côté client
+   - **Sélectionnez tous les environnements** (Production, Preview, Development)
+   - Pour utiliser le proxy backend, ajoutez aussi `OPENROUTER_API_KEY` (sans VITE_)
 
 6. Cliquez sur **"Deploy"**
 
@@ -92,9 +95,13 @@ Après le déploiement :
 1. Allez sur votre projet
 2. Cliquez sur **Settings** → **Environment Variables**
 3. Ajoutez :
-   - **Name** : `OPENROUTER_API_KEY`
-   - **Value** : `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`
+   - **Name** : `VITE_OPENROUTER_API_KEY`
+   - **Value** : `sk-or-v1-votre-cle-api-ici`
    - **Environments** : Sélectionnez Production, Preview, et Development
+   
+   **Note :** Si vous utilisez le proxy backend (`api/openrouter.ts`), ajoutez aussi :
+   - **Name** : `OPENROUTER_API_KEY` (sans VITE_)
+   - **Value** : `sk-or-v1-votre-cle-api-ici`
 
 ### Via CLI :
 
