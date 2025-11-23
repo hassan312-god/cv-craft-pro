@@ -1,11 +1,5 @@
-// Utiliser les variables d'environnement pour la clé API
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const OPENROUTER_API_URL = import.meta.env.VITE_OPENROUTER_API_URL || 'https://openrouter.ai/api/v1/chat/completions';
-
-// Vérifier que la clé API est définie
-if (!OPENROUTER_API_KEY) {
-  console.warn('⚠️ VITE_OPENROUTER_API_KEY n\'est pas définie. Les fonctionnalités IA ne fonctionneront pas.');
-}
+// API endpoint pour la génération IA (utilise la fonction serverless Vercel)
+const API_ENDPOINT = '/api/openrouter';
 
 export interface OpenRouterMessage {
   role: 'system' | 'user' | 'assistant';
@@ -48,35 +42,11 @@ IMPORTANT: La description DOIT être écrite à la première personne (exemple: 
   ];
 
   try {
-    // Utiliser le proxy backend si disponible, sinon appeler directement (développement uniquement)
-    const API_URL = import.meta.env.VITE_API_URL || OPENROUTER_API_URL;
-    const useProxy = import.meta.env.VITE_API_URL;
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    
-    // Sur Vercel, utiliser /api/openrouter
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('vercel.com');
-    const endpoint = useProxy 
-      ? `${API_URL}/openrouter` 
-      : isVercel 
-        ? '/api/openrouter'
-        : API_URL;
-    
-    // Si on utilise le proxy ou Vercel, pas besoin de la clé API côté client
-    if (!useProxy && !isVercel) {
-      if (!OPENROUTER_API_KEY) {
-        throw new Error('Clé API non configurée. Veuillez définir VITE_OPENROUTER_API_KEY ou utiliser le proxy backend.');
-      }
-      headers['Authorization'] = `Bearer ${OPENROUTER_API_KEY}`;
-      headers['HTTP-Referer'] = window.location.origin;
-      headers['X-Title'] = 'CV Builder Pro';
-    }
-    
-    const response = await fetch(endpoint, {
+    const response = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         model: 'openai/gpt-4o-mini',
         messages: messages,
@@ -121,32 +91,11 @@ Format: 3-4 puces décrivant les responsabilités et réalisations principales. 
   ];
 
   try {
-    const API_URL = import.meta.env.VITE_API_URL || OPENROUTER_API_URL;
-    const useProxy = import.meta.env.VITE_API_URL;
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    
-    if (!useProxy) {
-      if (!OPENROUTER_API_KEY) {
-        throw new Error('Clé API non configurée. Veuillez définir VITE_OPENROUTER_API_KEY ou utiliser le proxy backend.');
-      }
-      headers['Authorization'] = `Bearer ${OPENROUTER_API_KEY}`;
-      headers['HTTP-Referer'] = window.location.origin;
-      headers['X-Title'] = 'CV Builder Pro';
-    }
-    
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('vercel.com');
-    const endpoint = useProxy 
-      ? `${API_URL}/openrouter` 
-      : isVercel 
-        ? '/api/openrouter'
-        : API_URL;
-    
-    const response = await fetch(endpoint, {
+    const response = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         model: 'openai/gpt-4o-mini',
         messages: messages,
@@ -188,32 +137,11 @@ La description doit mettre en valeur les compétences acquises ou la pertinence 
   ];
 
   try {
-    const API_URL = import.meta.env.VITE_API_URL || OPENROUTER_API_URL;
-    const useProxy = import.meta.env.VITE_API_URL;
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    
-    if (!useProxy) {
-      if (!OPENROUTER_API_KEY) {
-        throw new Error('Clé API non configurée. Veuillez définir VITE_OPENROUTER_API_KEY ou utiliser le proxy backend.');
-      }
-      headers['Authorization'] = `Bearer ${OPENROUTER_API_KEY}`;
-      headers['HTTP-Referer'] = window.location.origin;
-      headers['X-Title'] = 'CV Builder Pro';
-    }
-    
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('vercel.com');
-    const endpoint = useProxy 
-      ? `${API_URL}/openrouter` 
-      : isVercel 
-        ? '/api/openrouter'
-        : API_URL;
-    
-    const response = await fetch(endpoint, {
+    const response = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         model: 'openai/gpt-4o-mini',
         messages: messages,
