@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState, useRef } from "react";
+import { ReactNode, useEffect, useState, useRef, useCallback } from "react";
 import { FileText } from "lucide-react";
 
 interface CVPreviewWrapperProps {
@@ -8,12 +8,31 @@ interface CVPreviewWrapperProps {
 export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
   // Dimensions A4 standard : 210mm x 297mm
   // À 96 DPI : 794px x 1123px (8.27" x 11.69")
-  // Pour l'affichage à l'écran, on utilise 70% pour que ça rentre bien
   const a4Width = 794; // pixels (210mm)
   const a4Height = 1123; // pixels (297mm)
-  const screenScale = 0.7; // Échelle pour l'affichage à l'écran
+  const [screenScale, setScreenScale] = useState(0.7); // Échelle responsive
+  const outerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(1);
+
+  // Adapter l'échelle à la largeur disponible (mobile inclus)
+  const updateScale = useCallback(() => {
+    const available = outerRef.current?.clientWidth ?? window.innerWidth;
+    const next = Math.min(0.7, Math.max(0.28, (available - 8) / a4Width));
+    setScreenScale(Number.isFinite(next) && next > 0 ? next : 0.7);
+  }, []);
+
+  useEffect(() => {
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    const ro = new ResizeObserver(updateScale);
+    if (outerRef.current) ro.observe(outerRef.current);
+    return () => {
+      window.removeEventListener("resize", updateScale);
+      ro.disconnect();
+    };
+  }, [updateScale]);
+
 
   useEffect(() => {
     const calculatePages = () => {
