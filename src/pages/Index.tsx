@@ -197,68 +197,71 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
-      <header className="border-b border-border bg-card/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-2xl font-bold text-foreground tracking-tight">
+      <header className="border-b border-border bg-card/90 backdrop-blur-md sticky top-0 z-50 safe-top">
+        <div className="container mx-auto safe-x py-3 sm:py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="text-lg sm:text-2xl font-bold text-foreground tracking-tight truncate">
               CV Builder Pro
             </div>
             <div className="hidden sm:block px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
               2025
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <Button 
               onClick={() => navigate('/gallery')} 
               variant="outline"
-              className="font-medium"
+              size="sm"
+              className="font-medium press"
             >
               Modèles
             </Button>
             <Button 
               onClick={() => navigate('/create')} 
-              className="bg-primary hover:bg-primary/90 font-medium"
+              size="sm"
+              className="bg-primary hover:bg-primary/90 font-medium press"
             >
-              Créer mon CV
+              <span className="hidden sm:inline">Créer mon CV</span>
+              <span className="sm:hidden">Créer</span>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section className="relative py-12 sm:py-20 md:py-28 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-foreground/10" />
         
-        <div className="container mx-auto px-6" style={{ maxWidth: '1200px' }}>
-          <div className="grid lg:grid-cols-[1fr_1fr] gap-8 lg:gap-12 items-center">
+        <div className="container mx-auto safe-x" style={{ maxWidth: '1200px' }}>
+          <div className="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-12 items-center">
             {/* Left Column - Text Content */}
-            <div className="order-2 lg:order-1">
-              <div className="inline-flex items-center gap-2 border border-border px-4 py-2 rounded-full mb-8 text-sm font-medium">
-                <Sparkles className="w-4 h-4" />
+            <div className="order-2 lg:order-1 animate-fade-in">
+              <div className="inline-flex items-center gap-2 border border-border px-3 sm:px-4 py-2 rounded-full mb-6 sm:mb-8 text-xs sm:text-sm font-medium">
+                <Sparkles className="w-4 h-4 text-primary" />
                 100% Gratuit - Sans Inscription
               </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight tracking-tight" style={{ minHeight: '200px' }}>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-bold text-foreground mb-5 leading-[1.1] tracking-tight min-h-[140px] sm:min-h-[180px] md:min-h-[200px]">
                 <TypewriterText />
               </h1>
-              <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
                 Des outils intuitifs, des designs modernes et un export PDF instantané. 
                 Créez un CV qui vous démarque en 2025.
               </p>
               
               {/* Stats */}
-              <div className="flex gap-8 mb-10 pb-10 border-b border-border">
+              <div className="grid grid-cols-3 gap-3 sm:gap-8 mb-8 pb-8 border-b border-border">
                 <AnimatedCount value="5" label="Modèles Professionnels" />
                 <AnimatedPercentSmooth />
                 <AnimatedPDF />
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button 
                   size="lg" 
                   onClick={() => navigate('/create')}
-                  className="bg-primary hover:bg-primary/90 font-medium text-base px-8 h-12"
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 font-medium text-base px-8 h-12 press"
                 >
                   Commencer Maintenant
                   <ArrowRight className="ml-2 w-4 h-4" />
@@ -267,7 +270,7 @@ const Index = () => {
                   size="lg" 
                   variant="outline"
                   onClick={() => navigate('/gallery')}
-                  className="font-medium text-base px-8 h-12 border-border hover:bg-accent"
+                  className="w-full sm:w-auto font-medium text-base px-8 h-12 border-border hover:bg-accent hover:text-accent-foreground press"
                 >
                   Voir les Modèles
                 </Button>
@@ -275,12 +278,12 @@ const Index = () => {
             </div>
 
             {/* Right Column - Mockup Image */}
-            <div className="order-1 lg:order-2 flex items-center justify-center">
-              <div className="w-full h-full flex items-center justify-center">
+            <div className="order-1 lg:order-2 flex items-center justify-center animate-scale-in">
+              <div className="w-full flex items-center justify-center">
                 <img 
                   src="/A_digital_advertisement_displays_CV_Builder_Pro_20.png" 
-                  alt="CV Builder Pro - Aperçu de l'application"
-                  className="w-full h-auto max-w-full object-contain"
+                  alt="CV Builder Pro - Aperçu de l'application de création de CV"
+                  className="w-full h-auto max-w-[420px] lg:max-w-full object-contain rounded-xl"
                   loading="eager"
                 />
               </div>
@@ -288,6 +291,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+
 
       {/* Features Section */}
       <section className="py-20 border-t border-border bg-muted/20">
