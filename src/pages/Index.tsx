@@ -107,11 +107,12 @@ const Index = () => {
     };
 
     return (
-      <span className="inline-block">
+      <span className="inline-block break-words">
         {renderColoredText()}
-        <span className="animate-pulse inline-block w-0.5 h-8 bg-foreground ml-1 align-middle">|</span>
+        <span className="animate-pulse inline-block w-0.5 h-6 sm:h-8 bg-foreground ml-1 align-middle">|</span>
       </span>
     );
+
   };
 
   // Composants d'animation pour les stats
@@ -132,12 +133,13 @@ const Index = () => {
 
     return (
       <div className="text-center">
-        <h2 className="text-4xl font-bold transform transition-all duration-300 hover:scale-110">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold transform transition-all duration-300 hover:scale-110">
           {count}+
         </h2>
-        <p className="text-muted-foreground">{label}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">{label}</p>
       </div>
     );
+
   };
 
   const AnimatedPercentSmooth = () => {
@@ -166,10 +168,10 @@ const Index = () => {
 
     return (
       <div className="text-center">
-        <h2 className="text-4xl font-bold">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
           {percent}%
         </h2>
-        <p className="text-muted-foreground">Gratuit</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">Gratuit</p>
       </div>
     );
   };
@@ -187,11 +189,12 @@ const Index = () => {
           show ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         }`}
       >
-        <h2 className="text-4xl font-bold">PDF</h2>
-        <p className="text-muted-foreground">Export Haute Qualité</p>
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">PDF</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground">Export Haute Qualité</p>
       </div>
     );
   };
+
 
   return (
     <div className="min-h-screen bg-background">
