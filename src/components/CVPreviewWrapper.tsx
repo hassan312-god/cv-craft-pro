@@ -87,20 +87,22 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
   }, [children, a4Height]);
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex w-full flex-col items-center gap-2">
       {/* Indicateur de nombre de pages */}
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-medium">
         <FileText className="w-4 h-4" />
         <span>{pageCount} {pageCount > 1 ? 'pages' : 'page'}</span>
       </div>
 
-      <div className="flex justify-center items-start p-4 bg-muted/30">
+      <div ref={outerRef} className="flex w-full max-w-full justify-center items-start p-1 sm:p-4 bg-muted/30 overflow-hidden rounded-lg">
         <div
-          className="bg-white shadow-2xl relative"
+          className="bg-white shadow-lift relative overflow-hidden"
           style={{
             width: `${a4Width * screenScale}px`,
+            height: `${a4Height * pageCount * screenScale}px`,
           }}
         >
+
           <div
             className="origin-top-left"
             style={{
