@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState, useRef } from "react";
+import { ReactNode, useEffect, useState, useRef, useCallback } from "react";
 import { FileText } from "lucide-react";
 
 interface CVPreviewWrapperProps {
@@ -8,12 +8,31 @@ interface CVPreviewWrapperProps {
 export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
   // Dimensions A4 standard : 210mm x 297mm
   // À 96 DPI : 794px x 1123px (8.27" x 11.69")
-  // Pour l'affichage à l'écran, on utilise 70% pour que ça rentre bien
   const a4Width = 794; // pixels (210mm)
   const a4Height = 1123; // pixels (297mm)
-  const screenScale = 0.7; // Échelle pour l'affichage à l'écran
+  const [screenScale, setScreenScale] = useState(0.7); // Échelle responsive
+  const outerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(1);
+
+  // Adapter l'échelle à la largeur disponible (mobile inclus)
+  const updateScale = useCallback(() => {
+    const available = outerRef.current?.clientWidth ?? window.innerWidth;
+    const next = Math.min(0.7, Math.max(0.28, (available - 8) / a4Width));
+    setScreenScale(Number.isFinite(next) && next > 0 ? next : 0.7);
+  }, []);
+
+  useEffect(() => {
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    const ro = new ResizeObserver(updateScale);
+    if (outerRef.current) ro.observe(outerRef.current);
+    return () => {
+      window.removeEventListener("resize", updateScale);
+      ro.disconnect();
+    };
+  }, [updateScale]);
+
 
   useEffect(() => {
     const calculatePages = () => {
@@ -68,20 +87,22 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
   }, [children, a4Height]);
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex w-full flex-col items-center gap-2">
       {/* Indicateur de nombre de pages */}
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-medium">
         <FileText className="w-4 h-4" />
         <span>{pageCount} {pageCount > 1 ? 'pages' : 'page'}</span>
       </div>
 
-      <div className="flex justify-center items-start p-4 bg-muted/30">
+      <div ref={outerRef} className="flex w-full max-w-full justify-center items-start p-1 sm:p-4 bg-muted/30 overflow-hidden rounded-lg">
         <div
-          className="bg-white shadow-2xl relative"
+          className="bg-white shadow-lift relative overflow-hidden"
           style={{
             width: `${a4Width * screenScale}px`,
+            height: `${a4Height * pageCount * screenScale}px`,
           }}
         >
+
           <div
             className="origin-top-left"
             style={{
