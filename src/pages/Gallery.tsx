@@ -131,51 +131,55 @@ const Gallery = () => {
   const previewCVData = previewTemplateId ? exampleCVs[previewTemplateId]?.data : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+      <header className="bg-card border-b border-border sticky top-0 z-50 safe-top">
+        <div className="max-w-7xl mx-auto safe-x py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
+              size="sm"
               onClick={() => navigate('/')}
-              className="gap-2"
+              className="gap-2 shrink-0 press"
             >
               <ArrowLeft className="w-4 h-4" />
-              Retour
+              <span className="hidden xs:inline sm:inline">Retour</span>
             </Button>
-            <h1 className="text-2xl font-bold text-foreground">Galerie de CV</h1>
+            <h1 className="text-base sm:text-2xl font-bold text-foreground truncate">Galerie de CV</h1>
             <Button
               variant="default"
+              size="sm"
               onClick={() => navigate('/create')}
+              className="shrink-0 press"
             >
-              Créer un CV vierge
+              <span className="hidden sm:inline">Créer un CV vierge</span>
+              <span className="sm:hidden">Créer</span>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+      <main className="max-w-7xl mx-auto safe-x py-6 sm:py-8">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4">
             Choisissez votre modèle
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8">
             Plus de 20 modèles professionnels organisés par secteur d'activité. 
             Cliquez sur un exemple pour le personnaliser.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
+          <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
               <Input
                 type="text"
-                placeholder="Rechercher par nom, poste, entreprise, compétence..."
+                placeholder="Rechercher un modèle..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 text-base"
+                className="pl-9 sm:pl-10 pr-10 h-11 sm:h-12 text-sm sm:text-base"
               />
               {searchQuery && (
                 <Button
@@ -196,62 +200,70 @@ const Gallery = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 justify-center mb-4">
-            <Button
-              variant={selectedCategory === "all" ? "default" : "outline"}
-              onClick={() => setSelectedCategory("all")}
-              size="sm"
-            >
-              Tous ({Object.keys(exampleCVs).length})
-            </Button>
-            {Object.entries(cvCategories).map(([key, label]) => {
-              const count = Object.values(exampleCVs).filter(cv => cv.category === key).length;
-              return (
-                <Button
-                  key={key}
-                  variant={selectedCategory === key ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(key as CVCategory)}
-                  size="sm"
-                >
-                  {label} ({count})
-                </Button>
-              );
-            })}
+          <div className="-mx-4 px-4 mb-3 overflow-x-auto sm:mx-0 sm:px-0 sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-2 w-max sm:w-auto sm:flex-wrap sm:justify-center pb-1">
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                onClick={() => setSelectedCategory("all")}
+                size="sm"
+                className="shrink-0 press"
+              >
+                Tous ({Object.keys(exampleCVs).length})
+              </Button>
+              {Object.entries(cvCategories).map(([key, label]) => {
+                const count = Object.values(exampleCVs).filter(cv => cv.category === key).length;
+                return (
+                  <Button
+                    key={key}
+                    variant={selectedCategory === key ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(key as CVCategory)}
+                    size="sm"
+                    className="shrink-0 press"
+                  >
+                    {label} ({count})
+                  </Button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Sort Options */}
-          <div className="flex flex-wrap gap-2 justify-center items-center">
-            <span className="text-sm text-muted-foreground">Trier par:</span>
-            <Button
-              variant={sortBy === "default" ? "default" : "outline"}
-              onClick={() => setSortBy("default")}
-              size="sm"
-            >
-              Par défaut
-            </Button>
-            <Button
-              variant={sortBy === "rating" ? "default" : "outline"}
-              onClick={() => setSortBy("rating")}
-              size="sm"
-              className="gap-1"
-            >
-              <Star className="w-3 h-3" />
-              Note
-            </Button>
-            <Button
-              variant={sortBy === "popularity" ? "default" : "outline"}
-              onClick={() => setSortBy("popularity")}
-              size="sm"
-              className="gap-1"
-            >
-              <TrendingUp className="w-3 h-3" />
-              Popularité
-            </Button>
+          <div className="-mx-4 px-4 overflow-x-auto sm:mx-0 sm:px-0 sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-2 w-max sm:w-auto sm:flex-wrap sm:justify-center items-center pb-1">
+              <span className="text-xs sm:text-sm text-muted-foreground shrink-0">Trier par:</span>
+              <Button
+                variant={sortBy === "default" ? "default" : "outline"}
+                onClick={() => setSortBy("default")}
+                size="sm"
+                className="shrink-0 press"
+              >
+                Par défaut
+              </Button>
+              <Button
+                variant={sortBy === "rating" ? "default" : "outline"}
+                onClick={() => setSortBy("rating")}
+                size="sm"
+                className="gap-1 shrink-0 press"
+              >
+                <Star className="w-3 h-3" />
+                Note
+              </Button>
+              <Button
+                variant={sortBy === "popularity" ? "default" : "outline"}
+                onClick={() => setSortBy("popularity")}
+                size="sm"
+                className="gap-1 shrink-0 press"
+              >
+                <TrendingUp className="w-3 h-3" />
+                Popularité
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+
           {sortedCVs.map(([templateId, cvExample]) => {
             const cvData = cvExample.data;
             const templateRating = ratings[templateId] || { average: 0, count: 0 };
