@@ -271,22 +271,22 @@ const Gallery = () => {
             return (
               <Card key={templateId} className="overflow-hidden border-border flex flex-col">
                 {/* Theme Header */}
-                <div className="p-4 border-b border-border bg-muted/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-foreground">{cvExample.colorTheme}</h3>
-                    <span className="text-xs px-2 py-1 bg-background border border-border rounded-full">
+                <div className="p-3 sm:p-4 border-b border-border bg-muted/30">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="text-base sm:text-lg font-bold text-foreground truncate">{cvExample.colorTheme}</h3>
+                    <span className="text-[10px] sm:text-xs px-2 py-1 bg-background border border-border rounded-full shrink-0">
                       {cvCategories[cvExample.category]}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <span className="font-medium text-foreground">
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2 min-w-0">
+                    <span className="font-medium text-foreground truncate">
                       {cvData.firstName} {cvData.lastName}
                     </span>
-                    <span>•</span>
+                    <span className="shrink-0">•</span>
                     <span className="truncate">{cvData.experiences[0]?.position}</span>
                   </div>
                   {/* Rating Display */}
-                  <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center justify-between gap-2 mt-2">
                     <StarRating 
                       rating={templateRating.average} 
                       showValue={true}
@@ -297,7 +297,7 @@ const Gallery = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenRatingModal(templateId)}
-                      className="h-6 px-2 text-xs"
+                      className="h-6 px-2 text-xs shrink-0"
                     >
                       Noter
                     </Button>
@@ -305,15 +305,15 @@ const Gallery = () => {
                 </div>
 
                 {/* CV Preview */}
-                <div className="p-4 bg-muted/10 flex-1">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="h-[400px] overflow-hidden">
-                      <div className="scale-[0.5] origin-top-left w-[200%]">
-                        <CVPreview cvData={cvData} />
-                      </div>
-                    </div>
+                <div className="p-3 sm:p-4 bg-muted/10 flex-1 min-w-0">
+                  <div
+                    className="bg-white rounded-lg shadow-soft overflow-hidden max-h-[320px] sm:max-h-[400px] cursor-pointer"
+                    onClick={() => handlePreview(templateId)}
+                  >
+                    <CVPreview cvData={cvData} />
                   </div>
                 </div>
+
 
                 {/* Actions */}
                 <div className="p-4 border-t border-border flex gap-2">
