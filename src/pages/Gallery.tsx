@@ -364,9 +364,8 @@ const Gallery = () => {
         )}
 
         {/* CTA Section */}
-        <div className="mt-16 text-center">
-        {/* CTA Section */}
         <div className="mt-12 sm:mt-16 text-center safe-bottom">
+
           <Card className="p-5 sm:p-8 border-border">
             <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4">
               Aucun modèle ne vous convient ?
