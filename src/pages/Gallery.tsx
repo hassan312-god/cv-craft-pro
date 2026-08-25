@@ -365,16 +365,19 @@ const Gallery = () => {
 
         {/* CTA Section */}
         <div className="mt-16 text-center">
-          <Card className="p-8 border-border">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
+        {/* CTA Section */}
+        <div className="mt-12 sm:mt-16 text-center safe-bottom">
+          <Card className="p-5 sm:p-8 border-border">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4">
               Aucun modèle ne vous convient ?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-5 sm:mb-6">
               Créez votre CV à partir de zéro et choisissez votre propre design
             </p>
             <Button
               variant="default"
               size="lg"
+              className="w-full sm:w-auto press"
               onClick={() => navigate('/create')}
             >
               Créer un CV personnalisé
@@ -385,19 +388,21 @@ const Gallery = () => {
 
       {/* Preview Modal */}
       <Dialog open={previewTemplateId !== null} onOpenChange={(open) => !open && setPreviewTemplateId(null)}>
-        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto p-0">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
-            <DialogTitle>
+        <DialogContent className="w-[calc(100vw-1.5rem)] max-w-6xl max-h-[92vh] overflow-y-auto p-0 sm:w-full">
+          <DialogHeader className="px-4 sm:px-6 pt-5 sm:pt-6 pb-3 sm:pb-4 border-b border-border">
+            <DialogTitle className="text-base sm:text-xl pr-8 text-left truncate">
               Aperçu - {previewTemplateId && exampleCVs[previewTemplateId]?.colorTheme}
             </DialogTitle>
           </DialogHeader>
           {previewCVData && (
-            <div className="flex justify-center items-start p-6 bg-muted/30 min-h-[500px]">
+            <div className="flex justify-center items-start p-2 sm:p-6 bg-muted/30 overflow-x-hidden">
               <CVPreview cvData={previewCVData} />
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+
 
       {/* Rating Modal */}
       <Dialog open={ratingModalOpen} onOpenChange={setRatingModalOpen}>
