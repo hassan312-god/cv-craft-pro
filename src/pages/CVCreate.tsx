@@ -1171,55 +1171,43 @@ const CVCreate = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex items-center justify-between pt-6 border-t border-border">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-4 pt-5 sm:pt-6 border-t border-border safe-bottom">
+              <div className="flex items-center justify-between gap-3">
                 <Button
                   variant="outline"
                   onClick={prevStep}
                   disabled={currentStep === 0}
-                  className="font-medium"
+                  className="font-medium press flex-1 sm:flex-none"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
+                  <ChevronLeft className="w-4 h-4 mr-1.5 sm:mr-2" />
                   Précédent
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleSaveDraft}
-                  className="font-medium"
-                  title="Sauvegarder le brouillon"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Sauvegarder
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDraftsModal(true)}
-                  className="font-medium"
-                  title="Voir les brouillons sauvegardés"
-                >
-                  <FolderOpen className="w-4 h-4 mr-2" />
-                  Brouillons
-                </Button>
-              </div>
-              
-              <div className="text-sm text-muted-foreground">
-                Étape {currentStep + 1} sur {steps.length}
+
+                <span className="hidden sm:block text-sm text-muted-foreground whitespace-nowrap">
+                  Étape {currentStep + 1} sur {steps.length}
+                </span>
+
+                {currentStep < steps.length - 1 && (
+                  <Button
+                    onClick={nextStep}
+                    className="font-medium bg-primary hover:bg-primary/90 press flex-1 sm:flex-none"
+                  >
+                    Suivant
+                    <ChevronRight className="w-4 h-4 ml-1.5 sm:ml-2" />
+                  </Button>
+                )}
               </div>
 
-              {currentStep < steps.length - 1 ? (
-                <Button
-                  onClick={nextStep}
-                  className="font-medium bg-primary hover:bg-primary/90"
-                >
-                  Suivant
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              ) : (
-                <div className="flex gap-2">
+              <p className="sm:hidden text-center text-xs text-muted-foreground">
+                Étape {currentStep + 1} sur {steps.length}
+              </p>
+
+              {currentStep === steps.length - 1 && (
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
                   <Button
                     onClick={handleDownloadPDF}
                     disabled={isDownloading}
-                    className="font-medium bg-primary hover:bg-primary/90"
+                    className="font-medium bg-primary hover:bg-primary/90 press w-full sm:w-auto"
                   >
                     {isDownloading ? (
                       <>
@@ -1237,7 +1225,7 @@ const CVCreate = () => {
                     onClick={handleExportWord}
                     disabled={isExportingWord}
                     variant="outline"
-                    className="font-medium"
+                    className="font-medium press w-full sm:w-auto"
                   >
                     {isExportingWord ? (
                       <>
@@ -1254,7 +1242,7 @@ const CVCreate = () => {
                   <Button
                     onClick={handleShareCV}
                     variant="outline"
-                    className="font-medium"
+                    className="font-medium press w-full sm:w-auto"
                   >
                     <Share2 className="w-4 h-4 mr-2" />
                     Partager
@@ -1262,15 +1250,39 @@ const CVCreate = () => {
                   <Button
                     onClick={() => setShowStatsModal(true)}
                     variant="outline"
-                    size="icon"
-                    className="font-medium"
+                    className="font-medium press w-full sm:w-auto"
                     title="Statistiques"
                   >
-                    <BarChart3 className="w-4 h-4" />
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Stats
                   </Button>
                 </div>
               )}
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveDraft}
+                  className="font-medium press flex-1 sm:flex-none"
+                  title="Sauvegarder le brouillon"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Sauvegarder
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDraftsModal(true)}
+                  className="font-medium press flex-1 sm:flex-none"
+                  title="Voir les brouillons sauvegardés"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Brouillons
+                </Button>
+              </div>
             </div>
+
           </div>
 
           {/* Fixed Preview Section */}
