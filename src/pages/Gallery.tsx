@@ -131,51 +131,55 @@ const Gallery = () => {
   const previewCVData = previewTemplateId ? exampleCVs[previewTemplateId]?.data : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+      <header className="bg-card border-b border-border sticky top-0 z-50 safe-top">
+        <div className="max-w-7xl mx-auto safe-x py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
+              size="sm"
               onClick={() => navigate('/')}
-              className="gap-2"
+              className="gap-2 shrink-0 press"
             >
               <ArrowLeft className="w-4 h-4" />
-              Retour
+              <span className="hidden xs:inline sm:inline">Retour</span>
             </Button>
-            <h1 className="text-2xl font-bold text-foreground">Galerie de CV</h1>
+            <h1 className="text-base sm:text-2xl font-bold text-foreground truncate">Galerie de CV</h1>
             <Button
               variant="default"
+              size="sm"
               onClick={() => navigate('/create')}
+              className="shrink-0 press"
             >
-              Créer un CV vierge
+              <span className="hidden sm:inline">Créer un CV vierge</span>
+              <span className="sm:hidden">Créer</span>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+      <main className="max-w-7xl mx-auto safe-x py-6 sm:py-8">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4">
             Choisissez votre modèle
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8">
             Plus de 20 modèles professionnels organisés par secteur d'activité. 
             Cliquez sur un exemple pour le personnaliser.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
+          <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
               <Input
                 type="text"
-                placeholder="Rechercher par nom, poste, entreprise, compétence..."
+                placeholder="Rechercher un modèle..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 text-base"
+                className="pl-9 sm:pl-10 pr-10 h-11 sm:h-12 text-sm sm:text-base"
               />
               {searchQuery && (
                 <Button
@@ -196,62 +200,70 @@ const Gallery = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 justify-center mb-4">
-            <Button
-              variant={selectedCategory === "all" ? "default" : "outline"}
-              onClick={() => setSelectedCategory("all")}
-              size="sm"
-            >
-              Tous ({Object.keys(exampleCVs).length})
-            </Button>
-            {Object.entries(cvCategories).map(([key, label]) => {
-              const count = Object.values(exampleCVs).filter(cv => cv.category === key).length;
-              return (
-                <Button
-                  key={key}
-                  variant={selectedCategory === key ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(key as CVCategory)}
-                  size="sm"
-                >
-                  {label} ({count})
-                </Button>
-              );
-            })}
+          <div className="-mx-4 px-4 mb-3 overflow-x-auto sm:mx-0 sm:px-0 sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-2 w-max sm:w-auto sm:flex-wrap sm:justify-center pb-1">
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                onClick={() => setSelectedCategory("all")}
+                size="sm"
+                className="shrink-0 press"
+              >
+                Tous ({Object.keys(exampleCVs).length})
+              </Button>
+              {Object.entries(cvCategories).map(([key, label]) => {
+                const count = Object.values(exampleCVs).filter(cv => cv.category === key).length;
+                return (
+                  <Button
+                    key={key}
+                    variant={selectedCategory === key ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(key as CVCategory)}
+                    size="sm"
+                    className="shrink-0 press"
+                  >
+                    {label} ({count})
+                  </Button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Sort Options */}
-          <div className="flex flex-wrap gap-2 justify-center items-center">
-            <span className="text-sm text-muted-foreground">Trier par:</span>
-            <Button
-              variant={sortBy === "default" ? "default" : "outline"}
-              onClick={() => setSortBy("default")}
-              size="sm"
-            >
-              Par défaut
-            </Button>
-            <Button
-              variant={sortBy === "rating" ? "default" : "outline"}
-              onClick={() => setSortBy("rating")}
-              size="sm"
-              className="gap-1"
-            >
-              <Star className="w-3 h-3" />
-              Note
-            </Button>
-            <Button
-              variant={sortBy === "popularity" ? "default" : "outline"}
-              onClick={() => setSortBy("popularity")}
-              size="sm"
-              className="gap-1"
-            >
-              <TrendingUp className="w-3 h-3" />
-              Popularité
-            </Button>
+          <div className="-mx-4 px-4 overflow-x-auto sm:mx-0 sm:px-0 sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-2 w-max sm:w-auto sm:flex-wrap sm:justify-center items-center pb-1">
+              <span className="text-xs sm:text-sm text-muted-foreground shrink-0">Trier par:</span>
+              <Button
+                variant={sortBy === "default" ? "default" : "outline"}
+                onClick={() => setSortBy("default")}
+                size="sm"
+                className="shrink-0 press"
+              >
+                Par défaut
+              </Button>
+              <Button
+                variant={sortBy === "rating" ? "default" : "outline"}
+                onClick={() => setSortBy("rating")}
+                size="sm"
+                className="gap-1 shrink-0 press"
+              >
+                <Star className="w-3 h-3" />
+                Note
+              </Button>
+              <Button
+                variant={sortBy === "popularity" ? "default" : "outline"}
+                onClick={() => setSortBy("popularity")}
+                size="sm"
+                className="gap-1 shrink-0 press"
+              >
+                <TrendingUp className="w-3 h-3" />
+                Popularité
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+
           {sortedCVs.map(([templateId, cvExample]) => {
             const cvData = cvExample.data;
             const templateRating = ratings[templateId] || { average: 0, count: 0 };
@@ -259,22 +271,22 @@ const Gallery = () => {
             return (
               <Card key={templateId} className="overflow-hidden border-border flex flex-col">
                 {/* Theme Header */}
-                <div className="p-4 border-b border-border bg-muted/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-foreground">{cvExample.colorTheme}</h3>
-                    <span className="text-xs px-2 py-1 bg-background border border-border rounded-full">
+                <div className="p-3 sm:p-4 border-b border-border bg-muted/30">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="text-base sm:text-lg font-bold text-foreground truncate">{cvExample.colorTheme}</h3>
+                    <span className="text-[10px] sm:text-xs px-2 py-1 bg-background border border-border rounded-full shrink-0">
                       {cvCategories[cvExample.category]}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <span className="font-medium text-foreground">
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-2 min-w-0">
+                    <span className="font-medium text-foreground truncate">
                       {cvData.firstName} {cvData.lastName}
                     </span>
-                    <span>•</span>
+                    <span className="shrink-0">•</span>
                     <span className="truncate">{cvData.experiences[0]?.position}</span>
                   </div>
                   {/* Rating Display */}
-                  <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center justify-between gap-2 mt-2">
                     <StarRating 
                       rating={templateRating.average} 
                       showValue={true}
@@ -285,7 +297,7 @@ const Gallery = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleOpenRatingModal(templateId)}
-                      className="h-6 px-2 text-xs"
+                      className="h-6 px-2 text-xs shrink-0"
                     >
                       Noter
                     </Button>
@@ -293,21 +305,21 @@ const Gallery = () => {
                 </div>
 
                 {/* CV Preview */}
-                <div className="p-4 bg-muted/10 flex-1">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="h-[400px] overflow-hidden">
-                      <div className="scale-[0.5] origin-top-left w-[200%]">
-                        <CVPreview cvData={cvData} />
-                      </div>
-                    </div>
+                <div className="p-3 sm:p-4 bg-muted/10 flex-1 min-w-0">
+                  <div
+                    className="bg-white rounded-lg shadow-soft overflow-hidden max-h-[320px] sm:max-h-[400px] cursor-pointer"
+                    onClick={() => handlePreview(templateId)}
+                  >
+                    <CVPreview cvData={cvData} />
                   </div>
                 </div>
 
+
                 {/* Actions */}
-                <div className="p-4 border-t border-border flex gap-2">
+                <div className="p-3 sm:p-4 border-t border-border flex gap-2">
                   <Button
                     variant="default"
-                    className="flex-1"
+                    className="flex-1 press"
                     onClick={() => handleUseTemplate(templateId)}
                   >
                     Utiliser
@@ -315,11 +327,14 @@ const Gallery = () => {
                   <Button
                     variant="outline"
                     size="icon"
+                    className="shrink-0 press"
+                    aria-label="Aperçu du modèle"
                     onClick={() => handlePreview(templateId)}
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
                 </div>
+
               </Card>
             );
           })}
@@ -349,17 +364,19 @@ const Gallery = () => {
         )}
 
         {/* CTA Section */}
-        <div className="mt-16 text-center">
-          <Card className="p-8 border-border">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
+        <div className="mt-12 sm:mt-16 text-center safe-bottom">
+
+          <Card className="p-5 sm:p-8 border-border">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4">
               Aucun modèle ne vous convient ?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-5 sm:mb-6">
               Créez votre CV à partir de zéro et choisissez votre propre design
             </p>
             <Button
               variant="default"
               size="lg"
+              className="w-full sm:w-auto press"
               onClick={() => navigate('/create')}
             >
               Créer un CV personnalisé
@@ -370,19 +387,21 @@ const Gallery = () => {
 
       {/* Preview Modal */}
       <Dialog open={previewTemplateId !== null} onOpenChange={(open) => !open && setPreviewTemplateId(null)}>
-        <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto p-0">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
-            <DialogTitle>
+        <DialogContent className="w-[calc(100vw-1.5rem)] max-w-6xl max-h-[92vh] overflow-y-auto p-0 sm:w-full">
+          <DialogHeader className="px-4 sm:px-6 pt-5 sm:pt-6 pb-3 sm:pb-4 border-b border-border">
+            <DialogTitle className="text-base sm:text-xl pr-8 text-left truncate">
               Aperçu - {previewTemplateId && exampleCVs[previewTemplateId]?.colorTheme}
             </DialogTitle>
           </DialogHeader>
           {previewCVData && (
-            <div className="flex justify-center items-start p-6 bg-muted/30 min-h-[500px]">
+            <div className="flex justify-center items-start p-2 sm:p-6 bg-muted/30 overflow-x-hidden">
               <CVPreview cvData={previewCVData} />
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+
 
       {/* Rating Modal */}
       <Dialog open={ratingModalOpen} onOpenChange={setRatingModalOpen}>
