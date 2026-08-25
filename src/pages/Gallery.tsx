@@ -316,10 +316,10 @@ const Gallery = () => {
 
 
                 {/* Actions */}
-                <div className="p-4 border-t border-border flex gap-2">
+                <div className="p-3 sm:p-4 border-t border-border flex gap-2">
                   <Button
                     variant="default"
-                    className="flex-1"
+                    className="flex-1 press"
                     onClick={() => handleUseTemplate(templateId)}
                   >
                     Utiliser
@@ -327,11 +327,14 @@ const Gallery = () => {
                   <Button
                     variant="outline"
                     size="icon"
+                    className="shrink-0 press"
+                    aria-label="Aperçu du modèle"
                     onClick={() => handlePreview(templateId)}
                   >
                     <Eye className="w-4 h-4" />
                   </Button>
                 </div>
+
               </Card>
             );
           })}
