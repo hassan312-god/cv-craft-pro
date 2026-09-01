@@ -1,22 +1,24 @@
-// API endpoint pour la génération IA (utilise la fonction serverless Vercel)
-const API_ENDPOINT = '/api/openrouter';
-
-export interface OpenRouterMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
-export interface OpenRouterResponse {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-  }>;
-}
+import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Génère une description "À propos" basée sur les informations du CV
+ * Toute la génération IA passe par la fonction serveur `ai-cv`
+ * (la clé API reste côté serveur, jamais dans le navigateur).
  */
+const invokeAI = async <T,>(action: string, payload: Record<string, unknown>): Promise<T> => {
+  const { data, error } = await supabase.functions.invoke("ai-cv", {
+    body: { action, payload },
+  });
+
+  if (error) {
+    console.error(`Erreur IA (${action}):`, error);
+    throw new Error("La génération IA a échoué");
+  }
+  if ((data as { error?: string })?.error) {
+    throw new Error((data as { error: string }).error);
+  }
+  return data as T;
+};
+
 export const generateAbout = async (cvData: {
   firstName: string;
   lastName: string;
@@ -24,152 +26,38 @@ export const generateAbout = async (cvData: {
   education: Array<{ degree: string; school: string }>;
   skills: Array<{ name: string; level: number }>;
 }): Promise<string> => {
-  const messages: OpenRouterMessage[] = [
-    {
-      role: 'system',
-      content: 'Tu es un expert en rédaction de CV professionnels. Tu rédiges des descriptions concises, professionnelles et impactantes en français, à la PREMIÈRE PERSONNE (je, me, mon, ma, mes).'
-    },
-    {
-      role: 'user',
-      content: `Rédige une section "À propos" professionnelle de 3-4 phrases à la PREMIÈRE PERSONNE (utilise "je", "me", "mon", "ma", "mes") pour ${cvData.firstName} ${cvData.lastName}.
-      
-Expériences: ${cvData.experiences.map(e => `${e.position} chez ${e.company}`).join(', ') || 'Aucune expérience'}
-Formation: ${cvData.education.map(e => `${e.degree} à ${e.school}`).join(', ') || 'Aucune formation'}
-Compétences principales: ${cvData.skills.slice(0, 5).map(s => s.name).join(', ') || 'Aucune compétence'}
-
-IMPORTANT: La description DOIT être écrite à la première personne (exemple: "Je suis...", "Mon expérience...", "Mes compétences..."). Ne pas utiliser la troisième personne. La description doit être professionnelle, concise et mettre en valeur le profil. Réponds uniquement avec le texte de la description, sans titre ni formatage.`
-    }
-  ];
-
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 200
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    const data: OpenRouterResponse = await response.json();
-    return data.choices[0]?.message?.content?.trim() || '';
-  } catch (error) {
-    console.error('Error generating about:', error);
-    throw error;
-  }
+  const { text } = await invokeAI<{ text: string }>("about", cvData);
+  return text;
 };
 
-/**
- * Génère une description pour une expérience professionnelle
- */
 export const generateExperienceDescription = async (
   position: string,
   company: string,
   existingDescription?: string
 ): Promise<string> => {
-  const messages: OpenRouterMessage[] = [
-    {
-      role: 'system',
-      content: 'Tu es un expert en rédaction de CV professionnels. Tu rédiges des descriptions d\'expériences professionnelles concises et impactantes en français, avec des puces.'
-    },
-    {
-      role: 'user',
-      content: `Rédige une description professionnelle pour le poste de ${position} chez ${company}.
-      
-${existingDescription ? `Description actuelle: ${existingDescription}\nAméliore et complète cette description.` : 'Crée une nouvelle description.'}
-
-Format: 3-4 puces décrivant les responsabilités et réalisations principales. Réponds uniquement avec les puces, une par ligne, sans numérotation.`
-    }
-  ];
-
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 250
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    const data: OpenRouterResponse = await response.json();
-    return data.choices[0]?.message?.content?.trim() || '';
-  } catch (error) {
-    console.error('Error generating experience description:', error);
-    throw error;
-  }
+  const { text } = await invokeAI<{ text: string }>("experience", {
+    position,
+    company,
+    existingDescription,
+  });
+  return text;
 };
 
-/**
- * Génère une description pour une formation (exactement 5 mots)
- */
 export const generateEducationDescription = async (
   degree: string,
   school: string
 ): Promise<string> => {
-  const messages: OpenRouterMessage[] = [
-    {
-      role: 'system',
-      content: 'Tu es un expert en rédaction de CV professionnels. Tu génères des descriptions de formations très courtes et professionnelles en français, exactement 5 mots.'
-    },
-    {
-      role: 'user',
-      content: `Génère une description de EXACTEMENT 5 MOTS pour la formation ${degree} à ${school}. 
-      
-La description doit mettre en valeur les compétences acquises ou la pertinence de la formation. Réponds UNIQUEMENT avec exactement 5 mots, sans ponctuation finale, sans formatage, sans phrases complètes.`
-    }
-  ];
-
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 20
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    const data: OpenRouterResponse = await response.json();
-    let description = data.choices[0]?.message?.content?.trim() || '';
-    
-    // S'assurer qu'on a exactement 5 mots
-    const words = description.split(/\s+/).filter(w => w.length > 0);
-    if (words.length > 5) {
-      description = words.slice(0, 5).join(' ');
-    } else if (words.length < 5 && words.length > 0) {
-      // Si moins de 5 mots, on garde ce qui a été généré
-      description = words.join(' ');
-    }
-    
-    return description;
-  } catch (error) {
-    console.error('Error generating education description:', error);
-    throw error;
-  }
+  const { text } = await invokeAI<{ text: string }>("education", { degree, school });
+  const words = text.split(/\s+/).filter(Boolean);
+  return words.slice(0, 5).join(" ");
 };
 
+export type AIStep = "personal" | "experiences" | "education" | "skills" | "socials";
+
+/** Génère un exemple complet pour une étape du formulaire. */
+export const generateStepContent = async (
+  step: AIStep,
+  context: { firstName?: string; lastName?: string; jobTitle?: string }
+): Promise<Record<string, unknown>> => {
+  return await invokeAI<Record<string, unknown>>("step", { step, ...context });
+};
