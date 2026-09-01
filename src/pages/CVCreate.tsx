@@ -68,6 +68,7 @@ const CVCreate = () => {
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(true);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -644,17 +645,28 @@ const CVCreate = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-5 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/')} className="font-medium">
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Retour
+        <div className="container mx-auto safe-x py-3 sm:py-5 flex items-center justify-between gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="font-medium shrink-0 px-2 sm:px-3">
+            <ArrowLeft className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Retour</span>
           </Button>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">Créer mon CV</h1>
-          <div className="flex items-center gap-2">
+          <h1 className="text-base sm:text-xl font-bold text-foreground tracking-tight truncate">Créer mon CV</h1>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Aperçu : modal sur mobile, colonne sur desktop */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowMobilePreview(true)}
+              className="font-medium px-2 lg:hidden"
+              aria-label="Aperçu du CV"
+            >
+              <Eye className="w-4 h-4" />
+            </Button>
             <Button 
               variant="outline"
+              size="sm"
               onClick={() => setShowPreview(!showPreview)} 
-              className="font-medium"
+              className="font-medium hidden lg:inline-flex"
             >
               {showPreview ? (
                 <>
@@ -668,53 +680,52 @@ const CVCreate = () => {
                 </>
               )}
             </Button>
-          <Button 
-            onClick={handleDownloadPDF} 
-            disabled={isDownloading}
-            className="bg-primary hover:bg-primary/90 font-medium"
-          >
-            {isDownloading ? (
-              <>
-                <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                Génération...
-              </>
-            ) : (
-              <>
-                <Download className="mr-2 w-4 h-4" />
-                PDF
-              </>
-            )}
-          </Button>
+            <Button 
+              onClick={handleDownloadPDF} 
+              disabled={isDownloading}
+              size="sm"
+              className="bg-primary hover:bg-primary/90 font-medium px-2 sm:px-3"
+            >
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 animate-spin sm:mr-2" />
+              ) : (
+                <Download className="w-4 h-4 sm:mr-2" />
+              )}
+              <span className="hidden sm:inline">{isDownloading ? 'Génération...' : 'PDF'}</span>
+            </Button>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8">
-        <div className={`grid gap-8 ${showPreview ? 'lg:grid-cols-[1fr_500px]' : 'lg:grid-cols-1'}`}>
+      <div className="container mx-auto safe-x py-6 sm:py-8">
+        <div className={`grid gap-6 lg:gap-8 ${showPreview ? 'lg:grid-cols-[1fr_500px]' : 'lg:grid-cols-1'}`}>
           {/* Form Section */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             {/* Progress Steps */}
-            <div className="flex items-center justify-between mb-8">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center flex-1">
-                  <button
-                    onClick={() => setCurrentStep(index)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                      currentStep === index 
-                        ? 'bg-primary text-primary-foreground scale-110' 
-                        : currentStep > index
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                  {index < steps.length - 1 && (
-                    <div className={`flex-1 h-1 mx-2 ${currentStep > index ? 'bg-primary' : 'bg-muted'}`} />
-                  )}
-                </div>
-              ))}
+            <div className="-mx-1 overflow-x-auto pb-1 mb-6 sm:mb-8">
+              <div className="flex items-center min-w-max px-1 sm:min-w-0">
+                {steps.map((step, index) => (
+                  <div key={step.id} className="flex items-center flex-1">
+                    <button
+                      onClick={() => setCurrentStep(index)}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center font-bold transition-all ${
+                        currentStep === index 
+                          ? 'bg-primary text-primary-foreground scale-110' 
+                          : currentStep > index
+                          ? 'bg-primary/20 text-primary'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                    {index < steps.length - 1 && (
+                      <div className={`w-10 sm:w-auto sm:flex-1 h-1 mx-2 ${currentStep > index ? 'bg-primary' : 'bg-muted'}`} />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
+
 
             <h2 className="text-2xl font-bold text-foreground mb-2">{steps[currentStep].title}</h2>
 
@@ -1293,6 +1304,34 @@ const CVCreate = () => {
               </div>
             </div>
           )}
+
+          {/* Aperçu mobile en modal */}
+          <Dialog open={showMobilePreview} onOpenChange={setShowMobilePreview}>
+            <DialogContent className="lg:hidden max-w-[100vw] w-screen h-[100dvh] sm:h-auto sm:max-h-[95vh] overflow-y-auto p-3 rounded-none sm:rounded-lg">
+              <DialogHeader className="text-left">
+                <DialogTitle className="text-base">Aperçu du CV</DialogTitle>
+                <DialogDescription className="text-xs">
+                  Aperçu au format A4 de votre CV.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="w-full overflow-x-hidden">
+                <CVPreview key={`modal-${cvData.theme}-${cvData.template}`} cvData={cvData} />
+              </div>
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={isDownloading}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                {isDownloading ? (
+                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 w-4 h-4" />
+                )}
+                Télécharger PDF
+              </Button>
+            </DialogContent>
+          </Dialog>
+
           
           {/* Hidden preview for PDF generation - full size A4 without scaling */}
           <div 
