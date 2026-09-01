@@ -157,59 +157,57 @@ const Share = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto safe-x py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
+              size="sm"
               onClick={() => navigate('/')}
-              className="gap-2"
+              className="shrink-0 px-2 sm:px-3"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Retour
+              <ArrowLeft className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Retour</span>
             </Button>
-            <h1 className="text-xl font-bold text-foreground">CV Partagé</h1>
+            <h1 className="text-base sm:text-xl font-bold text-foreground truncate">CV Partagé</h1>
             <Button
               onClick={handleDownloadPDF}
               disabled={isDownloading}
-              className="gap-2"
+              size="sm"
+              className="shrink-0 px-2 sm:px-3"
             >
               {isDownloading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Génération...
-                </>
+                <Loader2 className="w-4 h-4 animate-spin sm:mr-2" />
               ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  Télécharger PDF
-                </>
+                <Download className="w-4 h-4 sm:mr-2" />
               )}
+              <span className="hidden sm:inline">
+                {isDownloading ? "Génération..." : "Télécharger PDF"}
+              </span>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto safe-x py-6 sm:py-8">
         {sharedCV && (
-          <Card className="p-4 mb-6 bg-muted/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  Expire le : {formatExpiryDate(sharedCV.expiresAt)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Vues : {sharedCV.viewCount}
-                </p>
-              </div>
+          <Card className="p-3 sm:p-4 mb-4 sm:mb-6 bg-muted/30">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Expire le : {formatExpiryDate(sharedCV.expiresAt)}
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Vues : {sharedCV.viewCount}
+              </p>
             </div>
           </Card>
         )}
 
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full max-w-full overflow-x-hidden">
           <CVPreview cvData={cvData} />
         </div>
       </main>
     </div>
+
   );
 };
 
