@@ -68,6 +68,7 @@ const CVCreate = () => {
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(true);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
