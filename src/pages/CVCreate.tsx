@@ -1304,6 +1304,34 @@ const CVCreate = () => {
               </div>
             </div>
           )}
+
+          {/* Aperçu mobile en modal */}
+          <Dialog open={showMobilePreview} onOpenChange={setShowMobilePreview}>
+            <DialogContent className="lg:hidden max-w-[100vw] w-screen h-[100dvh] sm:h-auto sm:max-h-[95vh] overflow-y-auto p-3 rounded-none sm:rounded-lg">
+              <DialogHeader className="text-left">
+                <DialogTitle className="text-base">Aperçu du CV</DialogTitle>
+                <DialogDescription className="text-xs">
+                  Aperçu au format A4 de votre CV.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="w-full overflow-x-hidden">
+                <CVPreview key={`modal-${cvData.theme}-${cvData.template}`} cvData={cvData} />
+              </div>
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={isDownloading}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                {isDownloading ? (
+                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 w-4 h-4" />
+                )}
+                Télécharger PDF
+              </Button>
+            </DialogContent>
+          </Dialog>
+
           
           {/* Hidden preview for PDF generation - full size A4 without scaling */}
           <div 
