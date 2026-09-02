@@ -7,9 +7,7 @@ import { getSharedCV, formatExpiryDate } from "@/lib/shareStorage";
 import { CVPreview } from "@/components/CVPreview";
 import { CVData } from "./CVCreate";
 import { toast } from "sonner";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { getTemplateComponent } from "@/lib/templateConfig";
+import { exportCVToPDF } from "@/lib/pdfExport";
 
 const Share = () => {
   const { shareId } = useParams<{ shareId: string }>();
