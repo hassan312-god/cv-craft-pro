@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft, Loader2, LogIn, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
@@ -58,14 +57,14 @@ const Auth = () => {
   const handleGoogle = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
       });
-      if (result.error) {
-        toast.error("Connexion Google impossible");
-        return;
-      }
-      if (result.redirected) return;
+
+      if (error) throw error;
     } catch {
       toast.error("Connexion Google impossible");
     } finally {
