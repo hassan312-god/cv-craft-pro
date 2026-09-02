@@ -3,99 +3,89 @@ import html2canvas from "html2canvas";
 import { getTemplateComponent } from "@/lib/templateConfig";
 import type { CVData } from "@/pages/CVCreate";
 
-/**
- * Génère un PDF A4 fidèle à l'aperçu du CV (rendu hors écran à 794px de large,
- * soit 210mm à 96 DPI), puis le télécharge.
- */
 export const exportCVToPDF = async (cvData: CVData): Promise<string> => {
-  const tempContainer = document.createElement("div");
-  tempContainer.style.position = "fixed";
-  tempContainer.style.left = "-9999px";
-  tempContainer.style.top = "0";
-  tempContainer.style.width = "794px";
-  tempContainer.style.backgroundColor = "white";
-  tempContainer.style.zIndex = "-1";
-  document.body.appendChild(tempContainer);
-
-  const React = await import("react");
-  const ReactDOM = await import("react-dom/client");
-  const TemplateComponent = getTemplateComponent(cvData.template || "minimal");
-  const root = ReactDOM.createRoot(tempContainer);
-  root.render(React.createElement(TemplateComponent, { cvData }));
-
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.left = "-9999px";
+  container.style.top = "0";
+  container.style.width = "794px";
+  container.style.minHeight = "1123px";
+  container.style.background = "#ffffff";
+  container.style.zIndex = "-1";
+  container.style.overflow = "hidden";
+  container.style.padding = "0";
+  container.style.margin = "0";
+  document.body.appendChild(container);
 
   try {
-    const cvElement = (tempContainer.querySelector('div[style*="794px"]') ||
-      tempContainer.firstElementChild) as HTMLElement | null;
+    const React = await import("react");
+    const ReactDOM = await import("react-dom/client");
+    const TemplateComponent = getTemplateComponent(cvData.template || "minimal");
+    const root = ReactDOM.createRoot(container);
+    root.render(React.createElement(TemplateComponent, { cvData }));
 
-    if (!cvElement) {
-      throw new Error("Impossible de trouver le contenu du CV");
-    }
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
-    cvElement.style.display = "block";
-    cvElement.style.visibility = "visible";
-    cvElement.style.position = "relative";
-
-    const canvas = await html2canvas(cvElement, {
+    const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
-      logging: false,
       backgroundColor: "#ffffff",
-      allowTaint: true,
+      logging: false,
       width: 794,
-      height: cvElement.scrollHeight || 1123,
-      scrollX: 0,
-      scrollY: 0,
+      height: 1123,
     });
 
-    if (!canvas || canvas.width === 0 || canvas.height === 0) {
-      throw new Error("Canvas vide - le CV n'a pas pu être capturé");
-    }
-
     const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = 210;
-    const pdfHeight = 297;
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    if (imgHeight <= pdfHeight + 5) {
-      pdf.addImage(canvas.toDataURL("image/png", 1.0), "PNG", 0, 0, pdfWidth, imgHeight);
-    } else {
-      let remaining = imgHeight;
-      let yOffset = 0;
-      let page = 0;
+    const pageCanvas = document.createElement("canvas");
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = canvas.height;
+    const ctx = pageCanvas.getContext("2d");
+    if (!ctx) throw new Error("Impossible de créer le canvas PDF");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+    ctx.drawImage(canvas, 0, 0);
 
-      while (remaining > 0) {
-        if (page > 0) pdf.addPage();
+    let remainingHeight = imgHeight;
+    let offsetY = 0;
+    let pageNumber = 0;
 
-        const heightOnPage = Math.min(remaining, pdfHeight);
-        const sourceY = (yOffset / imgHeight) * canvas.height;
-        const sourceHeight = (heightOnPage / imgHeight) * canvas.height;
+    while (remainingHeight > 0) {
+      if (pageNumber > 0) pdf.addPage();
+      const pageContentHeight = Math.min(remainingHeight, pageHeight);
+      const sourceY = (offsetY / imgHeight) * canvas.height;
+      const sourceHeight = (pageContentHeight / imgHeight) * canvas.height;
 
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = sourceHeight;
-        const ctx = pageCanvas.getContext("2d");
-        if (ctx) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-          ctx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
-          pdf.addImage(pageCanvas.toDataURL("image/png", 1.0), "PNG", 0, 0, pdfWidth, heightOnPage);
-        }
+      const sliceCanvas = document.createElement("canvas");
+      sliceCanvas.width = canvas.width;
+      sliceCanvas.height = Math.max(1, sourceHeight);
+      const sliceCtx = sliceCanvas.getContext("2d");
+      if (!sliceCtx) throw new Error("Impossible de préparer la page PDF");
+      sliceCtx.fillStyle = "#ffffff";
+      sliceCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+      sliceCtx.drawImage(pageCanvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
 
-        remaining -= pdfHeight;
-        yOffset += pdfHeight;
-        page++;
+      pdf.addImage(sliceCanvas.toDataURL("image/png"), "PNG", 0, 0, imgWidth, pageContentHeight);
 
-        if (remaining > 0 && remaining < 20) break;
-      }
+      remainingHeight -= pageHeight;
+      offsetY += pageHeight;
+      pageNumber += 1;
     }
 
-    const fileName = `${cvData.firstName || "CV"}_${cvData.lastName || "Pro"}_CV.pdf`;
+    const fileName = `${cvData.firstName || "CV"}_${cvData.lastName || "Pro"}.pdf`;
     pdf.save(fileName);
     return fileName;
   } finally {
-    root.unmount();
-    if (tempContainer.parentNode) document.body.removeChild(tempContainer);
+    const rootNode = container.querySelector("#root");
+    if (rootNode && rootNode.parentNode) {
+      rootNode.parentNode.removeChild(rootNode);
+    }
+    if (container.parentNode) {
+      document.body.removeChild(container);
+    }
   }
 };

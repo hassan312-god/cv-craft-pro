@@ -16,9 +16,11 @@ import { allThemes } from "@/lib/themeConfig";
 import { saveDraft, getAllDrafts, getDraft, deleteDraft, formatDraftDate, Draft } from "@/lib/draftStorage";
 import { exportToWord } from "@/lib/wordExport";
 import { saveSharedCV, getShareUrl, formatExpiryDate } from "@/lib/shareStorage";
+import { extractDocumentText, parseCVFromDocumentText } from "@/lib/documentImport";
 import { incrementCVsCreated, incrementPDFsExported, incrementWordsExported, incrementSharesCreated, recordTemplateUsage, recordThemeUsage, getUsageStats } from "@/lib/usageStats";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import { importCVFromFile } from "@/lib/importCV";
+import { exportCVToPDF } from "@/lib/pdfExport";
+import { importCVFile } from "@/lib/cvFileImport";
 
 export interface Experience {
   id: string;
@@ -79,6 +81,7 @@ const CVCreate = () => {
   const [shareUrl, setShareUrl] = useState<string>("");
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [selectedAiModel, setSelectedAiModel] = useState<OpenRouterModel>(OPENROUTER_MODELS[0].value);
+  const [isImportingCV, setIsImportingCV] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
@@ -187,6 +190,22 @@ const CVCreate = () => {
   const handlePhotoRemove = () => {
     updateField('photo', '');
     toast.success("Photo supprimée");
+  };
+
+  const handleImportCV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setIsImportingCV(true);
+    try {
+      const importedData = await importCVFile(file);
+      setCvData((current) => ({ ...current, ...importedData }));
+      toast.success("CV importé. Vérifiez les champs avant de continuer.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Impossible d’importer ce fichier.");
+    } finally {
+      setIsImportingCV(false);
+    }
   };
 
   const handleGetLocation = () => {
@@ -426,7 +445,7 @@ const CVCreate = () => {
         experiences: cvData.experiences,
         education: cvData.education,
         skills: cvData.skills
-      });
+      }, selectedAiModel);
       updateField('about', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
@@ -441,7 +460,7 @@ const CVCreate = () => {
     const exp = cvData.experiences.find(e => e.id === expId);
     if (!exp) return;
     try {
-      const generated = await generateExperienceDescription(exp.position, exp.company, exp.description);
+      const generated = await generateExperienceDescription(exp.position, exp.company, exp.description, selectedAiModel);
       updateExperience(expId, 'description', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
@@ -456,7 +475,7 @@ const CVCreate = () => {
     const edu = cvData.education.find(e => e.id === eduId);
     if (!edu) return;
     try {
-      const generated = await generateEducationDescription(edu.degree, edu.school);
+      const generated = await generateEducationDescription(edu.degree, edu.school, selectedAiModel);
       updateEducation(eduId, 'description', generated);
       toast.success("Description générée avec succès !");
     } catch (error) {
@@ -617,6 +636,19 @@ const CVCreate = () => {
             {currentStep === 0 && (
               <Card className="p-6 border-border">
                 <div className="space-y-4">
+                  <div className="rounded-lg border border-dashed border-primary/40 bg-primary/5 p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">Importer un CV existant</p>
+                        <p className="text-xs text-muted-foreground">PDF ou DOCX. Les informations seront extraites puis modifiables.</p>
+                      </div>
+                      <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                        {isImportingCV ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                        {isImportingCV ? "Import..." : "Choisir un fichier"}
+                        <input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleImportCV} disabled={isImportingCV} className="hidden" />
+                      </label>
+                    </div>
+                  </div>
                   <div className="rounded-lg border border-border bg-muted/30 p-3">
                     <Label htmlFor="ai-model">Modèle IA</Label>
                     <select

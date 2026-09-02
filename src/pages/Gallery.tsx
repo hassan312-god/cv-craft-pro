@@ -345,12 +345,16 @@ const Gallery = () => {
                 </div>
 
                 {/* CV Preview */}
-                <div className="p-3 sm:p-4 bg-muted/10 flex-1 min-w-0">
+                <div className="p-3 sm:p-4 bg-muted/10 flex-1 min-w-0 overflow-hidden">
                   <div
-                    className="bg-white rounded-lg shadow-soft overflow-hidden max-h-[320px] sm:max-h-[400px] cursor-pointer"
+                    className="h-[220px] w-full cursor-pointer overflow-hidden rounded-lg bg-white shadow-soft sm:h-[310px] lg:h-[360px] flex items-center justify-center"
                     onClick={() => handlePreview(templateId)}
                   >
-                    <CVPreview cvData={cvData} />
+                    <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                      <div className="origin-top scale-[0.38] sm:scale-[0.5] lg:scale-[0.6]" style={{ width: "794px" }}>
+                        <CVPreview cvData={cvData} />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -434,8 +438,11 @@ const Gallery = () => {
             </DialogTitle>
           </DialogHeader>
           {previewCVData && (
-            <div className="flex justify-center items-start p-2 sm:p-6 bg-muted/30 overflow-x-hidden">
-              <CVPreview cvData={previewCVData} />
+            <div className="flex max-h-[70vh] justify-center overflow-auto bg-muted/30 p-2 sm:p-6">
+              <div className="w-full max-w-[794px]">
+                <CVPreview cvData={previewCVData} />
+              </div>
+              
             </div>
           )}
         </DialogContent>

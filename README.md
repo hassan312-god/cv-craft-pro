@@ -137,12 +137,7 @@ Puis déployer sur Vercel avec les variables d’environnement ci-dessus.
 
 ## Documentation complémentaire
 
-Pour des détails de déploiement et d’intégration :
-
-- [DEPLOYMENT.md](DEPLOYMENT.md)
-- [QUICK_START_VERCEL.md](QUICK_START_VERCEL.md)
-- [docs/WEBHOOK_SETUP.md](docs/WEBHOOK_SETUP.md)
-- [docs/FIX_PRODUCTION_ERRORS.md](docs/FIX_PRODUCTION_ERRORS.md)
+La documentation détaillée est conservée dans [docs](docs) et les guides de déploiement restent disponibles si besoin, mais le README principal est le point d’entrée unique du projet.
 
 ## Contribution
 
