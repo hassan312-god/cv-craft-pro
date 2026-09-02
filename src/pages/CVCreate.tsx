@@ -10,7 +10,7 @@ import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowR
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
-import { generateAbout, generateExperienceDescription, generateEducationDescription } from "@/lib/openRouter";
+import { generateAbout, generateExperienceDescription, generateEducationDescription, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
 import { getTemplateComponent } from "@/lib/templateConfig";
 import { allThemes } from "@/lib/themeConfig";
 import { saveDraft, getAllDrafts, getDraft, deleteDraft, formatDraftDate, Draft } from "@/lib/draftStorage";
@@ -78,6 +78,7 @@ const CVCreate = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareUrl, setShareUrl] = useState<string>("");
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [selectedAiModel, setSelectedAiModel] = useState<OpenRouterModel>(OPENROUTER_MODELS[0].value);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
@@ -616,6 +617,20 @@ const CVCreate = () => {
             {currentStep === 0 && (
               <Card className="p-6 border-border">
                 <div className="space-y-4">
+                  <div className="rounded-lg border border-border bg-muted/30 p-3">
+                    <Label htmlFor="ai-model">Modèle IA</Label>
+                    <select
+                      id="ai-model"
+                      value={selectedAiModel}
+                      onChange={(e) => setSelectedAiModel(e.target.value as OpenRouterModel)}
+                      className="mt-2 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                    >
+                      {OPENROUTER_MODELS.map((model) => (
+                        <option key={model.value} value={model.value}>{model.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">Prénom</Label>

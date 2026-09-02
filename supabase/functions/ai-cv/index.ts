@@ -1,15 +1,30 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
-const MODEL = 'qwen/qwen-2.5-72b-instruct'
+const DEFAULT_MODEL = Deno.env.get('OPENROUTER_MODEL') ?? 'qwen/qwen-2.5-72b-instruct'
+const ALLOWED_MODELS = new Set([
+  'qwen/qwen-2.5-72b-instruct',
+  'deepseek/deepseek-chat-v3-0324',
+  'meta-llama/llama-3.1-8b-instruct',
+  'google/gemini-2.0-flash-001',
+  'openai/gpt-4o-mini',
+])
 
 type Message = { role: 'system' | 'user' | 'assistant'; content: string }
+
+function resolveModel(model?: string): string {
+  if (typeof model === 'string' && model.trim() && ALLOWED_MODELS.has(model.trim())) {
+    return model.trim()
+  }
+  return DEFAULT_MODEL
+}
 
 async function callOpenRouter(
   apiKey: string,
   messages: Message[],
   maxTokens: number,
   json = false,
+  selectedModel?: string,
 ): Promise<string> {
   const res = await fetch(OPENROUTER_URL, {
     method: 'POST',
@@ -18,7 +33,7 @@ async function callOpenRouter(
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: resolveModel(selectedModel),
       messages,
       temperature: 0.7,
       max_tokens: maxTokens,
@@ -53,6 +68,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => null)
     const action = body?.action
     const payload = body?.payload ?? {}
+    const selectedModel = typeof payload.model === 'string' ? payload.model : undefined
 
     if (typeof action !== 'string') {
       return new Response(JSON.stringify({ error: 'action requise' }), {
@@ -80,7 +96,7 @@ Formation: ${(payload.education ?? []).map((e: any) => `${e.degree} à ${e.schoo
 Compétences: ${(payload.skills ?? []).slice(0, 6).map((s: any) => s.name).join(', ') || 'aucune'}
 Réponds uniquement avec le texte, sans titre ni formatage.`,
         },
-      ], 300)
+      ], 300, false, selectedModel)
       result = { text }
     } else if (action === 'experience') {
       const text = await callOpenRouter(apiKey, [
@@ -90,7 +106,7 @@ Réponds uniquement avec le texte, sans titre ni formatage.`,
           content: `Rédige 3 à 4 puces décrivant les responsabilités et réalisations pour le poste de ${payload.position} chez ${payload.company}.${payload.existingDescription ? `\nDescription actuelle à améliorer: ${payload.existingDescription}` : ''}
 Réponds uniquement avec les puces, une par ligne, sans numérotation.`,
         },
-      ], 300)
+      ], 300, false, selectedModel)
       result = { text }
     } else if (action === 'education') {
       const text = await callOpenRouter(apiKey, [
@@ -99,7 +115,7 @@ Réponds uniquement avec les puces, une par ligne, sans numérotation.`,
           role: 'user',
           content: `Génère une description de EXACTEMENT 5 MOTS pour la formation ${payload.degree} à ${payload.school}. Réponds uniquement avec ces 5 mots, sans ponctuation finale.`,
         },
-      ], 40)
+      ], 40, false, selectedModel)
       result = { text }
     } else if (action === 'step') {
       const step = payload.step
@@ -136,6 +152,7 @@ Réponds uniquement avec le JSON, sans texte autour.`,
         ],
         1200,
         true,
+        selectedModel,
       )
       try {
         result = JSON.parse(raw.replace(/^```(json)?/i, '').replace(/```$/, '').trim())
