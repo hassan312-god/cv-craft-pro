@@ -2,134 +2,155 @@
 
 # CV Craft Pro
 
-![GitHub License](https://img.shields.io/github/license/hassan312-god/cv-craft-pro?style=flat-square)
-![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-blue?style=flat-square)
-![Vite](https://img.shields.io/badge/vite-v5.x-purple?style=flat-square)
-![Supabase](https://img.shields.io/badge/supabase-backend-green?style=flat-square)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat-square)
+CV Craft Pro est un générateur de CV moderne, pensé pour créer des curriculum vitae professionnels en quelques minutes. L’application combine un éditeur visuel, des templates premium, une IA d’assistance et des exports PDF/Word.
 
-CV Craft Pro est une solution complète de création de curriculum vitae assistée par intelligence artificielle. Cette application permet aux utilisateurs de générer, personnaliser et exporter des CV professionnels en utilisant une vaste bibliothèque de templates modernes. Le projet intègre des fonctionnalités avancées de gestion de contenu via Supabase, une automatisation IA via OpenRouter et des capacités d'exportation multi-formats (PDF et Word).
+## Vue d’ensemble
 
-## Fonctionnalités
+- Création de CV guidée et rapide
+- Prévisualisation instantanée
+- Templates premium par catégorie
+- Authentification avec Supabase
+- Export PDF et Word
+- Possibilité de partager et sauvegarder les CV
+- IA pour générer ou enrichir le contenu
 
-*   Interface de création dynamique avec prévisualisation en temps réel.
-*   Plus de 20 templates professionnels (Modern, Creative, Corporate, Tech, etc.).
-*   Génération de contenu assistée par IA via l'intégration OpenRouter.
-*   Système d'authentification et de stockage cloud sécurisé avec Supabase.
-*   Moteur d'exportation haute fidélité pour formats PDF et DOCX.
-*   Gestion des brouillons locaux et synchronisation cloud des documents.
-*   Système de partage public avec gestion des permissions et statistiques d'utilisation.
-*   Architecture réactive optimisée pour mobiles et tablettes.
+## Fonctionnalités principales
 
-## Stack Technique
+### 1. Création de CV
+- formulaire étape par étape
+- édition des informations personnelles, expériences, formation, compétences
+- thème et template personnalisables
+- sauvegarde automatique des brouillons
+
+### 2. Templates premium
+- collection organisée par style
+- catégories : Moderne, Professionnel, Minimaliste, Créatif, Classique, Avec photo
+- navigation par catégorie et détail par template
+
+### 3. IA et automatisation
+- génération de texte assistée
+- amélioration du profil professionnel
+- intégration OpenRouter
+
+### 4. Export et partage
+- export PDF
+- export Word
+- partage public
+- statistiques de usage
+
+## Stack technique
 
 ### Frontend
-*   **Framework**: React 18 avec TypeScript.
-*   **Build Tool**: Vite.
-*   **Styling**: Tailwind CSS avec composants UI Shadcn.
-*   **Gestion d'état**: React Context API et Hooks personnalisés.
-*   **Animations**: Lucide React pour l'iconographie.
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- Shadcn UI
+- React Router
 
-### Backend & Services
-*   **BaaS**: Supabase (Authentification, PostgreSQL, Storage).
-*   **Serverless**: Edge Functions Supabase (Deno runtime).
-*   **Proxy API**: Node.js (express) pour la gestion des webhooks et requêtes sensibles.
-*   **IA**: Intégration OpenRouter API.
+### Backend / services
+- Supabase
+- Edge Functions
+- OpenRouter API
+- stockage local + cloud
 
-### Infrastructure & CI/CD
-*   **Déploiement**: Vercel.
-*   **Automatisation**: GitHub Actions (Workflows Vite, Gulp, Grunt).
-*   **Gestionnaire de paquets**: Bun / npm.
+### Déploiement
+- Vercel
+- Node.js
 
-## Installation
+## Démarrage rapide
 
 ### Prérequis
-*   Node.js >= 18.x
-*   Bun (optionnel, recommandé pour le verrouillage des dépendances)
-*   CLI Supabase (pour le développement local des Edge Functions)
+- Node.js 18+
+- npm
 
-### Frontend
-1. Cloner le dépôt :
-   ```bash
-   git clone https://github.com/hassan312-god/cv-craft-pro.git
-   cd cv-craft-pro
-   ```
-2. Installer les dépendances :
-   ```bash
-   npm install
-   ```
-3. Configurer les variables d'environnement dans un fichier `.env` :
-   ```env
-   VITE_SUPABASE_URL=votre_url_supabase
-   VITE_SUPABASE_ANON_KEY=votre_cle_anon
-   VITE_OPENROUTER_API_KEY=votre_cle_api
-   ```
-4. Lancer le serveur de développement :
-   ```bash
-   npm run dev
-   ```
+### Installation
 
-### Backend (Supabase Edge Functions)
-1. Initialiser le projet Supabase :
-   ```bash
-   supabase init
-   ```
-2. Déployer les fonctions :
-   ```bash
-   supabase functions deploy ai-cv
-   ```
+```bash
+git clone https://github.com/hassan312-god/cv-craft-pro.git
+cd cv-craft-pro
+npm install
+```
 
-### Proxy Serveur (Optionnel)
-1. Accéder au dossier serveur :
-   ```bash
-   cd server
-   npm install
-   ```
-2. Démarrer le proxy :
-   ```bash
-   node api-proxy.js
-   ```
+### Variables d’environnement
+
+Créer un fichier `.env` à la racine du projet :
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+VITE_OPENROUTER_API_KEY=your_openrouter_key
+```
+
+### Lancer le projet
+
+```bash
+npm run dev
+```
+
+### Build de production
+
+```bash
+npm run build
+```
 
 ## Structure du projet
 
 ```text
 .
-├── .github/workflows/      # Pipelines CI/CD (Vite, Grunt, Gulp)
-├── api/                    # Serverless functions (OpenRouter, Webhooks)
-├── config/                 # Configurations spécifiques à l'environnement
-├── docs/                   # Documentation technique et guides de production
-├── public/                 # Assets statiques et favicon
-├── scripts/                # Scripts utilitaires (tests de webhooks)
-├── server/                 # Serveur proxy Node.js
+├── api/                     # API serveur / webhooks / proxy
+├── config/                 # configurations
+├── docs/                   # documentation technique
+├── public/                 # assets publics
+├── scripts/                # scripts utiles
+├── server/                 # serveur proxy optionnel
 ├── src/
-│   ├── components/         # Composants React
-│   │   ├── templates/      # Bibliothèque de templates de CV (20+ styles)
-│   │   └── ui/             # Bibliothèque de composants Shadcn/UI
-│   ├── contexts/           # Fournisseurs de contexte (Auth, etc.)
-│   ├── hooks/              # Hooks personnalisés (UI, mobile)
-│   ├── integrations/       # Client Supabase et types générés
-│   ├── lib/                # Logique métier (Exports PDF, Word, IA)
-│   ├── pages/              # Vues principales de l'application
-│   └── main.tsx            # Point d'entrée de l'application
-├── supabase/               # Migrations SQL et Edge Functions
-├── tailwind.config.ts      # Configuration des styles
-└── vite.config.ts          # Configuration du bundler Vite
+│   ├── components/         # composants UI et templates
+│   ├── contexts/           # contextes React
+│   ├── hooks/              # hooks personnalisés
+│   ├── integrations/       # intégrations externes
+│   ├── lib/                # logique métier et utilitaires
+│   ├── pages/              # pages de l'application
+│   ├── App.tsx             # routage principal
+│   └── main.tsx            # point d'entrée
+├── supabase/               # migrations et functions
+├── .gitignore
+├── LICENSE
+├── components.json
+├── package.json
+├── README.md               # documentation principale
+├── tailwind.config.ts
+├── tsconfig.json
+├── vercel.json
+├── vite.config.ts
+└── index.html
 ```
 
-## Configuration API & Webhooks
+## Déploiement
 
-Le projet utilise des webhooks pour la synchronisation des données et l'interaction avec les services tiers.
-*   Les scripts de test sont disponibles dans `/scripts/test-webhook.sh`.
-*   La configuration des endpoints se trouve dans `api/webhook.ts`.
-*   Consulter `docs/WEBHOOK_SETUP.md` pour les instructions détaillées sur le raccordement des services externes.
+### Vercel
+
+```bash
+npm run build
+```
+
+Puis déployer sur Vercel avec les variables d’environnement ci-dessus.
+
+## Documentation complémentaire
+
+Pour des détails de déploiement et d’intégration :
+
+- [DEPLOYMENT.md](DEPLOYMENT.md)
+- [QUICK_START_VERCEL.md](QUICK_START_VERCEL.md)
+- [docs/WEBHOOK_SETUP.md](docs/WEBHOOK_SETUP.md)
+- [docs/FIX_PRODUCTION_ERRORS.md](docs/FIX_PRODUCTION_ERRORS.md)
 
 ## Contribution
 
-1. Créer une branche pour votre fonctionnalité : `git checkout -b feature/AmazingFeature`.
-2. Valider vos modifications : `git commit -m 'Add some AmazingFeature'`.
-3. Pousser vers la branche : `git push origin feature/AmazingFeature`.
-4. Ouvrir une Pull Request.
+1. Créer une branche
+2. Développer la fonctionnalité
+3. Vérifier le build
+4. Ouvrir une pull request
 
 ## Licence
 
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
+Projet distribué sous licence MIT. Voir [LICENSE](LICENSE).

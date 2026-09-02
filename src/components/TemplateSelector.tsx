@@ -59,19 +59,29 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
   );
 
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4 text-foreground tracking-tight">Choisir un template</h2>
-        <p className="text-muted-foreground mb-6">
-          Plus de {templateConfig.length} templates professionnels organisés par style
+    <div className="space-y-6">
+      <div className="rounded-2xl border border-border bg-gradient-to-br from-background via-muted/30 to-background p-5 shadow-sm">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Premium collection
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Templates premium</h2>
+          </div>
+          <span className="text-sm text-muted-foreground">{templateConfig.length} modèles professionnels</span>
+        </div>
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+          Choisissez un design premium selon votre secteur, votre style et votre niveau de professionnalisme.
         </p>
+      </div>
 
-        {/* Category Filters */}
+      <div className="space-y-3">
         <div className="flex flex-wrap gap-2">
           <Button
             variant={selectedCategory === "all" ? "default" : "outline"}
             onClick={() => setSelectedCategory("all")}
             size="sm"
+            className="rounded-full"
           >
             Tous ({templateConfig.length})
           </Button>
@@ -85,6 +95,7 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
                   variant={selectedCategory === key ? "default" : "outline"}
                   onClick={() => setSelectedCategory(key as TemplateCategory)}
                   size="sm"
+                  className="rounded-full"
                 >
                   {label} ({count})
                 </Button>
@@ -93,48 +104,49 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
         </div>
       </div>
 
-      {/* Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filteredTemplates.map((template) => {
           const exampleData = getExampleCVData(template.id);
           const isSelected = selectedTemplate === template.id;
-          
+
           return (
             <Card
               key={template.id}
-              className={`overflow-hidden border-border flex flex-col cursor-pointer transition-all ${
-                isSelected 
-                  ? 'border-primary ring-2 ring-primary ring-offset-2' 
-                  : 'border-border hover:border-primary/50'
+              className={`group overflow-hidden border transition-all duration-200 cursor-pointer ${
+                isSelected
+                  ? 'border-primary ring-2 ring-primary/20 shadow-md'
+                  : 'border-border hover:border-primary/50 hover:shadow-md'
               }`}
-              style={{ height: '650px' }}
               onClick={() => onSelectTemplate(template.id)}
             >
-              {/* Template Header */}
-              <div className="p-4 border-b border-border bg-muted/30 flex-shrink-0">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-bold text-foreground truncate flex-1 mr-2">{template.name}</h3>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs px-2 py-1 bg-background border border-border rounded-full whitespace-nowrap">
-                      {templateCategories[template.category]}
-                    </span>
-                    {isSelected && (
-                      <div className="bg-primary text-primary-foreground rounded-full p-1 flex-shrink-0">
-                        <Check className="w-4 h-4" />
-                      </div>
-                    )}
+              <div className="flex items-center justify-between border-b border-border bg-muted/20 px-4 py-3">
+                <span className="rounded-full border border-border bg-background px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                  {templateCategories[template.category]}
+                </span>
+                {isSelected ? (
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <Check className="h-4 w-4" />
                   </div>
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                ) : (
+                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    Pro
+                  </span>
+                )}
               </div>
 
-              {/* CV Preview - Fixed aspect ratio container */}
-              <div className="p-4 bg-muted/10 flex-1 min-h-0 flex items-center justify-center">
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full" style={{ aspectRatio: '210/297' }}>
-                  <div className="relative w-full h-full flex items-center justify-center" style={{ overflow: 'hidden' }}>
-                    <div 
+              <div className="p-4">
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">{template.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{template.description}</p>
+                  </div>
+                </div>
+
+                <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+                  <div className="relative flex items-center justify-center bg-gradient-to-b from-slate-50 to-white p-2" style={{ aspectRatio: '210/297' }}>
+                    <div
                       style={{
-                        transform: 'scale(0.4)',
+                        transform: 'scale(0.34)',
                         transformOrigin: 'center center',
                         width: '794px',
                         minHeight: '1123px',
@@ -149,18 +161,13 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
                   </div>
                 </div>
               </div>
-
-              {/* Template name footer */}
-              <div className="p-3 border-t border-border bg-background flex-shrink-0">
-                <p className="text-sm font-medium text-center text-foreground truncate">{template.name}</p>
-              </div>
             </Card>
           );
         })}
       </div>
 
       {filteredTemplates.length === 0 && (
-        <div className="text-center py-12">
+        <div className="rounded-xl border border-dashed border-border p-10 text-center">
           <p className="text-muted-foreground">Aucun template trouvé dans cette catégorie.</p>
         </div>
       )}

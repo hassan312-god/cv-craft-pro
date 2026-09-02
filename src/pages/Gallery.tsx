@@ -124,6 +124,14 @@ const Gallery = () => {
     navigate('/create', { state: { cvData: exampleCVs[templateId].data } });
   };
 
+  const handleCategoryViewMore = (category: CVCategory) => {
+    navigate(`/gallery/${category}`);
+  };
+
+  const handleViewTemplateDetail = (category: CVCategory, templateId: string) => {
+    navigate(`/gallery/${category}/${templateId}`);
+  };
+
   const handlePreview = (templateId: string) => {
     setPreviewTemplateId(templateId);
   };
@@ -259,6 +267,38 @@ const Gallery = () => {
               </Button>
             </div>
           </div>
+        </div>
+
+        <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Object.entries(cvCategories).map(([key, label]) => {
+            const items = Object.entries(exampleCVs).filter(([, item]) => item.category === key);
+            const featured = items.slice(0, 3);
+            if (!items.length) return null;
+
+            return (
+              <Card key={key} className="border-border p-4">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold">{label}</h3>
+                  <Button variant="ghost" size="sm" onClick={() => handleCategoryViewMore(key as CVCategory)} className="text-xs">
+                    Voir +
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {featured.map(([templateId, cvExample]) => (
+                    <button
+                      key={templateId}
+                      type="button"
+                      onClick={() => handleViewTemplateDetail(cvExample.category, templateId)}
+                      className="flex w-full items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition hover:border-primary/50"
+                    >
+                      <span className="text-sm font-medium">{cvExample.colorTheme}</span>
+                      <span className="text-xs text-muted-foreground">Détail</span>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Gallery Grid */}
