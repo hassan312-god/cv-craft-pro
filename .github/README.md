@@ -1,120 +1,135 @@
-# GitHub Actions Workflows
+<img src="public/favicon.ico" width="48" height="48" alt="CV Craft Pro Logo" align="right" />
 
-Ce répertoire contient les workflows GitHub Actions pour automatiser les builds et les déploiements du projet.
+# CV Craft Pro
 
-## 📋 Workflows Disponibles
+![GitHub License](https://img.shields.io/github/license/hassan312-god/cv-craft-pro?style=flat-square)
+![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-blue?style=flat-square)
+![Vite](https://img.shields.io/badge/vite-v5.x-purple?style=flat-square)
+![Supabase](https://img.shields.io/badge/supabase-backend-green?style=flat-square)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat-square)
 
-### 1. **CI/CD Pipeline** (`.github/workflows/ci.yml`)
-Workflow principal pour le projet Vite/React :
-- ✅ Lint du code
-- ✅ Build de production
-- ✅ Upload des artifacts
-- ✅ Déploiement preview pour les PRs
+CV Craft Pro est une solution complète de création de curriculum vitae assistée par intelligence artificielle. Cette application permet aux utilisateurs de générer, personnaliser et exporter des CV professionnels en utilisant une vaste bibliothèque de templates modernes. Le projet intègre des fonctionnalités avancées de gestion de contenu via Supabase, une automatisation IA via OpenRouter et des capacités d'exportation multi-formats (PDF et Word).
 
-**Déclenchement :**
-- Push sur `main` ou `develop`
-- Pull Requests
-- Déclenchement manuel
+## Fonctionnalités
 
-### 2. **Build with Vite** (`.github/workflows/vite.yml`)
-Workflow spécifique pour le build Vite :
-- ✅ Test sur Node.js 18.x et 20.x
-- ✅ Lint
-- ✅ Build
-- ✅ Upload des artifacts
+*   Interface de création dynamique avec prévisualisation en temps réel.
+*   Plus de 20 templates professionnels (Modern, Creative, Corporate, Tech, etc.).
+*   Génération de contenu assistée par IA via l'intégration OpenRouter.
+*   Système d'authentification et de stockage cloud sécurisé avec Supabase.
+*   Moteur d'exportation haute fidélité pour formats PDF et DOCX.
+*   Gestion des brouillons locaux et synchronisation cloud des documents.
+*   Système de partage public avec gestion des permissions et statistiques d'utilisation.
+*   Architecture réactive optimisée pour mobiles et tablettes.
 
-### 3. **Build with Gulp** (`.github/workflows/gulp.yml`)
-Workflow pour tester le build avec Gulp :
-- ✅ Installation de Gulp CLI
-- ✅ Création automatique de `gulpfile.js` si absent
-- ✅ Build avec Gulp
-- ✅ Upload des artifacts
+## Stack Technique
 
-**Note :** Ce workflow crée un `gulpfile.js` basique si le fichier n'existe pas.
+### Frontend
+*   **Framework**: React 18 avec TypeScript.
+*   **Build Tool**: Vite.
+*   **Styling**: Tailwind CSS avec composants UI Shadcn.
+*   **Gestion d'état**: React Context API et Hooks personnalisés.
+*   **Animations**: Lucide React pour l'iconographie.
 
-### 4. **Build with Grunt** (`.github/workflows/grunt.yml`)
-Workflow pour tester le build avec Grunt :
-- ✅ Installation de Grunt CLI
-- ✅ Création automatique de `Gruntfile.js` si absent
-- ✅ Installation des plugins Grunt nécessaires
-- ✅ Build avec Grunt
-- ✅ Upload des artifacts
+### Backend & Services
+*   **BaaS**: Supabase (Authentification, PostgreSQL, Storage).
+*   **Serverless**: Edge Functions Supabase (Deno runtime).
+*   **Proxy API**: Node.js (express) pour la gestion des webhooks et requêtes sensibles.
+*   **IA**: Intégration OpenRouter API.
 
-**Note :** Ce workflow crée un `Gruntfile.js` basique si le fichier n'existe pas.
+### Infrastructure & CI/CD
+*   **Déploiement**: Vercel.
+*   **Automatisation**: GitHub Actions (Workflows Vite, Gulp, Grunt).
+*   **Gestionnaire de paquets**: Bun / npm.
 
-### 5. **Build with Webpack** (`.github/workflows/webpack.yml`)
-Workflow pour tester le build avec Webpack :
-- ✅ Installation de Webpack et Webpack CLI
-- ✅ Création automatique de `webpack.config.js` si absent
-- ✅ Build avec Webpack
-- ✅ Upload des artifacts
+## Installation
 
-**Note :** Ce workflow crée un `webpack.config.js` basique si le fichier n'existe pas.
+### Prérequis
+*   Node.js >= 18.x
+*   Bun (optionnel, recommandé pour le verrouillage des dépendances)
+*   CLI Supabase (pour le développement local des Edge Functions)
 
-## 🚀 Utilisation
+### Frontend
+1. Cloner le dépôt :
+   ```bash
+   git clone https://github.com/hassan312-god/cv-craft-pro.git
+   cd cv-craft-pro
+   ```
+2. Installer les dépendances :
+   ```bash
+   npm install
+   ```
+3. Configurer les variables d'environnement dans un fichier `.env` :
+   ```env
+   VITE_SUPABASE_URL=votre_url_supabase
+   VITE_SUPABASE_ANON_KEY=votre_cle_anon
+   VITE_OPENROUTER_API_KEY=votre_cle_api
+   ```
+4. Lancer le serveur de développement :
+   ```bash
+   npm run dev
+   ```
 
-### Activer un workflow
+### Backend (Supabase Edge Functions)
+1. Initialiser le projet Supabase :
+   ```bash
+   supabase init
+   ```
+2. Déployer les fonctions :
+   ```bash
+   supabase functions deploy ai-cv
+   ```
 
-Les workflows sont automatiquement activés lors de :
-- Push sur les branches `main` ou `develop`
-- Ouverture/modification d'une Pull Request
-- Déclenchement manuel via l'onglet "Actions" de GitHub
+### Proxy Serveur (Optionnel)
+1. Accéder au dossier serveur :
+   ```bash
+   cd server
+   npm install
+   ```
+2. Démarrer le proxy :
+   ```bash
+   node api-proxy.js
+   ```
 
-### Déclencher manuellement
+## Structure du projet
 
-1. Allez sur l'onglet **Actions** de votre repository GitHub
-2. Sélectionnez le workflow souhaité
-3. Cliquez sur **Run workflow**
-4. Choisissez la branche et cliquez sur **Run workflow**
+```text
+.
+├── .github/workflows/      # Pipelines CI/CD (Vite, Grunt, Gulp)
+├── api/                    # Serverless functions (OpenRouter, Webhooks)
+├── config/                 # Configurations spécifiques à l'environnement
+├── docs/                   # Documentation technique et guides de production
+├── public/                 # Assets statiques et favicon
+├── scripts/                # Scripts utilitaires (tests de webhooks)
+├── server/                 # Serveur proxy Node.js
+├── src/
+│   ├── components/         # Composants React
+│   │   ├── templates/      # Bibliothèque de templates de CV (20+ styles)
+│   │   └── ui/             # Bibliothèque de composants Shadcn/UI
+│   ├── contexts/           # Fournisseurs de contexte (Auth, etc.)
+│   ├── hooks/              # Hooks personnalisés (UI, mobile)
+│   ├── integrations/       # Client Supabase et types générés
+│   ├── lib/                # Logique métier (Exports PDF, Word, IA)
+│   ├── pages/              # Vues principales de l'application
+│   └── main.tsx            # Point d'entrée de l'application
+├── supabase/               # Migrations SQL et Edge Functions
+├── tailwind.config.ts      # Configuration des styles
+└── vite.config.ts          # Configuration du bundler Vite
+```
 
-## 📦 Artifacts
+## Configuration API & Webhooks
 
-Tous les workflows uploadent les artifacts de build dans :
-- **Nom :** `{tool}-build-{node-version}`
-- **Rétention :** 7 jours (30 jours pour CI/CD)
-- **Emplacement :** `dist/`
+Le projet utilise des webhooks pour la synchronisation des données et l'interaction avec les services tiers.
+*   Les scripts de test sont disponibles dans `/scripts/test-webhook.sh`.
+*   La configuration des endpoints se trouve dans `api/webhook.ts`.
+*   Consulter `docs/WEBHOOK_SETUP.md` pour les instructions détaillées sur le raccordement des services externes.
 
-Pour télécharger les artifacts :
-1. Allez sur l'onglet **Actions**
-2. Sélectionnez une exécution de workflow
-3. Faites défiler jusqu'à **Artifacts**
-4. Téléchargez le fichier ZIP
+## Contribution
 
-## 🔧 Configuration
+1. Créer une branche pour votre fonctionnalité : `git checkout -b feature/AmazingFeature`.
+2. Valider vos modifications : `git commit -m 'Add some AmazingFeature'`.
+3. Pousser vers la branche : `git push origin feature/AmazingFeature`.
+4. Ouvrir une Pull Request.
 
-### Variables d'environnement
+## Licence
 
-Pour ajouter des variables d'environnement :
-1. Allez dans **Settings** > **Secrets and variables** > **Actions**
-2. Ajoutez vos secrets/variables
-
-### Modifier un workflow
-
-Éditez le fichier `.github/workflows/{workflow-name}.yml` et poussez les changements.
-
-## 📝 Notes
-
-- Les workflows Gulp, Grunt et Webpack créent automatiquement les fichiers de configuration s'ils n'existent pas
-- Le projet principal utilise **Vite**, donc le workflow `vite.yml` est le plus pertinent
-- Les autres workflows (Gulp, Grunt, Webpack) sont fournis comme exemples ou pour des besoins spécifiques
-
-## 🐛 Dépannage
-
-### Le workflow échoue
-
-1. Vérifiez les logs dans l'onglet **Actions**
-2. Assurez-vous que `package.json` contient les scripts nécessaires
-3. Vérifiez que les dépendances sont correctement installées
-
-### Les artifacts ne sont pas générés
-
-1. Vérifiez que le build réussit
-2. Assurez-vous que le répertoire `dist/` est créé
-3. Vérifiez les permissions du workflow
-
-## 📚 Ressources
-
-- [Documentation GitHub Actions](https://docs.github.com/en/actions)
-- [Actions Marketplace](https://github.com/marketplace?type=actions)
-- [Workflow Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
-
+Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
