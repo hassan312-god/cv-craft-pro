@@ -357,124 +357,8 @@ const CVCreate = () => {
     });
 
     try {
-      // Créer un conteneur temporaire pour le PDF (sans scaling)
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'fixed';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '0';
-      tempContainer.style.width = '794px';
-      tempContainer.style.backgroundColor = 'white';
-      tempContainer.style.zIndex = '-1';
-      document.body.appendChild(tempContainer);
-
-      // Rendre le template directement dans le conteneur temporaire
-      const template = cvData.template || 'minimal';
-      const TemplateComponent = getTemplateComponent(template);
-      
-      // Utiliser React pour rendre le composant
-      const React = await import('react');
-      const ReactDOM = await import('react-dom/client');
-      const root = ReactDOM.createRoot(tempContainer);
-      
-      root.render(React.createElement(TemplateComponent, { cvData }));
-      
-      // Attendre que le contenu soit rendu
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Trouver le conteneur CV réel (sans wrapper de scaling)
-      const cvElement = tempContainer.querySelector('div[style*="794px"]') || 
-                       tempContainer.firstElementChild as HTMLElement;
-      
-      if (!cvElement) {
-        throw new Error("Impossible de trouver le contenu du CV");
-      }
-
-      // S'assurer que l'élément est visible pour html2canvas
-      (cvElement as HTMLElement).style.display = 'block';
-      (cvElement as HTMLElement).style.visibility = 'visible';
-      (cvElement as HTMLElement).style.position = 'relative';
-
-      // Générer le canvas
-      const canvas = await html2canvas(cvElement as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        allowTaint: true,
-        width: 794,
-        height: (cvElement as HTMLElement).scrollHeight || 1123,
-        scrollX: 0,
-        scrollY: 0
-      });
-
-      // Nettoyer l'élément temporaire
-      root.unmount();
-      document.body.removeChild(tempContainer);
-
-      if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        throw new Error("Canvas vide - le CV n'a pas pu être capturé");
-      }
-
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      
-      // Dimensions A4 en mm
-      const pdfWidth = 210; // A4 width in mm
-      const pdfHeight = 297; // A4 height in mm
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      // Créer le PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      
-      // Si le contenu tient sur une page (avec une petite marge de 5mm)
-      if (imgHeight <= pdfHeight + 5) {
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      } else {
-        // Contenu sur plusieurs pages - découper intelligemment
-        const pageHeight = pdfHeight;
-        let totalHeight = imgHeight;
-        let yOffset = 0;
-        let pageNumber = 0;
-        
-        while (totalHeight > 0) {
-          if (pageNumber > 0) {
-            pdf.addPage();
-          }
-          
-          // Calculer la hauteur à afficher sur cette page
-          const heightOnPage = Math.min(totalHeight, pageHeight);
-          
-          // Calculer la position Y dans l'image source
-          const sourceY = (yOffset / imgHeight) * canvas.height;
-          const sourceHeight = (heightOnPage / imgHeight) * canvas.height;
-          
-          // Créer un canvas temporaire pour cette page
-          const pageCanvas = document.createElement('canvas');
-          pageCanvas.width = canvas.width;
-          pageCanvas.height = sourceHeight;
-          const ctx = pageCanvas.getContext('2d');
-          
-          if (ctx) {
-            ctx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
-            const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
-            pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, heightOnPage);
-          }
-          
-          totalHeight -= pageHeight;
-          yOffset += pageHeight;
-          pageNumber++;
-          
-          // Éviter les pages presque vides (moins de 20mm de contenu)
-          if (totalHeight > 0 && totalHeight < 20) {
-            break;
-          }
-        }
-      }
-      
-      // Télécharger le PDF
-      const filename = `${cvData.firstName || 'CV'}_${cvData.lastName || 'Pro'}_CV.pdf`;
-      pdf.save(filename);
-      
+      await exportCVToPDF(cvData);
+      incrementPDFsExported();
       toast.success("PDF téléchargé avec succès !", {
         id: "pdf-download"
       });
@@ -483,7 +367,6 @@ const CVCreate = () => {
       toast.error(`Erreur lors de la génération du PDF: ${error instanceof Error ? error.message : 'Erreur inconnue'}`, {
         id: "pdf-download"
       });
-      incrementPDFsExported();
     } finally {
       setIsDownloading(false);
       toast.dismiss("pdf-download");
