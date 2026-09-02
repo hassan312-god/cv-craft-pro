@@ -1,138 +1,135 @@
+<img src="public/favicon.ico" width="48" height="48" alt="CV Craft Pro Logo" align="right" />
+
 # CV Craft Pro
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/hassan312-god/cv-craft-pro/vite.yml?branch=main&style=flat-square)
-![License](https://img.shields.io/github/license/hassan312-god/cv-craft-pro?style=flat-square)
-![Stack](https://img.shields.io/badge/Stack-React_|_TypeScript_|_Supabase-blue?style=flat-square)
-![Vercel](https://img.shields.io/badge/Deployment-Vercel-black?style=flat-square&logo=vercel)
+![GitHub License](https://img.shields.io/github/license/hassan312-god/cv-craft-pro?style=flat-square)
+![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-blue?style=flat-square)
+![Vite](https://img.shields.io/badge/vite-v5.x-purple?style=flat-square)
+![Supabase](https://img.shields.io/badge/supabase-backend-green?style=flat-square)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat-square)
 
-**CV Craft Pro** est une plateforme web moderne et exhaustive de création de curriculum vitae. Elle permet aux utilisateurs de concevoir des CV professionnels grâce à une interface intuitive, un large catalogue de templates spécialisés, et une intégration poussée de l'intelligence artificielle pour l'optimisation du contenu.
+CV Craft Pro est une solution complète de création de curriculum vitae assistée par intelligence artificielle. Cette application permet aux utilisateurs de générer, personnaliser et exporter des CV professionnels en utilisant une vaste bibliothèque de templates modernes. Le projet intègre des fonctionnalités avancées de gestion de contenu via Supabase, une automatisation IA via OpenRouter et des capacités d'exportation multi-formats (PDF et Word).
 
----
+## Fonctionnalités
 
-### 🚀 Fonctionnalités
+*   Interface de création dynamique avec prévisualisation en temps réel.
+*   Plus de 20 templates professionnels (Modern, Creative, Corporate, Tech, etc.).
+*   Génération de contenu assistée par IA via l'intégration OpenRouter.
+*   Système d'authentification et de stockage cloud sécurisé avec Supabase.
+*   Moteur d'exportation haute fidélité pour formats PDF et DOCX.
+*   Gestion des brouillons locaux et synchronisation cloud des documents.
+*   Système de partage public avec gestion des permissions et statistiques d'utilisation.
+*   Architecture réactive optimisée pour mobiles et tablettes.
 
-*   **Éditeur de CV en Temps Réel** : Visualisation instantanée des modifications avec rendu haute fidélité.
-*   **Génération par IA** : Intégration d'OpenRouter pour l'assistance à la rédaction et l'optimisation de contenu.
-*   **Bibliothèque de Templates** : Plus de 20 modèles (Modern, Creative, Tech, Timeline, etc.) hautement personnalisables.
-*   **Gestion Cloud** : Sauvegarde, synchronisation et gestion de versions via Supabase.
-*   **Export Multi-format** : Exportation optimisée vers PDF et Microsoft Word.
-*   **Système de Partage** : Génération de liens de partage publics avec gestion des accès.
-*   **Architecture Serverless** : Utilisation de Supabase Edge Functions pour les tâches de traitement lourd.
+## Stack Technique
 
----
+### Frontend
+*   **Framework**: React 18 avec TypeScript.
+*   **Build Tool**: Vite.
+*   **Styling**: Tailwind CSS avec composants UI Shadcn.
+*   **Gestion d'état**: React Context API et Hooks personnalisés.
+*   **Animations**: Lucide React pour l'iconographie.
 
-### 🛠️ Stack Technique
+### Backend & Services
+*   **BaaS**: Supabase (Authentification, PostgreSQL, Storage).
+*   **Serverless**: Edge Functions Supabase (Deno runtime).
+*   **Proxy API**: Node.js (express) pour la gestion des webhooks et requêtes sensibles.
+*   **IA**: Intégration OpenRouter API.
 
-#### Frontend
-*   **Framework** : React 18 avec TypeScript
-*   **Build Tool** : Vite.js
-*   **Styling** : Tailwind CSS + Framer Motion
-*   **UI Components** : Radix UI / Shadcn UI
-*   **State Management** : React Context API + Custom Hooks
+### Infrastructure & CI/CD
+*   **Déploiement**: Vercel.
+*   **Automatisation**: GitHub Actions (Workflows Vite, Gulp, Grunt).
+*   **Gestionnaire de paquets**: Bun / npm.
 
-#### Backend & Infrastructure
-*   **Backend-as-a-Service** : Supabase (Auth, Database, Storage)
-*   **Serverless** : Supabase Edge Functions (Deno runtime)
-*   **Database** : PostgreSQL (via Supabase)
-*   **API AI** : OpenRouter API (Proxy Node.js inclus pour le développement)
+## Installation
 
-#### DevOps & CI/CD
-*   **CI/CD** : GitHub Actions (Vite, Webpack, Gulp workflows)
-*   **Deployment** : Vercel
-*   **Package Manager** : Bun / npm
+### Prérequis
+*   Node.js >= 18.x
+*   Bun (optionnel, recommandé pour le verrouillage des dépendances)
+*   CLI Supabase (pour le développement local des Edge Functions)
 
----
+### Frontend
+1. Cloner le dépôt :
+   ```bash
+   git clone https://github.com/hassan312-god/cv-craft-pro.git
+   cd cv-craft-pro
+   ```
+2. Installer les dépendances :
+   ```bash
+   npm install
+   ```
+3. Configurer les variables d'environnement dans un fichier `.env` :
+   ```env
+   VITE_SUPABASE_URL=votre_url_supabase
+   VITE_SUPABASE_ANON_KEY=votre_cle_anon
+   VITE_OPENROUTER_API_KEY=votre_cle_api
+   ```
+4. Lancer le serveur de développement :
+   ```bash
+   npm run dev
+   ```
 
-### 📦 Installation
+### Backend (Supabase Edge Functions)
+1. Initialiser le projet Supabase :
+   ```bash
+   supabase init
+   ```
+2. Déployer les fonctions :
+   ```bash
+   supabase functions deploy ai-cv
+   ```
 
-#### Prérequis
-*   **Node.js** : v18.0.0 ou supérieur
-*   **Bun** (optionnel mais recommandé) : v1.0+
-*   **Supabase CLI** : Pour la gestion locale des fonctions et migrations
-*   **Clé API OpenRouter** : Pour les fonctionnalités IA
+### Proxy Serveur (Optionnel)
+1. Accéder au dossier serveur :
+   ```bash
+   cd server
+   npm install
+   ```
+2. Démarrer le proxy :
+   ```bash
+   node api-proxy.js
+   ```
 
-#### 1. Clonage et Dépendances
-```bash
-git clone https://github.com/hassan312-god/cv-craft-pro.git
-cd cv-craft-pro
-npm install
-```
-
-#### 2. Configuration Environnementale
-Créez un fichier `.env` à la racine :
-```env
-VITE_SUPABASE_URL=votre_url_supabase
-VITE_SUPABASE_ANON_KEY=votre_cle_anon
-VITE_OPENROUTER_API_KEY=votre_cle_openrouter
-```
-
-#### 3. Initialisation Supabase
-```bash
-supabase start
-supabase migration up
-```
-
-#### 4. Lancement
-**Frontend :**
-```bash
-npm run dev
-```
-**Proxy API (si nécessaire pour tests locaux) :**
-```bash
-cd server
-npm install
-node api-proxy.js
-```
-
----
-
-### 📂 Structure du projet
+## Structure du projet
 
 ```text
 .
-├── .github/workflows/      # Pipelines CI/CD (Vite, Grunt, Gulp, Webpack)
-├── api/                    # Serverless Functions (Vercel/Node)
-├── public/                 # Assets statiques et images
-├── server/                 # Proxy de développement et utilitaires Node.js
+├── .github/workflows/      # Pipelines CI/CD (Vite, Grunt, Gulp)
+├── api/                    # Serverless functions (OpenRouter, Webhooks)
+├── config/                 # Configurations spécifiques à l'environnement
+├── docs/                   # Documentation technique et guides de production
+├── public/                 # Assets statiques et favicon
+├── scripts/                # Scripts utilitaires (tests de webhooks)
+├── server/                 # Serveur proxy Node.js
 ├── src/
-│   ├── components/         # Composants React réutilisables
-│   │   ├── ui/             # Composants atomiques (Shadcn UI)
-│   │   └── templates/      # Catalogue de templates de CV (20+ modèles)
-│   ├── contexts/           # Contextes globaux (Auth, Theme)
-│   ├── hooks/              # Hooks personnalisés (Toast, Mobile detection)
+│   ├── components/         # Composants React
+│   │   ├── templates/      # Bibliothèque de templates de CV (20+ styles)
+│   │   └── ui/             # Bibliothèque de composants Shadcn/UI
+│   ├── contexts/           # Fournisseurs de contexte (Auth, etc.)
+│   ├── hooks/              # Hooks personnalisés (UI, mobile)
 │   ├── integrations/       # Client Supabase et types générés
-│   ├── lib/                # Logique métier (Export PDF/Word, AI, Storage)
-│   └── pages/              # Vues principales (Auth, Dashboard, Gallery, Share)
-├── supabase/
-│   ├── functions/          # Edge Functions (AI, Webhooks, Cron)
-│   └── migrations/         # Schémas de base de données PostgreSQL
-├── tailwind.config.ts      # Configuration du design system
-└── vite.config.ts          # Configuration du bundler
+│   ├── lib/                # Logique métier (Exports PDF, Word, IA)
+│   ├── pages/              # Vues principales de l'application
+│   └── main.tsx            # Point d'entrée de l'application
+├── supabase/               # Migrations SQL et Edge Functions
+├── tailwind.config.ts      # Configuration des styles
+└── vite.config.ts          # Configuration du bundler Vite
 ```
 
----
+## Configuration API & Webhooks
 
-### 🔧 Configuration IA (OpenRouter)
+Le projet utilise des webhooks pour la synchronisation des données et l'interaction avec les services tiers.
+*   Les scripts de test sont disponibles dans `/scripts/test-webhook.sh`.
+*   La configuration des endpoints se trouve dans `api/webhook.ts`.
+*   Consulter `docs/WEBHOOK_SETUP.md` pour les instructions détaillées sur le raccordement des services externes.
 
-Le projet utilise **OpenRouter** pour centraliser les appels aux modèles de langage. La configuration se trouve dans `src/lib/openRouter.ts` et les requêtes transitent soit par le proxy local (`server/api-proxy.js`), soit directement via les Edge Functions de Supabase dans `supabase/functions/ai-cv/`.
+## Contribution
 
-Pour modifier les prompts système ou le modèle utilisé (ex: GPT-4o, Claude 3.5), éditez le fichier `src/lib/openRouter.ts`.
+1. Créer une branche pour votre fonctionnalité : `git checkout -b feature/AmazingFeature`.
+2. Valider vos modifications : `git commit -m 'Add some AmazingFeature'`.
+3. Pousser vers la branche : `git push origin feature/AmazingFeature`.
+4. Ouvrir une Pull Request.
 
----
+## Licence
 
-### 📄 Licence
-
-Ce projet est distribué sous licence **MIT**. Voir le fichier `LICENSE` pour plus de détails.
-
----
-
-### 🤝 Contribution
-
-1.  Forkez le projet.
-2.  Créez votre branche de fonctionnalité (`git checkout -b feature/AmazingFeature`).
-3.  Committez vos changements (`git commit -m 'Add some AmazingFeature'`).
-4.  Pushez la branche (`git push origin feature/AmazingFeature`).
-5.  Ouvrez une Pull Request.
-
----
-*Développé avec passion pour faciliter la recherche d'emploi.*
+Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
