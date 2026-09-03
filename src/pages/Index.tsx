@@ -219,6 +219,22 @@ const Index = () => {
               Modèles
             </Button>
             <Button 
+              onClick={() => navigate('/mes-cv')} 
+              variant="outline"
+              size="sm"
+              className="font-medium press hidden sm:inline-flex"
+            >
+              Mes CV
+            </Button>
+            <Button 
+              onClick={() => navigate('/auth')} 
+              variant="ghost"
+              size="sm"
+              className="font-medium press"
+            >
+              Connexion
+            </Button>
+            <Button 
               onClick={() => navigate('/create')} 
               size="sm"
               className="bg-primary hover:bg-primary/90 font-medium press"

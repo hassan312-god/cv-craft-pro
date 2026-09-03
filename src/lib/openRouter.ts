@@ -70,6 +70,14 @@ export const generateEducationDescription = async (
 
 export type AIStep = "personal" | "experiences" | "education" | "skills" | "socials";
 
+/** Génère un CV complet (toutes les sections) en une seule requête. */
+export const generateFullCV = async (
+  context: { firstName?: string; lastName?: string; jobTitle?: string },
+  model?: OpenRouterModel
+): Promise<Record<string, unknown>> => {
+  return await invokeAI<Record<string, unknown>>("full", { ...context, model });
+};
+
 /** Génère un exemple complet pour une étape du formulaire. */
 export const generateStepContent = async (
   step: AIStep,

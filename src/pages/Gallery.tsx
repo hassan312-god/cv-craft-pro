@@ -155,6 +155,14 @@ const Gallery = () => {
             </Button>
             <h1 className="text-base sm:text-2xl font-bold text-foreground truncate">Galerie de CV</h1>
             <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/mes-cv')}
+              className="press shrink-0 hidden sm:inline-flex"
+            >
+              Mes CV
+            </Button>
+            <Button
               variant="default"
               size="sm"
               onClick={() => navigate('/create')}

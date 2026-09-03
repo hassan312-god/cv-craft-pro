@@ -117,6 +117,33 @@ Réponds uniquement avec les puces, une par ligne, sans numérotation.`,
         },
       ], 40, false, selectedModel)
       result = { text }
+    } else if (action === 'full') {
+      const context = `Profil: ${payload.firstName ?? ''} ${payload.lastName ?? ''}. Métier / secteur visé: ${payload.jobTitle || 'profil professionnel polyvalent'}.`
+      const raw = await callOpenRouter(
+        apiKey,
+        [
+          sys,
+          {
+            role: 'user',
+            content: `${context}
+Génère un CV COMPLET, réaliste et cohérent en français, au format JSON strict correspondant EXACTEMENT à ce schéma:
+{"firstName":string,"lastName":string,"email":string,"phone":string,"address":string,"about":string,
+"experiences":[{"position":string,"company":string,"startDate":"MM/AAAA","endDate":"MM/AAAA ou Présent","description":string}] (3 entrées),
+"education":[{"degree":string,"school":string,"startDate":"AAAA","endDate":"AAAA","description":string}] (2 entrées),
+"skills":[{"name":string,"level":number entre 60 et 95}] (8 entrées),
+"linkedin":string,"github":string,"twitter":string,"portfolio":string}
+Conserve le prénom et le nom fournis s'ils existent. Réponds uniquement avec le JSON, sans texte autour.`,
+          },
+        ],
+        2500,
+        true,
+        selectedModel,
+      )
+      try {
+        result = JSON.parse(raw.replace(/^```(json)?/i, '').replace(/```$/, '').trim())
+      } catch {
+        throw new Error('Réponse IA invalide')
+      }
     } else if (action === 'step') {
       const step = payload.step
       const context = `Profil: ${payload.firstName ?? ''} ${payload.lastName ?? ''}. Métier / secteur visé: ${payload.jobTitle || 'profil professionnel polyvalent'}.`
