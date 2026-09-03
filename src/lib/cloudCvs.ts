@@ -33,7 +33,7 @@ export const saveCVToCloud = async (
   const payload = {
     user_id: userId,
     title,
-    cv_data: cvData as unknown as Record<string, unknown>,
+    cv_data: JSON.parse(JSON.stringify(cvData)) as never,
     template: cvData.template ?? null,
     theme: cvData.theme ?? null,
   };
