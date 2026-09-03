@@ -10,7 +10,9 @@ import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowR
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
-import { generateAbout, generateExperienceDescription, generateEducationDescription, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
+import { generateAbout, generateExperienceDescription, generateEducationDescription, generateStepContent, generateFullCV, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveCVToCloud } from "@/lib/cloudCvs";
 import { getTemplateComponent } from "@/lib/templateConfig";
 import { allThemes } from "@/lib/themeConfig";
 import { saveDraft, getAllDrafts, getDraft, deleteDraft, formatDraftDate, Draft } from "@/lib/draftStorage";
@@ -83,6 +85,12 @@ const CVCreate = () => {
   const [selectedAiModel, setSelectedAiModel] = useState<OpenRouterModel>(OPENROUTER_MODELS[0].value);
   const [isImportingCV, setIsImportingCV] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [jobTitle, setJobTitle] = useState("");
+  const [isGeneratingFull, setIsGeneratingFull] = useState(false);
+  const [isSavingCloud, setIsSavingCloud] = useState(false);
+  const { user } = useAuth();
+  const [savedCvId, setSavedCvId] = useState<string | null>((location.state?.savedCvId as string) ?? null);
+  const [savedCvTitle, setSavedCvTitle] = useState<string>((location.state?.savedCvTitle as string) ?? "");
   const cvPreviewRef = useRef<HTMLDivElement>(null);
   const cvPreviewVisibleRef = useRef<HTMLDivElement>(null);
   
@@ -370,6 +378,105 @@ const CVCreate = () => {
     }));
   };
 
+  const applyGenerated = (data: Record<string, unknown>) => {
+    setCvData((prev) => {
+      const next = { ...prev };
+      const str = (k: string) => (typeof data[k] === "string" ? (data[k] as string) : undefined);
+      (["firstName", "lastName", "email", "phone", "address", "about", "linkedin", "github", "twitter", "portfolio"] as const).forEach((k) => {
+        const v = str(k);
+        if (v) (next as any)[k] = v;
+      });
+      if (Array.isArray(data.experiences)) {
+        next.experiences = (data.experiences as any[]).map((e, i) => ({
+          id: `${Date.now()}-exp-${i}`,
+          company: e.company ?? "",
+          position: e.position ?? "",
+          startDate: e.startDate ?? "",
+          endDate: e.endDate ?? "",
+          description: e.description ?? "",
+        }));
+      }
+      if (Array.isArray(data.education)) {
+        next.education = (data.education as any[]).map((e, i) => ({
+          id: `${Date.now()}-edu-${i}`,
+          school: e.school ?? "",
+          degree: e.degree ?? "",
+          startDate: e.startDate ?? "",
+          endDate: e.endDate ?? "",
+          description: e.description ?? "",
+        }));
+      }
+      if (Array.isArray(data.skills)) {
+        next.skills = (data.skills as any[]).map((s, i) => ({
+          id: `${Date.now()}-skill-${i}`,
+          name: s.name ?? "",
+          level: typeof s.level === "number" ? s.level : 75,
+        }));
+      }
+      return next;
+    });
+  };
+
+  const handleGenerateFullCV = async (downloadPdf = false) => {
+    setIsGeneratingFull(true);
+    toast.loading("Génération du CV complet avec IA...", { id: "ai-full" });
+    try {
+      const data = await generateFullCV(
+        { firstName: cvData.firstName, lastName: cvData.lastName, jobTitle },
+        selectedAiModel
+      );
+      applyGenerated(data);
+      toast.success("CV généré avec IA", { id: "ai-full" });
+      if (downloadPdf) {
+        await new Promise((r) => setTimeout(r, 300));
+        await handleDownloadPDF();
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Génération impossible", { id: "ai-full" });
+    } finally {
+      setIsGeneratingFull(false);
+    }
+  };
+
+  const handleGenerateStep = async () => {
+    const stepKeys = ["personal", "experiences", "education", "skills", "socials"] as const;
+    const step = stepKeys[currentStep];
+    if (!step) {
+      toast.info("Aucune génération IA pour cette étape");
+      return;
+    }
+    setIsGenerating(`step-${step}`);
+    try {
+      const data = await generateStepContent(step, { firstName: cvData.firstName, lastName: cvData.lastName, jobTitle }, selectedAiModel);
+      applyGenerated(data);
+      toast.success("Section générée avec IA");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Génération impossible");
+    } finally {
+      setIsGenerating(null);
+    }
+  };
+
+  const handleSaveCloud = async () => {
+    if (!user) {
+      toast.error("Connectez-vous pour sauvegarder dans le cloud");
+      navigate("/auth");
+      return;
+    }
+    setIsSavingCloud(true);
+    try {
+      const title = savedCvTitle || `${cvData.firstName || "CV"} ${cvData.lastName || ""}`.trim() || "Mon CV";
+      const id = await saveCVToCloud(cvData, title, savedCvId);
+      setSavedCvId(id);
+      setSavedCvTitle(title);
+      toast.success("CV sauvegardé dans le cloud");
+    } catch {
+      toast.error("Sauvegarde cloud impossible");
+    } finally {
+      setIsSavingCloud(false);
+    }
+  };
+
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     toast.loading("Génération du PDF en cours...", {
@@ -559,6 +666,15 @@ const CVCreate = () => {
             <Button
               variant="outline"
               size="sm"
+              onClick={() => navigate(user ? "/mes-cv" : "/auth")}
+              className="font-medium px-2 sm:px-3"
+            >
+              <FolderOpen className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Mes CV</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setShowMobilePreview(true)}
               className="font-medium px-2 lg:hidden"
               aria-label="Aperçu du CV"
@@ -661,6 +777,37 @@ const CVCreate = () => {
                         <option key={model.value} value={model.value}>{model.label}</option>
                       ))}
                     </select>
+                  </div>
+
+                  <div className="rounded-lg border border-primary/40 bg-primary/5 p-4 space-y-3">
+                    <div>
+                      <p className="font-medium text-foreground">Générer un CV complet avec IA</p>
+                      <p className="text-xs text-muted-foreground">Toutes les sections sont remplies en une seule étape.</p>
+                    </div>
+                    <Input
+                      value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)}
+                      placeholder="Métier visé (ex : Développeur Full Stack)"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <Button
+                        onClick={() => handleGenerateFullCV(false)}
+                        disabled={isGeneratingFull}
+                        className="bg-primary hover:bg-primary/90 font-medium w-full"
+                      >
+                        {isGeneratingFull ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                        Générer le CV complet
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleGenerateFullCV(true)}
+                        disabled={isGeneratingFull || isDownloading}
+                        className="font-medium w-full"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Générer + PDF A4
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
@@ -1221,6 +1368,30 @@ const CVCreate = () => {
                   <FolderOpen className="w-4 h-4 mr-2" />
                   Brouillons
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSaveCloud}
+                  disabled={isSavingCloud}
+                  className="font-medium press flex-1 sm:flex-none"
+                  title="Sauvegarder dans le cloud"
+                >
+                  {isSavingCloud ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Cloud
+                </Button>
+                {currentStep < 4 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGenerateStep}
+                    disabled={isGenerating !== null}
+                    className="font-medium press flex-1 sm:flex-none"
+                    title="Générer cette section avec IA"
+                  >
+                    {isGenerating?.startsWith("step-") ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                    IA section
+                  </Button>
+                )}
               </div>
             </div>
 
