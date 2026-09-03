@@ -139,7 +139,7 @@ const Gallery = () => {
   const previewCVData = previewTemplateId ? exampleCVs[previewTemplateId]?.data : null;
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <main className="min-h-screen bg-background overflow-x-hidden" aria-label="Galerie de modèles de CV">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50 safe-top">
         <div className="max-w-7xl mx-auto safe-x py-3 sm:py-4">
@@ -497,7 +497,7 @@ const Gallery = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </main>
   );
 };
 

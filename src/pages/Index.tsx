@@ -197,7 +197,7 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <main className="min-h-screen bg-background overflow-x-hidden" aria-label="Page d'accueil">
       {/* Header */}
       <header className="border-b border-border bg-card/90 backdrop-blur-md sticky top-0 z-50 safe-top">
         <div className="container mx-auto safe-x py-3 sm:py-4 flex items-center justify-between gap-3">

@@ -3,8 +3,33 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_PROJECT_ID = (import.meta.env.VITE_SUPABASE_PROJECT_ID ?? '').trim();
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || (
+  SUPABASE_PROJECT_ID ? `https://${SUPABASE_PROJECT_ID}.supabase.co` : ''
+))
+  .trim()
+  .replace(/^['"]|['"]$/g, '')
+  .replace(/\/+$/, '');
+const SUPABASE_PUBLISHABLE_KEY = (
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY ?? ''
+).trim().replace(/^['"]|['"]$/g, '');
+
+if (!SUPABASE_URL) {
+  throw new Error('VITE_SUPABASE_URL is missing. Add your Supabase project URL to the Vite environment.');
+}
+
+try {
+  const parsedUrl = new URL(SUPABASE_URL);
+  if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+    throw new Error();
+  }
+} catch {
+  throw new Error('VITE_SUPABASE_URL must be a valid HTTP(S) URL, for example https://your-project.supabase.co.');
+}
+
+if (!SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error('VITE_SUPABASE_PUBLISHABLE_KEY is missing. Add your Supabase publishable key to the Vite environment.');
+}
 
 
 function isNewSupabaseApiKey(value: string): boolean {

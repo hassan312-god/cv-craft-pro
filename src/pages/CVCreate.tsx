@@ -652,7 +652,7 @@ const CVCreate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background" aria-label="Création de CV">
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-50">
         <div className="container mx-auto safe-x py-3 sm:py-5 flex items-center justify-between gap-2">
@@ -1630,7 +1630,7 @@ const CVCreate = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </main>
   );
 };
 
