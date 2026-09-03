@@ -1,151 +1,74 @@
-<img src="public/favicon.ico" width="48" height="48" alt="CV Craft Pro Logo" align="right" />
+# CV Builder Pro
 
-# CV Craft Pro
+Application web pour créer, personnaliser, sauvegarder et exporter des CV professionnels au format PDF A4.
 
-CV Craft Pro est un générateur de CV moderne, pensé pour créer des curriculum vitae professionnels en quelques minutes. L’application combine un éditeur visuel, des templates premium, une IA d’assistance et des exports PDF/Word.
+## Fonctionnalités
 
-## Vue d’ensemble
+- Création guidée en 5 étapes (informations, expériences, formation, compétences, thème)
+- Génération IA d'un **CV complet en une seule étape** (ou section par section)
+- Plus de 30 templates et une galerie de modèles par secteur
+- Aperçu A4 en temps réel (fixe sur desktop, modal sur mobile)
+- Export PDF A4 haute qualité et export Word
+- Brouillons locaux + sauvegarde cloud « Mes CV » (compte requis)
+- Partage par lien, statistiques d'utilisation, import de CV existant (PDF/DOCX)
+- Interface responsive, sans emoji, couleurs solides (aucun gradient)
 
-- Création de CV guidée et rapide
-- Prévisualisation instantanée
-- Templates premium par catégorie
-- Authentification avec Supabase
-- Export PDF et Word
-- Possibilité de partager et sauvegarder les CV
-- IA pour générer ou enrichir le contenu
+## Stack
 
-## Fonctionnalités principales
+- React 18 + TypeScript + Vite
+- Tailwind CSS + shadcn/ui
+- Backend : base de données, authentification et fonctions serveur (Supabase / Lovable Cloud)
+- IA : fonction serveur `ai-cv` (OpenRouter, clé API côté serveur uniquement)
+- PDF : `jspdf` + `html2canvas`
 
-### 1. Création de CV
-- formulaire étape par étape
-- édition des informations personnelles, expériences, formation, compétences
-- thème et template personnalisables
-- sauvegarde automatique des brouillons
-
-### 2. Templates premium
-- collection organisée par style
-- catégories : Moderne, Professionnel, Minimaliste, Créatif, Classique, Avec photo
-- navigation par catégorie et détail par template
-
-### 3. IA et automatisation
-- génération de texte assistée
-- amélioration du profil professionnel
-- intégration OpenRouter
-
-### 4. Export et partage
-- export PDF
-- export Word
-- partage public
-- statistiques de usage
-
-## Stack technique
-
-### Frontend
-- React + TypeScript
-- Vite
-- Tailwind CSS
-- Shadcn UI
-- React Router
-
-### Backend / services
-- Supabase
-- Edge Functions
-- OpenRouter API
-- stockage local + cloud
-
-### Déploiement
-- Vercel
-- Node.js
-
-## Démarrage rapide
-
-### Prérequis
-- Node.js 18+
-- npm
-
-### Installation
+## Démarrage
 
 ```bash
-git clone https://github.com/hassan312-god/cv-craft-pro.git
-cd cv-craft-pro
 npm install
+npm run dev      # http://localhost:8080
+npm run build    # build de production dans dist/
 ```
 
-### Variables d’environnement
+## Variables d'environnement
 
-Créer un fichier `.env` à la racine du projet :
+Front (générées automatiquement) :
 
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-VITE_OPENROUTER_API_KEY=your_openrouter_key
+```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_PUBLISHABLE_KEY=
+VITE_SUPABASE_PROJECT_ID=
 ```
 
-### Lancer le projet
+Côté serveur (secret, jamais exposé au navigateur) :
+
+```
+OPENROUTER_API_KEY=
+OPENROUTER_MODEL=qwen/qwen-2.5-72b-instruct   # optionnel
+```
+
+## Structure
+
+```
+src/
+  pages/        Index, Gallery, CVCreate, Auth, MyCVs, Share, ...
+  components/   CVPreview, TemplateSelector, templates/
+  lib/          pdfExport, wordExport, openRouter, cloudCvs, draftStorage, ...
+  contexts/     AuthContext
+supabase/
+  functions/ai-cv/   proxy IA sécurisé
+```
+
+## Déploiement Vercel
+
+Le fichier `vercel.json` configure le build Vite (`dist/`) et la réécriture SPA.
 
 ```bash
-npm run dev
+npm i -g vercel
+vercel --prod
 ```
 
-### Build de production
-
-```bash
-npm run build
-```
-
-## Structure du projet
-
-```text
-.
-├── api/                     # API serveur / webhooks / proxy
-├── config/                 # configurations
-├── docs/                   # documentation technique
-├── public/                 # assets publics
-├── scripts/                # scripts utiles
-├── server/                 # serveur proxy optionnel
-├── src/
-│   ├── components/         # composants UI et templates
-│   ├── contexts/           # contextes React
-│   ├── hooks/              # hooks personnalisés
-│   ├── integrations/       # intégrations externes
-│   ├── lib/                # logique métier et utilitaires
-│   ├── pages/              # pages de l'application
-│   ├── App.tsx             # routage principal
-│   └── main.tsx            # point d'entrée
-├── supabase/               # migrations et functions
-├── .gitignore
-├── LICENSE
-├── components.json
-├── package.json
-├── README.md               # documentation principale
-├── tailwind.config.ts
-├── tsconfig.json
-├── vercel.json
-├── vite.config.ts
-└── index.html
-```
-
-## Déploiement
-
-### Vercel
-
-```bash
-npm run build
-```
-
-Puis déployer sur Vercel avec les variables d’environnement ci-dessus.
-
-## Documentation complémentaire
-
-La documentation détaillée est conservée dans [docs](docs) et les guides de déploiement restent disponibles si besoin, mais le README principal est le point d’entrée unique du projet.
-
-## Contribution
-
-1. Créer une branche
-2. Développer la fonctionnalité
-3. Vérifier le build
-4. Ouvrir une pull request
+Ajoutez les variables `VITE_*` dans les paramètres du projet Vercel. La génération IA passe par la fonction serveur du backend, aucune clé n'est nécessaire côté Vercel.
 
 ## Licence
 
-Projet distribué sous licence MIT. Voir [LICENSE](LICENSE).
+MIT — voir `LICENSE`.
