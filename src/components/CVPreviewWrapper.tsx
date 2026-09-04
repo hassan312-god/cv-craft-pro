@@ -106,7 +106,8 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
           <div
             className="origin-top-left"
             style={{
-              width: `${a4Width}px`,
+              width: `${a4Width * screenScale}px`,
+              height: `${a4Height * pageCount * screenScale}px`,
               transform: `scale(${screenScale})`,
               transformOrigin: 'top left',
             }}

@@ -358,10 +358,8 @@ const Gallery = () => {
                     className="h-[220px] w-full cursor-pointer overflow-hidden rounded-lg bg-white shadow-soft sm:h-[310px] lg:h-[360px] flex items-center justify-center"
                     onClick={() => handlePreview(templateId)}
                   >
-                    <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                      <div className="origin-top scale-[0.38] sm:scale-[0.5] lg:scale-[0.6]" style={{ width: "794px" }}>
-                        <CVPreview cvData={cvData} />
-                      </div>
+                    <div className="flex w-full items-start justify-center overflow-hidden">
+                      <CVPreview cvData={cvData} />
                     </div>
                   </div>
                 </div>
