@@ -147,14 +147,12 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
                 </div>
 
                 <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-                  <div className="relative flex items-center justify-center bg-gradient-to-b from-slate-50 to-white p-2" style={{ aspectRatio: '210/297' }}>
-                    <div className="h-full w-full overflow-hidden flex items-start justify-center">
-                      <div className="origin-top" style={{ transform: 'scale(0.34)', width: '794px', minHeight: '1123px', backgroundColor: 'white' }}>
+                  <div className="relative flex items-start justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white p-2" style={{ height: '360px' }}>
+                    <div className="origin-top" style={{ transform: 'scale(0.34)', transformOrigin: 'top center', width: '794px', height: '1123px', flexShrink: 0, backgroundColor: 'white' }}>
                       {(() => {
                         const TemplateComponent = getTemplateComponent(template.id);
                         return <TemplateComponent cvData={exampleData} />;
                       })()}
-                      </div>
                     </div>
                   </div>
                 </div>
