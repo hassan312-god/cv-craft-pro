@@ -140,6 +140,23 @@ export const templateConfig: TemplateConfigItem[] = [
   { id: 'photo-05', name: 'Highlight', component: TemplatePhotoCompact, preview: '/templates/photo-05.png', description: 'Disposition compacte avec photo marquante.', category: 'with-photo' }
 ];
 
+export const cvBuilderProTemplates: TemplateConfigItem[] = [
+  { id: 'template-01-modern', name: 'Template 01 - Modern', component: TemplateModernNew, preview: '/placeholder.svg', description: 'Hiérarchie nette et présentation contemporaine.', category: 'modern' },
+  { id: 'template-02-professional', name: 'Template 02 - Professional', component: TemplateProfessional, preview: '/placeholder.svg', description: 'Mise en page fiable pour les candidatures professionnelles.', category: 'professional' },
+  { id: 'template-03-minimal', name: 'Template 03 - Minimal', component: TemplateMinimal, preview: '/placeholder.svg', description: 'Design sobre qui laisse toute la place au contenu.', category: 'minimalist' },
+  { id: 'template-04-executive', name: 'Template 04 - Executive', component: TemplateExecutive, preview: '/placeholder.svg', description: 'Structure premium pour profils seniors et managers.', category: 'professional' },
+  { id: 'template-05-creative', name: 'Template 05 - Creative', component: TemplateCreative, preview: '/placeholder.svg', description: 'Composition expressive pour métiers créatifs.', category: 'creative' },
+  { id: 'template-06-academic', name: 'Template 06 - Academic', component: TemplateClassic, preview: '/placeholder.svg', description: 'Format structuré adapté aux parcours académiques.', category: 'classic' },
+  { id: 'template-07-compact', name: 'Template 07 - Compact', component: TemplateCompact, preview: '/placeholder.svg', description: 'Densité maîtrisée pour présenter davantage d’expérience.', category: 'minimalist' },
+  { id: 'template-08-corporate', name: 'Template 08 - Corporate', component: TemplateCorporate, preview: '/placeholder.svg', description: 'Présentation claire pour environnements corporate.', category: 'professional' },
+  { id: 'template-09-sidebar', name: 'Template 09 - Sidebar', component: TemplateSidebar, preview: '/placeholder.svg', description: 'Colonne latérale pour organiser les informations clés.', category: 'modern' },
+  { id: 'template-10-timeline', name: 'Template 10 - Timeline', component: TemplateTimeline, preview: '/placeholder.svg', description: 'Parcours professionnel présenté comme une progression.', category: 'modern' },
+  { id: 'template-11-two-column', name: 'Template 11 - Two Column', component: TemplateTwoColumn, preview: '/placeholder.svg', description: 'Deux colonnes équilibrées pour une lecture rapide.', category: 'modern' },
+  { id: 'template-12-photo', name: 'Template 12 - Photo', component: TemplatePhotoHeader, preview: '/placeholder.svg', description: 'En-tête visuel avec photo de profil intégrée.', category: 'with-photo' },
+];
+
+templateConfig.unshift(...cvBuilderProTemplates);
+
 templateConfig.push(
   { id: 'ilove-resume', name: 'I Love Resume', component: TemplateModernMinimal, preview: '/placeholder.svg', description: 'Mise en page éditoriale, claire et entièrement côté navigateur.', category: 'jsonresume' },
   { id: 'open-cv-template', name: 'Open CV Template', component: TemplateClassic, preview: '/placeholder.svg', description: 'Structure HTML/CSS simple, lisible et facile à personnaliser.', category: 'jsonresume' },

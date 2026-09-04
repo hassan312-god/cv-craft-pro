@@ -44,24 +44,7 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
               // Mesurer la hauteur réelle du contenu
               const scrollHeight = contentRef.current.scrollHeight;
               
-              // Calculer le nombre de pages A4 nécessaires
-              // Seulement compter une nouvelle page si le contenu dépasse vraiment la limite
-              // Avec une marge de tolérance de 150px pour éviter les pages presque vides
-              let pages = 1;
-              
-              if (scrollHeight <= a4Height) {
-                // Le contenu tient sur une page
-                pages = 1;
-              } else if (scrollHeight > a4Height + 150) {
-                // Le contenu dépasse vraiment, calculer le nombre de pages
-                pages = Math.ceil(scrollHeight / a4Height);
-              } else {
-                // Entre a4Height et a4Height + 150px, on garde 1 page
-                // (le contenu peut être légèrement compressé ou ajusté)
-                pages = 1;
-              }
-              
-              setPageCount(pages);
+              setPageCount(Math.max(1, Math.ceil(scrollHeight / a4Height)));
             }
           });
         });
@@ -118,9 +101,10 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
               className="cv-page-a4"
               style={{
                 width: `${a4Width}px`,
-                minHeight: 'auto',
-                height: 'auto',
+                minHeight: `${a4Height * pageCount}px`,
+                height: `${a4Height * pageCount}px`,
                 backgroundColor: 'white',
+                backgroundImage: `repeating-linear-gradient(to bottom, transparent 0, transparent ${a4Height - 1}px, hsl(var(--border)) ${a4Height - 1}px, hsl(var(--border)) ${a4Height}px)`,
               }}
             >
               {children}

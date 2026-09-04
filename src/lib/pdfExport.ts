@@ -26,13 +26,15 @@ export const exportCVToPDF = async (cvData: CVData): Promise<string> => {
 
     await new Promise((resolve) => setTimeout(resolve, 400));
 
+    const contentHeight = Math.max(1123, container.scrollHeight);
+
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
       width: 794,
-      height: 1123,
+      height: contentHeight,
     });
 
     const pdf = new jsPDF("p", "mm", "a4");

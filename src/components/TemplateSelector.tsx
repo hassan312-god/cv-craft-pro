@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { templateConfig, templateCategories, TemplateCategory, getTemplateComponent } from "@/lib/templateConfig";
+import { cvBuilderProTemplates, templateConfig, templateCategories, TemplateCategory, getTemplateComponent } from "@/lib/templateConfig";
 import { Check } from "lucide-react";
 import { CVData } from "@/pages/CVCreate";
 
@@ -54,9 +54,13 @@ const getExampleCVData = (templateId: string): CVData => ({
 export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) => {
   const [selectedCategory, setSelectedCategory] = useState<TemplateCategory>("all");
 
-  const filteredTemplates = templateConfig.filter(template => 
-    selectedCategory === "all" || template.category === selectedCategory
-  );
+  const filteredTemplates = [...templateConfig]
+    .filter(template => selectedCategory === "all" || template.category === selectedCategory)
+    .sort((first, second) => {
+      const firstIsLocal = cvBuilderProTemplates.some((template) => template.id === first.id);
+      const secondIsLocal = cvBuilderProTemplates.some((template) => template.id === second.id);
+      return Number(secondIsLocal) - Number(firstIsLocal);
+    });
 
   return (
     <div className="space-y-6">
@@ -64,7 +68,7 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="mb-2 inline-flex items-center rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-              Premium collection
+              CV Builder Pro · 12 templates locaux
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Templates premium</h2>
           </div>
