@@ -52,6 +52,7 @@
     "embla-carousel-react": "^8.6.0",
     "feather-icons": "^4.29.2",
     "file-saver": "^2.0.5",
+    "handlebars": "^4.7.9",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
     "jsonresume-theme-even": "^0.26.1",

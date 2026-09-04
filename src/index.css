@@ -179,13 +179,22 @@
   box-sizing: border-box;
 }
 
-/* Force les dimensions A4 sur tous les Cards dans le wrapper CV */
-.cv-page-a4 [class*="Card"],
-.cv-page-a4 [class*="card"] {
-  width: 794px !important;
-  min-height: 1123px !important;
-  max-width: 794px !important;
-  box-sizing: border-box;
+.cv-page-a4 h1,
+.cv-page-a4 h2,
+.cv-page-a4 h3,
+.cv-page-a4 p,
+.cv-page-a4 span,
+.cv-page-a4 a {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.cv-page-a4 .flex {
+  min-width: 0;
+}
+
+.cv-page-a4 .flex > * {
+  min-width: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

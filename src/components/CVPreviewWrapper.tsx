@@ -18,7 +18,7 @@ export const CVPreviewWrapper = ({ children }: CVPreviewWrapperProps) => {
   // Adapter l'échelle à la largeur disponible (mobile inclus)
   const updateScale = useCallback(() => {
     const available = outerRef.current?.clientWidth ?? window.innerWidth;
-    const next = Math.min(0.7, Math.max(0.28, (available - 8) / a4Width));
+    const next = Math.min(0.7, Math.max(0.2, (available - 8) / a4Width));
     setScreenScale(Number.isFinite(next) && next > 0 ? next : 0.7);
   }, []);
 

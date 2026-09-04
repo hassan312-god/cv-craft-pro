@@ -61,7 +61,7 @@ const Index = () => {
       const typingSpeed = isDeleting ? 30 : 100;
       const pauseTime = isDeleting ? 500 : 2000;
 
-      let pauseTimer: NodeJS.Timeout | null = null;
+      let pauseTimer: ReturnType<typeof setTimeout> | null = null;
 
       const timer = setTimeout(() => {
         if (!isDeleting && charIndex < currentPhrase.length) {

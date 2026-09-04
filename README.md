@@ -31,6 +31,9 @@ npm run build    # build de production dans dist/
 
 ## Variables d'environnement
 
+Copiez `.env.example` vers `.env.local`, puis remplacez les valeurs Supabase
+par celles de votre projet avant de lancer le serveur de développement.
+
 Front (générées automatiquement) :
 
 ```

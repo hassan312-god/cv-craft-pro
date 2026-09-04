@@ -23,6 +23,7 @@ import { incrementCVsCreated, incrementPDFsExported, incrementWordsExported, inc
 import { importCVFromFile } from "@/lib/importCV";
 import { exportCVToPDF } from "@/lib/pdfExport";
 import { importCVFile } from "@/lib/cvFileImport";
+import { importJsonResumeFile } from "@/lib/jsonResumeImport";
 
 export interface Experience {
   id: string;
@@ -206,7 +207,9 @@ const CVCreate = () => {
     if (!file) return;
     setIsImportingCV(true);
     try {
-      const importedData = await importCVFile(file);
+      const importedData = file.name.toLowerCase().endsWith(".json")
+        ? await importJsonResumeFile(file)
+        : await importCVFile(file);
       setCvData((current) => ({ ...current, ...importedData }));
       toast.success("CV importé. Vérifiez les champs avant de continuer.");
     } catch (error) {
@@ -761,7 +764,7 @@ const CVCreate = () => {
                       <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
                         {isImportingCV ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
                         {isImportingCV ? "Import..." : "Choisir un fichier"}
-                        <input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleImportCV} disabled={isImportingCV} className="hidden" />
+                        <input type="file" accept=".json,.pdf,.docx,application/json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handleImportCV} disabled={isImportingCV} className="hidden" />
                       </label>
                     </div>
                   </div>
