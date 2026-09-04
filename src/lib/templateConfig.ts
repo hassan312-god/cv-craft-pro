@@ -140,6 +140,13 @@ export const templateConfig: TemplateConfigItem[] = [
   { id: 'photo-05', name: 'Highlight', component: TemplatePhotoCompact, preview: '/templates/photo-05.png', description: 'Disposition compacte avec photo marquante.', category: 'with-photo' }
 ];
 
+templateConfig.push(
+  { id: 'ilove-resume', name: 'I Love Resume', component: TemplateModernMinimal, preview: '/placeholder.svg', description: 'Mise en page éditoriale, claire et entièrement côté navigateur.', category: 'jsonresume' },
+  { id: 'open-cv-template', name: 'Open CV Template', component: TemplateClassic, preview: '/placeholder.svg', description: 'Structure HTML/CSS simple, lisible et facile à personnaliser.', category: 'jsonresume' },
+  { id: 'html-css-cv-demo', name: 'HTML-CSS-CV-demo', component: TemplateMinimal, preview: '/placeholder.svg', description: 'Présentation minimaliste centrée sur le contenu.', category: 'jsonresume' },
+  { id: 'html-resume', name: 'HTML Resume', component: TemplateProfessional, preview: '/placeholder.svg', description: 'Format professionnel classique, conçu pour l’impression PDF.', category: 'jsonresume' },
+);
+
 export const jsonResumeTemplates: TemplateConfigItem[] = jsonResumeThemes.map((theme) => ({
   id: theme.id,
   name: theme.name,

@@ -816,4 +816,24 @@ Object.assign(exampleCVs, {
     colorTheme: "JSON Resume Spartan",
     data: { ...jsonResumeGalleryData, template: "jsonresume-spartan" },
   },
+  "ilove-resume": {
+    category: "jsonresume" as const,
+    colorTheme: "I Love Resume",
+    data: { ...jsonResumeGalleryData, template: "ilove-resume" },
+  },
+  "open-cv-template": {
+    category: "jsonresume" as const,
+    colorTheme: "Open CV Template",
+    data: { ...jsonResumeGalleryData, template: "open-cv-template" },
+  },
+  "html-css-cv-demo": {
+    category: "jsonresume" as const,
+    colorTheme: "HTML-CSS-CV-demo",
+    data: { ...jsonResumeGalleryData, template: "html-css-cv-demo" },
+  },
+  "html-resume": {
+    category: "jsonresume" as const,
+    colorTheme: "HTML Resume",
+    data: { ...jsonResumeGalleryData, template: "html-resume" },
+  },
 } satisfies Record<string, CVExample>);
