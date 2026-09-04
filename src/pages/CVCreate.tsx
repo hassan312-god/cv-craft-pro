@@ -117,11 +117,11 @@ const CVCreate = () => {
   });
 
   const steps = [
-    { id: 0, title: "Informations Personnelles", icon: "user" },
-    { id: 1, title: "Expériences Professionnelles", icon: "briefcase" },
-    { id: 2, title: "Formation", icon: "graduation" },
-    { id: 3, title: "Compétences", icon: "award" },
-    { id: 4, title: "Thème & Template", icon: "palette" }
+    { id: 0, title: "Personnalisation", shortTitle: "Profil", icon: "user" },
+    { id: 1, title: "Expériences professionnelles", shortTitle: "Expérience", icon: "briefcase" },
+    { id: 2, title: "Formation", shortTitle: "Formation", icon: "graduation" },
+    { id: 3, title: "Compétences", shortTitle: "Compétences", icon: "award" },
+    { id: 4, title: "Choisir un modèle", shortTitle: "Modèle", icon: "palette" }
   ];
 
   useEffect(() => {
@@ -727,18 +727,22 @@ const CVCreate = () => {
             <div className="-mx-1 overflow-x-auto pb-1 mb-6 sm:mb-8">
               <div className="flex items-center min-w-max px-1 sm:min-w-0">
                 {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center flex-1">
+                  <div key={step.id} className="flex min-w-[76px] items-center flex-1">
                     <button
                       onClick={() => setCurrentStep(index)}
-                      className={`w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center font-bold transition-all ${
+                      aria-label={`Aller à l'étape ${index + 1} : ${step.title}`}
+                      className={`flex w-full flex-col items-center gap-1 text-center text-[10px] font-medium sm:text-xs ${
                         currentStep === index 
-                          ? 'bg-primary text-primary-foreground scale-110' 
+                          ? 'text-primary' 
                           : currentStep > index
-                          ? 'bg-primary/20 text-primary'
-                          : 'bg-muted text-muted-foreground'
+                          ? 'text-primary/80'
+                          : 'text-muted-foreground'
                       }`}
                     >
-                      {index + 1}
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-muted font-bold sm:h-10 sm:w-10">
+                        {index + 1}
+                      </span>
+                      <span className="hidden max-w-[84px] truncate sm:block">{step.shortTitle}</span>
                     </button>
                     {index < steps.length - 1 && (
                       <div className={`w-10 sm:w-auto sm:flex-1 h-1 mx-2 ${currentStep > index ? 'bg-primary' : 'bg-muted'}`} />
@@ -758,8 +762,8 @@ const CVCreate = () => {
                   <div className="rounded-lg border border-dashed border-primary/40 bg-primary/5 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div>
-                        <p className="font-medium text-foreground">Importer un CV existant</p>
-                        <p className="text-xs text-muted-foreground">PDF ou DOCX. Les informations seront extraites puis modifiables.</p>
+                        <p className="font-medium text-foreground">Vous avez déjà un CV ?</p>
+                        <p className="text-xs text-muted-foreground">Importez un PDF, DOCX ou JSON Resume pour préremplir votre profil.</p>
                       </div>
                       <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
                         {isImportingCV ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
@@ -784,8 +788,8 @@ const CVCreate = () => {
 
                   <div className="rounded-lg border border-primary/40 bg-primary/5 p-4 space-y-3">
                     <div>
-                      <p className="font-medium text-foreground">Générer un CV complet avec IA</p>
-                      <p className="text-xs text-muted-foreground">Toutes les sections sont remplies en une seule étape.</p>
+                      <p className="font-medium text-foreground">Quel poste recherchez-vous ?</p>
+                      <p className="text-xs text-muted-foreground">Indiquez votre objectif pour personnaliser les exemples et le contenu.</p>
                     </div>
                     <Input
                       value={jobTitle}
@@ -815,7 +819,7 @@ const CVCreate = () => {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName">Prénom</Label>
+                      <Label htmlFor="firstName">Votre prénom</Label>
                       <Input 
                         id="firstName"
                         value={cvData.firstName}
@@ -824,7 +828,7 @@ const CVCreate = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Nom</Label>
+                      <Label htmlFor="lastName">Votre nom</Label>
                       <Input 
                         id="lastName"
                         value={cvData.lastName}

@@ -1,28 +1,28 @@
 import { ArrowRight, Check, FileText, LayoutTemplate, Sparkles, WandSparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { exampleCVs } from "@/lib/exampleCVData";
+import { getTemplateComponent } from "@/lib/templateConfig";
 
 const previewSheets = [
-  { name: "Modern", accent: "bg-slate-800", side: "bg-slate-800", text: "bg-slate-700" },
-  { name: "Professional", accent: "bg-emerald-600", side: "bg-emerald-600", text: "bg-slate-700" },
-  { name: "Creative", accent: "bg-orange-500", side: "bg-orange-500", text: "bg-slate-700" },
+  { name: "Modern", data: exampleCVs["dev-fullstack"].data },
+  { name: "Professional", data: exampleCVs["data-scientist"].data },
+  { name: "Creative", data: exampleCVs["ux-designer"].data },
 ];
 
-const PreviewSheet = ({ name, accent, side, text }: typeof previewSheets[number]) => (
-  <div className="group relative aspect-[0.7] w-full max-w-[190px] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-xl">
-    <div className={`h-5 ${accent}`} />
-    <div className="flex h-full gap-2 p-3">
-      <div className={`w-[28%] shrink-0 ${side} p-2`}>
-        <div className="mb-3 h-7 w-7 rounded-full bg-white/70" />
-        <div className="space-y-1.5"><div className="h-1 w-full rounded bg-white/70" /><div className="h-1 w-4/5 rounded bg-white/50" /><div className="h-1 w-full rounded bg-white/50" /></div>
+const PreviewSheet = ({ name, data }: typeof previewSheets[number]) => {
+  const TemplateComponent = getTemplateComponent(data.template);
+
+  return (
+    <div className="group relative aspect-[0.7] w-full max-w-[210px] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-xl">
+      <div className="absolute inset-0 flex items-start justify-center overflow-hidden bg-slate-50">
+        <div className="origin-top" style={{ width: "794px", height: "1123px", transform: "scale(0.25)", backgroundColor: "white" }}>
+          <TemplateComponent cvData={data} />
+        </div>
       </div>
-      <div className="min-w-0 flex-1 pt-1">
-        <div className={`mb-1 h-2 w-3/4 rounded ${text}`} /><div className="mb-4 h-1 w-1/2 rounded bg-slate-300" />
-        {["w-full", "w-5/6", "w-full", "w-4/5", "w-full", "w-3/4", "w-full", "w-5/6"].map((width, index) => <div key={index} className={`mb-2 h-1 rounded bg-slate-200 ${width}`} />)}
-      </div>
+      <span className="absolute bottom-2 left-2 rounded bg-white/95 px-1.5 py-0.5 text-[9px] font-semibold text-slate-700 shadow-sm">{name}</span>
     </div>
-    <span className="absolute bottom-2 left-2 rounded bg-white/90 px-1.5 py-0.5 text-[9px] font-semibold text-slate-700">{name}</span>
-  </div>
-);
+  );
+};
 
 const Index = () => {
   const navigate = useNavigate();
