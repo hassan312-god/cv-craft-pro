@@ -44,6 +44,10 @@ import { TemplateTimeline } from "@/components/templates/TemplateTimeline";
 import { TemplatePhotoModern } from "@/components/templates/TemplatePhotoModern";
 import { TemplatePhotoCompact } from "@/components/templates/TemplatePhotoCompact";
 
+// Thèmes npm JSON Resume
+import { createJsonResumeTemplate } from "@/components/templates/TemplateJsonResume";
+import { jsonResumeThemes } from "@/lib/jsonResumeThemes";
+
 export type TemplateCategory = 
   | "all"
   | "minimalist"
@@ -51,7 +55,8 @@ export type TemplateCategory =
   | "creative"
   | "with-photo"
   | "modern"
-  | "classic";
+  | "classic"
+  | "jsonresume";
 
 export interface TemplateConfigItem {
   id: string;
@@ -69,7 +74,8 @@ export const templateCategories: Record<TemplateCategory, string> = {
   creative: "Créatif",
   "with-photo": "Avec Photo",
   modern: "Moderne",
-  classic: "Classique"
+  classic: "Classique",
+  jsonresume: "JSON Resume"
 };
 
 export const templateConfig: TemplateConfigItem[] = [
@@ -133,6 +139,17 @@ export const templateConfig: TemplateConfigItem[] = [
   { id: 'photo-04', name: 'Display', component: TemplatePhotoModern, preview: '/templates/photo-04.png', description: 'Template photo moderne et premium.', category: 'with-photo' },
   { id: 'photo-05', name: 'Highlight', component: TemplatePhotoCompact, preview: '/templates/photo-05.png', description: 'Disposition compacte avec photo marquante.', category: 'with-photo' }
 ];
+
+export const jsonResumeTemplates: TemplateConfigItem[] = jsonResumeThemes.map((theme) => ({
+  id: theme.id,
+  name: theme.name,
+  component: createJsonResumeTemplate(theme.id),
+  preview: '/placeholder.svg',
+  description: theme.description,
+  category: 'jsonresume' as TemplateCategory,
+}));
+
+templateConfig.push(...jsonResumeTemplates);
 
 export const getTemplateComponent = (templateId: string) => {
   const template = templateConfig.find(t => t.id === templateId);
