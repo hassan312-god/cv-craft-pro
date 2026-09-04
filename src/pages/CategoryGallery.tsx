@@ -66,18 +66,8 @@ const CategoryGallery = () => {
 
               <div className="p-4">
                 <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-                  <div className="relative bg-gradient-to-b from-slate-50 to-white p-2" style={{ aspectRatio: "210/297" }}>
-                    <div
-                      style={{
-                        transform: "scale(0.34)",
-                        transformOrigin: "center center",
-                        width: "794px",
-                        minHeight: "1123px",
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <CVPreview cvData={cvExample.data} />
-                    </div>
+                  <div className="relative bg-gradient-to-b from-slate-50 to-white p-2">
+                    <CVPreview cvData={cvExample.data} />
                   </div>
                 </div>
 

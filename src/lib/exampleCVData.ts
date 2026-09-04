@@ -8,7 +8,8 @@ export type CVCategory =
   | "finance"
   | "sales"
   | "education"
-  | "medical";
+  | "medical"
+  | "jsonresume";
 
 export interface CVExample {
   data: CVData;
@@ -24,7 +25,8 @@ export const cvCategories: Record<CVCategory, string> = {
   finance: "Finance & Comptabilité",
   sales: "Commerce & Vente",
   education: "Éducation",
-  medical: "Médical & Santé"
+  medical: "Médical & Santé",
+  jsonresume: "JSON Resume"
 };
 
 export const exampleCVs: Record<string, CVExample> = {
@@ -795,3 +797,23 @@ export const exampleCVs: Record<string, CVExample> = {
     }
   }
 };
+
+const jsonResumeGalleryData = exampleCVs["dev-fullstack"].data;
+
+Object.assign(exampleCVs, {
+  "jsonresume-even": {
+    category: "jsonresume" as const,
+    colorTheme: "JSON Resume Even",
+    data: { ...jsonResumeGalleryData, template: "jsonresume-even" },
+  },
+  "jsonresume-onepage-plus": {
+    category: "jsonresume" as const,
+    colorTheme: "JSON Resume One Page Plus",
+    data: { ...jsonResumeGalleryData, template: "jsonresume-onepage-plus" },
+  },
+  "jsonresume-spartan": {
+    category: "jsonresume" as const,
+    colorTheme: "JSON Resume Spartan",
+    data: { ...jsonResumeGalleryData, template: "jsonresume-spartan" },
+  },
+} satisfies Record<string, CVExample>);

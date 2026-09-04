@@ -56,18 +56,8 @@ const TemplateDetail = () => {
           <Card className="overflow-hidden border-border">
             <div className="bg-muted/20 p-3">
               <div className="rounded-xl border border-border bg-white shadow-sm overflow-hidden">
-                <div className="relative bg-gradient-to-b from-slate-50 to-white p-2" style={{ aspectRatio: "210/297" }}>
-                  <div
-                    style={{
-                      transform: "scale(0.42)",
-                      transformOrigin: "center center",
-                      width: "794px",
-                      minHeight: "1123px",
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <CVPreview cvData={item.data} />
-                  </div>
+                <div className="relative bg-gradient-to-b from-slate-50 to-white p-2">
+                  <CVPreview cvData={item.data} />
                 </div>
               </div>
             </div>
