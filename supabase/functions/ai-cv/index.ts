@@ -126,13 +126,16 @@ Réponds uniquement avec les puces, une par ligne, sans numérotation.`,
           {
             role: 'user',
             content: `${context}
-Génère un CV COMPLET, réaliste et cohérent en français, au format JSON strict correspondant EXACTEMENT à ce schéma:
-{"firstName":string,"lastName":string,"email":string,"phone":string,"address":string,"about":string,
-"experiences":[{"position":string,"company":string,"startDate":"MM/AAAA","endDate":"MM/AAAA ou Présent","description":string}] (3 entrées),
-"education":[{"degree":string,"school":string,"startDate":"AAAA","endDate":"AAAA","description":string}] (2 entrées),
-"skills":[{"name":string,"level":number entre 60 et 95}] (8 entrées),
-"linkedin":string,"github":string,"twitter":string,"portfolio":string}
-Conserve le prénom et le nom fournis s'ils existent. Réponds uniquement avec le JSON, sans texte autour.`,
+Génère un CV COMPLET, réaliste et cohérent en français, au format JSON Resume (https://jsonresume.org/schema/) STRICT correspondant EXACTEMENT à ce schéma:
+{"basics":{"name":string,"label":string,"email":string,"phone":string,"url":string,"summary":string,
+"location":{"address":string,"city":string,"countryCode":"FR"},
+"profiles":[{"network":"LinkedIn"|"GitHub"|"Twitter","username":string,"url":string}]},
+"work":[{"name":string,"position":string,"url":string,"startDate":"AAAA-MM","endDate":"AAAA-MM","summary":string,"highlights":[string]}] (3 entrées),
+"education":[{"institution":string,"area":string,"studyType":string,"startDate":"AAAA-MM","endDate":"AAAA-MM","score":string,"courses":[string]}] (2 entrées),
+"skills":[{"name":string,"level":"Débutant"|"Intermédiaire"|"Avancé"|"Expert","keywords":[string]}] (6 entrées),
+"languages":[{"language":string,"fluency":string}] (2 entrées)}
+Les dates respectent le format ISO AAAA-MM. Conserve le prénom et le nom fournis s'ils existent (basics.name = "Prénom Nom").
+Réponds uniquement avec le JSON, sans texte autour.`,
           },
         ],
         2500,
@@ -140,7 +143,11 @@ Conserve le prénom et le nom fournis s'ils existent. Réponds uniquement avec l
         selectedModel,
       )
       try {
-        result = JSON.parse(raw.replace(/^```(json)?/i, '').replace(/```$/, '').trim())
+        const parsed = JSON.parse(raw.replace(/^```(json)?/i, '').replace(/```$/, '').trim())
+        if (!parsed || typeof parsed !== 'object' || !parsed.basics) {
+          throw new Error('schema')
+        }
+        result = parsed
       } catch {
         throw new Error('Réponse IA invalide')
       }
