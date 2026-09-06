@@ -24,6 +24,13 @@ export const exportCVToPDF = async (cvData: CVData): Promise<string> => {
     const root = ReactDOM.createRoot(container);
     root.render(React.createElement(TemplateComponent, { cvData }));
 
+    // Certains modèles (thèmes JSON Resume) se rendent de façon asynchrone :
+    // on attend que le contenu soit réellement présent.
+    const deadline = Date.now() + 6000;
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      if (container.scrollHeight > 80 && (container.textContent ?? "").trim().length > 40) break;
+    }
     await new Promise((resolve) => setTimeout(resolve, 400));
 
     const contentHeight = Math.max(1123, container.scrollHeight);
