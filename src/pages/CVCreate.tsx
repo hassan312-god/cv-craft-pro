@@ -10,7 +10,7 @@ import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowR
 import { CVPreview } from "@/components/CVPreview";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { toast } from "sonner";
-import { generateAbout, generateExperienceDescription, generateEducationDescription, generateStepContent, generateFullCV, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
+import { generateAbout, generateExperienceDescription, generateEducationDescription, generateStepContent, generateFullResume, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveCVToCloud } from "@/lib/cloudCvs";
 import { getTemplateComponent } from "@/lib/templateConfig";
@@ -23,7 +23,7 @@ import { incrementCVsCreated, incrementPDFsExported, incrementWordsExported, inc
 import { importCVFromFile } from "@/lib/importCV";
 import { exportCVToPDF } from "@/lib/pdfExport";
 import { importCVFile } from "@/lib/cvFileImport";
-import { importJsonResumeFile } from "@/lib/jsonResumeImport";
+import { importJsonResumeFile, importJsonResume } from "@/lib/jsonResumeImport";
 
 export interface Experience {
   id: string;
@@ -424,11 +424,11 @@ const CVCreate = () => {
     setIsGeneratingFull(true);
     toast.loading("Génération du CV complet avec IA...", { id: "ai-full" });
     try {
-      const data = await generateFullCV(
+      const resume = await generateFullResume(
         { firstName: cvData.firstName, lastName: cvData.lastName, jobTitle },
         selectedAiModel
       );
-      applyGenerated(data);
+      applyGenerated(importJsonResume(resume) as Record<string, unknown>);
       toast.success("CV généré avec IA", { id: "ai-full" });
       if (downloadPdf) {
         await new Promise((r) => setTimeout(r, 300));

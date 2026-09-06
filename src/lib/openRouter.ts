@@ -70,13 +70,23 @@ export const generateEducationDescription = async (
 
 export type AIStep = "personal" | "experiences" | "education" | "skills" | "socials";
 
-/** Génère un CV complet (toutes les sections) en une seule requête. */
-export const generateFullCV = async (
+/**
+ * Génère un CV complet en une seule requête, au format JSON Resume valide.
+ * Le résultat peut être rendu directement par un thème JSON Resume.
+ */
+export const generateFullResume = async (
   context: { firstName?: string; lastName?: string; jobTitle?: string },
   model?: OpenRouterModel
 ): Promise<Record<string, unknown>> => {
-  return await invokeAI<Record<string, unknown>>("full", { ...context, model });
+  const resume = await invokeAI<Record<string, unknown>>("full", { ...context, model });
+  if (!resume || typeof resume !== "object" || !("basics" in resume)) {
+    throw new Error("Le CV généré n'est pas un JSON Resume valide");
+  }
+  return resume;
 };
+
+/** Alias historique : renvoie également un JSON Resume. */
+export const generateFullCV = generateFullResume;
 
 /** Génère un exemple complet pour une étape du formulaire. */
 export const generateStepContent = async (

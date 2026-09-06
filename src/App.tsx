@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import CVCreate from "./pages/CVCreate";
+import CVComplete from "./pages/CVComplete";
 import Gallery from "./pages/Gallery";
 import Share from "./pages/Share";
 import Auth from "./pages/Auth";
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/create" element={<CVCreate />} />
+            <Route path="/cv-complet" element={<CVComplete />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:category" element={<CategoryGallery />} />
             <Route path="/gallery/:category/:templateId" element={<TemplateDetail />} />

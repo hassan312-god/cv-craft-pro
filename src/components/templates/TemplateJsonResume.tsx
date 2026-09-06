@@ -50,9 +50,18 @@ export const TemplateJsonResume = ({ cvData, themeId }: Props) => {
     );
   }
 
+  // Les thèmes ciblent `body` : une fois scopés, certaines règles (grid, max-width)
+  // rétrécissent le contenu dans la page A4. On rétablit la pleine largeur.
+  const widthFix = `
+    .${scopeClass} { width: 100% !important; max-width: 100% !important; margin: 0 !important; box-sizing: border-box; }
+    .${scopeClass}[style], .${scopeClass} { grid-template-columns: minmax(0, 1fr) !important; }
+    .${scopeClass} > * { max-width: 100% !important; min-width: 0 !important; }
+    .${scopeClass} img { max-width: 100% !important; height: auto !important; }
+  `;
+
   return (
     <div className={scopeClass} style={{ width: "100%" }}>
-      <style dangerouslySetInnerHTML={{ __html: state.css }} />
+      <style dangerouslySetInnerHTML={{ __html: `${state.css}\n${widthFix}` }} />
       <div dangerouslySetInnerHTML={{ __html: state.html }} />
     </div>
   );
