@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight, Eye, Maximize2, PencilRuler } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Reveal } from "@/components/Reveal";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
 import { PAGE_HEIGHT, PAGE_WIDTH } from "@/lib/canvasDocument";
 import {
@@ -115,7 +116,7 @@ const TemplatesGallery = () => {
               Créer mon CV
             </button>
             <button
-              onClick={() => navigate("/gallery")}
+              onClick={() => navigate("/exemples")}
               className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-[15px] font-bold text-slate-700 transition hover:-translate-y-0.5 hover:border-slate-900"
             >
               Partir d'un exemple
@@ -224,24 +225,7 @@ const TemplatesGallery = () => {
         </div>
       </section>
 
-      {/* Appel à l'action */}
-      <section className="bg-[#0d2a50] px-5 py-16 text-center text-white sm:px-8 sm:py-20">
-        <Reveal>
-          <h2 className="font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-4xl">
-            Prêt à composer votre CV ?
-          </h2>
-          <p className="mx-auto mt-4 max-w-md text-[15px] leading-7 text-slate-300">
-            Saisissez votre parcours une fois, puis testez toutes les mises en page sans jamais
-            retaper une ligne.
-          </p>
-          <button
-            onClick={() => navigate("/create")}
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-7 py-3.5 text-[15px] font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
-            Créer mon CV gratuitement
-          </button>
-        </Reveal>
-      </section>
+      <SiteFooter />
 
       {/* Aperçu agrandi */}
       <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>

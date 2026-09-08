@@ -16,6 +16,8 @@ import CategoryGallery from "./pages/CategoryGallery";
 import TemplateDetail from "./pages/TemplateDetail";
 import CanvasStudio from "./pages/CanvasStudio";
 import TemplatesGallery from "./pages/TemplatesGallery";
+import CVWizard from "./pages/CVWizard";
+import ExamplesByIndustry from "./pages/ExamplesByIndustry";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,7 +31,8 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/create" element={<CVCreate />} />
+            <Route path="/create" element={<CVWizard />} />
+            <Route path="/formulaire" element={<CVCreate />} />
             <Route path="/cv-complet" element={<CVComplete />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/gallery/:category" element={<CategoryGallery />} />
@@ -39,6 +42,7 @@ const App = () => (
             <Route path="/share/:shareId" element={<Share />} />
             <Route path="/editeur" element={<CanvasStudio />} />
             <Route path="/modeles" element={<TemplatesGallery />} />
+            <Route path="/exemples" element={<ExamplesByIndustry />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="/__jrtest" element={<JrTest />} />
           <Route path="*" element={<NotFound />} />
