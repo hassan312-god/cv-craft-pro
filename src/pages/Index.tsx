@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Reveal } from "@/components/Reveal";
+import { SiteFooter } from "@/components/SiteFooter";
 import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
 import { PAGE_WIDTH } from "@/lib/canvasDocument";
 import { ACCENT_CHOICES, canvasPresets, getPreset } from "@/lib/canvasPresets";
@@ -48,7 +49,7 @@ const PERKS = [
 
 const NAV_LINKS = [
   { label: "Modèles", to: "/modeles" },
-  { label: "Exemples", to: "/gallery" },
+  { label: "Exemples", to: "/exemples" },
   { label: "Fonctionnalités", to: "#fonctionnalites" },
   { label: "Tarifs", to: "#tarifs" },
   { label: "FAQ", to: "#faq" },
@@ -132,43 +133,6 @@ const FAQ = [
   },
 ];
 
-const FOOTER_COLUMNS = [
-  {
-    title: "Produit",
-    links: [
-      { label: "Créer un CV", to: "/create" },
-      { label: "Éditeur canvas", to: "/editeur" },
-      { label: "Modèles de CV", to: "/modeles" },
-      { label: "Mes CV", to: "/mes-cv" },
-    ],
-  },
-  {
-    title: "Modèles",
-    links: [
-      { label: "Modèles modernes", to: "/modeles" },
-      { label: "Modèles simples", to: "/modeles" },
-      { label: "Modèles professionnels", to: "/modeles" },
-      { label: "Modèles créatifs", to: "/modeles" },
-    ],
-  },
-  {
-    title: "Ressources",
-    links: [
-      { label: "Exemples par métier", to: "/gallery" },
-      { label: "Comment ça marche", to: "#etapes" },
-      { label: "Questions fréquentes", to: "#faq" },
-      { label: "Tarifs", to: "#tarifs" },
-    ],
-  },
-  {
-    title: "Compte",
-    links: [
-      { label: "Connexion", to: "/auth" },
-      { label: "Créer un compte", to: "/auth" },
-      { label: "Mes brouillons", to: "/mes-cv" },
-    ],
-  },
-];
 
 /* ------------------------------------------------------------------ */
 /* Composants                                                          */
@@ -649,77 +613,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ---------------------------------------------------------- */}
-      {/* Appel à l'action final                                      */}
-      {/* ---------------------------------------------------------- */}
-      <section className="bg-[#0d2a50] px-5 py-20 text-white sm:px-8 sm:py-24">
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-5xl">
-              Votre prochain poste commence par un bon CV
-            </h2>
-            <p className="mx-auto mt-5 max-w-md text-[17px] leading-8 text-slate-300">
-              Choisissez un modèle, remplissez votre parcours, exportez. C'est tout.
-            </p>
-            <button
-              onClick={() => go("/create")}
-              className="mt-9 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-8 py-4 text-[15px] font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-700"
-            >
-              Créer mon CV gratuitement <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ---------------------------------------------------------- */}
-      {/* Pied de page                                                */}
-      {/* ---------------------------------------------------------- */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
-            <div className="lg:col-span-1">
-              <div className="flex items-center gap-2 font-display text-xl font-extrabold">
-                <LayoutTemplate className="h-5 w-5 text-emerald-600" /> CVCraft
-              </div>
-              <p className="mt-4 max-w-xs text-sm leading-6 text-slate-500">
-                Créez un CV qui vous ressemble et ouvrez la porte à de nouvelles opportunités.
-              </p>
-            </div>
-
-            {FOOTER_COLUMNS.map((column) => (
-              <div key={column.title}>
-                <h3 className="font-display text-sm font-bold uppercase tracking-wide text-slate-900">
-                  {column.title}
-                </h3>
-                <ul className="mt-4 space-y-2.5">
-                  {column.links.map((link) => (
-                    <li key={link.label}>
-                      <button
-                        onClick={() => go(link.to)}
-                        className="text-sm text-slate-500 transition-colors hover:text-emerald-700"
-                      >
-                        {link.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 sm:flex-row">
-            <p className="text-xs text-slate-500">
-              © {new Date().getFullYear()} CV Craft Pro. Tous droits réservés.
-            </p>
-            <button
-              onClick={() => go("/create")}
-              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700"
-            >
-              Créer mon CV <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 };
