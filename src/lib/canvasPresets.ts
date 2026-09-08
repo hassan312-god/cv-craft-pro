@@ -17,10 +17,22 @@ import {
  * librement déplaçable, redimensionnable et restylable par l'utilisateur.
  */
 
+export type PresetCategory = "moderne" | "simple" | "professionnel" | "creatif";
+
+export const PRESET_CATEGORIES: Record<PresetCategory, string> = {
+  moderne: "Moderne",
+  simple: "Simple",
+  professionnel: "Professionnel",
+  creatif: "Créatif",
+};
+
 export interface CanvasPreset {
   id: string;
   name: string;
   description: string;
+  category: PresetCategory;
+  /** Étiquettes affichées sur la carte de la galerie. */
+  tags: string[];
   accent: string;
   /** Aperçu simplifié affiché dans la liste des modèles. */
   swatch: string[];
@@ -236,6 +248,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "sidebar",
     name: "Sidebar Moderne",
     description: "Colonne latérale colorée avec photo, contact et compétences.",
+    category: "moderne",
+    tags: ["Populaire", "Avec photo"],
     accent: "#1e40af",
     swatch: ["#1e40af", "#ffffff"],
     build: buildSidebar,
@@ -244,6 +258,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "minimal",
     name: "Minimal Centré",
     description: "Typographie aérée et sections centrées, très lisible.",
+    category: "simple",
+    tags: ["ATS"],
     accent: "#0f172a",
     swatch: ["#0f172a", "#f8fafc"],
     build: buildMinimal,
@@ -252,6 +268,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "two-columns",
     name: "Deux Colonnes",
     description: "Bandeau d'en-tête et colonne de droite pour les compétences.",
+    category: "professionnel",
+    tags: ["Populaire", "ATS"],
     accent: "#0d9488",
     swatch: ["#0d9488", "#f8fafc"],
     build: buildTwoColumns,
@@ -260,6 +278,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "creative",
     name: "Créatif Coloré",
     description: "En-tête pleine largeur et parcours en timeline.",
+    category: "creatif",
+    tags: ["Avec photo"],
     accent: "#7c3aed",
     swatch: ["#7c3aed", "#ede9fe"],
     build: buildCreative,
@@ -268,6 +288,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "executive",
     name: "Executive Serif",
     description: "Mise en page sobre en serif pour profils seniors.",
+    category: "professionnel",
+    tags: ["Serif", "ATS"],
     accent: "#7f1d1d",
     swatch: ["#7f1d1d", "#ffffff"],
     build: buildExecutive,
@@ -276,6 +298,8 @@ export const canvasPresets: CanvasPreset[] = [
     id: "banner",
     name: "Bandeau Photo",
     description: "Bandeau sombre avec photo et colonne secondaire.",
+    category: "moderne",
+    tags: ["Avec photo"],
     accent: "#f59e0b",
     swatch: ["#111827", "#f59e0b"],
     build: buildBanner,
