@@ -83,6 +83,9 @@ const CanvasStudio = () => {
   const [doc, setDoc] = useState<CanvasDocument>(() => {
     const fromState = location.state?.canvas;
     if (isCanvasDocument(fromState)) return fromState;
+    // Arrivée depuis la galerie : un modèle et une couleur sont demandés.
+    const presetId = location.state?.presetId as string | undefined;
+    if (presetId) return buildPresetDocument(presetId, location.state?.accent as string | undefined);
     const stored = (location.state?.cvData as CVData | undefined)?.canvas;
     if (isCanvasDocument(stored)) return stored;
     return buildPresetDocument(canvasPresets[0].id);
