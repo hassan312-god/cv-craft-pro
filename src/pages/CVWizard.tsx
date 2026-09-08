@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Plus, Sparkles, Trash2, WandSparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { WizardField, WizardLayout } from "@/components/wizard/WizardLayout";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import { buildPresetDocument, canvasPresets } from "@/lib/canvasPresets";
 import { demoResume } from "@/lib/demoResumes";
 import { saveDraft } from "@/lib/draftStorage";
@@ -167,30 +166,22 @@ const CVWizard = () => {
         wide
       >
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {canvasPresets.map((preset) => {
-            const doc = preset.build(preset.accent);
-            const width = 130;
-            return (
-              <button
-                key={preset.id}
-                onClick={() => setPresetId(preset.id)}
-                className={`overflow-hidden rounded-lg border-2 bg-white p-1 transition ${
-                  presetId === preset.id
-                    ? "border-emerald-600 shadow-md"
-                    : "border-transparent hover:border-slate-300"
-                }`}
-              >
-                <div className="overflow-hidden" style={{ width, height: width * 1.414 }}>
-                  <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-                    <CanvasRenderer doc={doc} cvData={demoResume} />
-                  </div>
-                </div>
-                <span className="mt-1.5 block text-center text-[11px] font-semibold">
-                  {preset.name}
-                </span>
-              </button>
-            );
-          })}
+          {canvasPresets.map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => setPresetId(preset.id)}
+              className={`min-w-0 rounded-lg border-2 bg-white p-1 transition ${
+                presetId === preset.id
+                  ? "border-emerald-600 shadow-md"
+                  : "border-transparent hover:border-slate-300"
+              }`}
+            >
+              <ResumeThumb doc={preset.build(preset.accent)} cvData={demoResume} />
+              <span className="mt-1.5 block text-center text-[11px] font-semibold">
+                {preset.name}
+              </span>
+            </button>
+          ))}
         </div>
       </WizardLayout>
     );
@@ -507,13 +498,12 @@ const CVWizard = () => {
       wide
     >
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-        <div
-          className="shrink-0 overflow-hidden rounded-lg border border-slate-200 shadow-lg"
-          style={{ width: 240, height: 240 * 1.414 }}
-        >
-          <div style={{ transform: `scale(${240 / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-            <CanvasRenderer doc={previewDoc} cvData={cv} />
-          </div>
+        <div className="w-full max-w-[240px] shrink-0">
+          <ResumeThumb
+            doc={previewDoc}
+            cvData={cv}
+            className="rounded-lg border border-slate-200 shadow-lg"
+          />
         </div>
 
         <ul className="w-full space-y-2 text-[15px]">

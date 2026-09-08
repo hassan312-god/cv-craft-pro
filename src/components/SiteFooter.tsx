@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, LayoutTemplate } from "lucide-react";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import { getPreset } from "@/lib/canvasPresets";
 import { demoResumes } from "@/lib/demoResumes";
 
@@ -59,7 +58,7 @@ export const SiteFooter = () => {
     <>
       {/* Bandeau modèles */}
       <section className="bg-[#25286b] px-5 py-16 text-white sm:px-8 sm:py-20">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
           <div>
             <h2 className="font-display text-3xl font-extrabold leading-tight tracking-[-0.02em] sm:text-[2.5rem]">
               Des modèles prêts à l'emploi
@@ -79,21 +78,20 @@ export const SiteFooter = () => {
           <div className="flex justify-center gap-4 sm:gap-6">
             {BANNER_SHEETS.map((sheet, index) => {
               const preset = getPreset(sheet.presetId);
-              const doc = preset.build(preset.accent);
-              const width = 150;
               return (
                 <button
                   key={sheet.presetId}
                   onClick={() => navigate("/editeur", { state: { presetId: sheet.presetId } })}
                   aria-label={`Ouvrir le modèle ${preset.name}`}
-                  className={`overflow-hidden rounded bg-white shadow-2xl transition duration-500 hover:-translate-y-2 ${
+                  className={`w-32 min-w-0 sm:w-36 lg:w-[150px] ${
                     index === 1 ? "hidden sm:block" : index === 2 ? "hidden lg:block" : ""
                   }`}
-                  style={{ width, height: width * 1.414 }}
                 >
-                  <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-                    <CanvasRenderer doc={doc} cvData={sheet.data} />
-                  </div>
+                  <ResumeThumb
+                    doc={preset.build(preset.accent)}
+                    cvData={sheet.data}
+                    className="rounded shadow-2xl transition duration-500 hover:-translate-y-2"
+                  />
                 </button>
               );
             })}

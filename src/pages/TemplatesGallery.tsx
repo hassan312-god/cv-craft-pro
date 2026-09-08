@@ -4,8 +4,7 @@ import { ChevronRight, Eye, Maximize2, PencilRuler } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Reveal } from "@/components/Reveal";
 import { SiteFooter } from "@/components/SiteFooter";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_HEIGHT, PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import {
   ACCENT_CHOICES,
   PRESET_CATEGORIES,
@@ -19,23 +18,14 @@ type Filter = PresetCategory | "all";
 interface PreviewProps {
   presetId: string;
   accent: string;
-  /** Largeur d'affichage en px ; la page A4 est mise à l'échelle dedans. */
-  width: number;
+  className?: string;
 }
 
 /** Feuille A4 d'un modèle, remplie d'un CV de démonstration complet. */
-const PresetPreview = ({ presetId, accent, width }: PreviewProps) => {
+const PresetPreview = ({ presetId, accent, className }: PreviewProps) => {
   const preset = canvasPresets.find((item) => item.id === presetId) ?? canvasPresets[0];
   const doc = useMemo(() => preset.build(accent), [preset, accent]);
-  const scale = width / PAGE_WIDTH;
-
-  return (
-    <div className="overflow-hidden bg-white" style={{ width, height: PAGE_HEIGHT * scale }}>
-      <div style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}>
-        <CanvasRenderer doc={doc} cvData={demoResume} />
-      </div>
-    </div>
-  );
+  return <ResumeThumb doc={doc} cvData={demoResume} className={className} />;
 };
 
 const TemplatesGallery = () => {
@@ -151,20 +141,22 @@ const TemplatesGallery = () => {
 
       {/* Grille de modèles */}
       <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
-        <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3">
           {visible.map((preset, index) => {
             const accent = accentOf(preset.id);
             return (
               <Reveal key={preset.id} delay={(index % 3) * 80} from="scale">
-                <article className="group">
+                <article className="group min-w-0">
                   {/* Cellule grise contenant la feuille, comme sur les galeries du marché */}
                   <div
                     onClick={() => openEditor(preset.id)}
-                    className="relative flex cursor-pointer justify-center rounded-md bg-[#f2f4f7] p-5 transition-all duration-300 group-hover:bg-[#e8ecf2]"
+                    className="relative cursor-pointer rounded-md bg-[#f2f4f7] p-3 transition-all duration-300 group-hover:bg-[#e8ecf2] sm:p-5"
                   >
-                    <div className="shadow-[0_2px_10px_rgba(15,23,42,0.10)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_10px_28px_rgba(15,23,42,0.18)]">
-                      <PresetPreview presetId={preset.id} accent={accent} width={300} />
-                    </div>
+                    <PresetPreview
+                      presetId={preset.id}
+                      accent={accent}
+                      className="shadow-[0_2px_10px_rgba(15,23,42,0.10)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_10px_28px_rgba(15,23,42,0.18)]"
+                    />
 
                     {preset.tags.length > 0 ? (
                       <div className="pointer-events-none absolute left-3 top-3 flex gap-1.5">
@@ -251,8 +243,12 @@ const TemplatesGallery = () => {
                 </div>
               </div>
 
-              <div className="animate-scale-in overflow-hidden rounded border border-slate-200 shadow-xl">
-                <PresetPreview presetId={preview.presetId} accent={preview.accent} width={560} />
+              <div className="w-full max-w-[560px]">
+                <PresetPreview
+                  presetId={preview.presetId}
+                  accent={preview.accent}
+                  className="animate-scale-in rounded border border-slate-200 shadow-xl"
+                />
               </div>
 
               <button
