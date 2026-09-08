@@ -17,12 +17,20 @@ import {
  * librement déplaçable, redimensionnable et restylable par l'utilisateur.
  */
 
-export type PresetCategory = "moderne" | "simple" | "professionnel" | "creatif";
+export type PresetCategory =
+  | "ats"
+  | "simple"
+  | "professionnel"
+  | "deux-colonnes"
+  | "moderne"
+  | "creatif";
 
 export const PRESET_CATEGORIES: Record<PresetCategory, string> = {
-  moderne: "Moderne",
+  ats: "ATS",
   simple: "Simple",
   professionnel: "Professionnel",
+  "deux-colonnes": "Deux colonnes",
+  moderne: "Moderne",
   creatif: "Créatif",
 };
 
@@ -243,12 +251,231 @@ const buildBanner = (accent: string): CanvasDocument => {
   ]);
 };
 
+
+/* --- Archétypes classiques, une seule colonne, densité maximale --------- */
+
+const buildClassic = (accent: string): CanvasDocument => {
+  z = 0;
+  return doc("classic", accent, [
+    section("identity", 64, 60, 666, 78, {
+      style: { fontSize: 30, fontWeight: 700, align: "center", letterSpacing: 3, uppercase: true },
+    }),
+    section("contact", 64, 146, 666, 20, { style: { align: "center", fontSize: 10.5 } }),
+    rule(64, 178, 666, "#111827", 2),
+
+    heading("Profil", 64, 196, 666),
+    rule(64, 218, 666, "#d1d5db", 1),
+    section("about", 64, 228, 666, 62, { style: { fontSize: 10.5 } }),
+
+    heading("Expérience professionnelle", 64, 306, 666),
+    rule(64, 328, 666, "#d1d5db", 1),
+    section("experiences", 64, 338, 666, 330, { style: { fontSize: 10.5 } }),
+
+    heading("Formation", 64, 690, 666),
+    rule(64, 712, 666, "#d1d5db", 1),
+    section("education", 64, 722, 666, 150, { style: { fontSize: 10.5 } }),
+
+    heading("Compétences", 64, 894, 320),
+    rule(64, 916, 320, "#d1d5db", 1),
+    section("skills", 64, 926, 320, 126, { style: { fontSize: 10 } }),
+
+    heading("Liens", 412, 894, 318),
+    rule(412, 916, 318, "#d1d5db", 1),
+    section("socials", 412, 926, 318, 126, { style: { fontSize: 10 } }),
+  ]);
+};
+
+const buildTraditional = (accent: string): CanvasDocument => {
+  z = 0;
+  const serif = "Georgia, 'Times New Roman', serif";
+  return doc(
+    "traditional",
+    accent,
+    [
+      section("identity", 64, 58, 420, 74, { style: { fontSize: 27, fontWeight: 700, fontFamily: serif } }),
+      section("contact", 500, 62, 230, 72, { style: { fontSize: 10, align: "right", fontFamily: serif } }),
+      rule(64, 148, 666, accent, 3),
+
+      heading("Résumé de carrière", 64, 168, 666, { style: { fontFamily: serif, color: accent } }),
+      section("about", 64, 194, 666, 60, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      heading("Parcours professionnel", 64, 272, 666, { style: { fontFamily: serif, color: accent } }),
+      section("experiences", 64, 298, 666, 350, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      heading("Formation", 64, 672, 666, { style: { fontFamily: serif, color: accent } }),
+      section("education", 64, 698, 666, 150, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      heading("Compétences", 64, 872, 320, { style: { fontFamily: serif, color: accent } }),
+      section("skills", 64, 898, 320, 130, { style: { fontFamily: serif, fontSize: 10 } }),
+
+      heading("Contacts", 412, 872, 318, { style: { fontFamily: serif, color: accent } }),
+      section("socials", 412, 898, 318, 130, { style: { fontFamily: serif, fontSize: 10 } }),
+    ],
+    serif,
+  );
+};
+
+const buildPrimeAts = (accent: string): CanvasDocument => {
+  z = 0;
+  return doc("prime-ats", accent, [
+    photo(64, 56, 96, 8),
+    section("identity", 184, 62, 380, 76, { style: { fontSize: 26, fontWeight: 700 } }),
+    section("contact", 580, 62, 150, 84, { style: { fontSize: 10, align: "right" } }),
+    rule(64, 172, 666, accent, 2),
+
+    heading("Profil professionnel", 64, 192, 666, { style: { color: accent } }),
+    section("about", 64, 216, 666, 62, { style: { fontSize: 10.5 } }),
+
+    heading("Expérience", 64, 296, 666, { style: { color: accent } }),
+    section("experiences", 64, 320, 666, 340, { style: { fontSize: 10.5 } }),
+
+    heading("Formation", 64, 684, 666, { style: { color: accent } }),
+    section("education", 64, 708, 666, 150, { style: { fontSize: 10.5 } }),
+
+    heading("Compétences", 64, 882, 666, { style: { color: accent } }),
+    section("skills", 64, 906, 320, 130, { style: { fontSize: 10 } }),
+    section("socials", 412, 906, 318, 130, { style: { fontSize: 10 } }),
+  ]);
+};
+
+const buildPureAts = (accent: string): CanvasDocument => {
+  z = 0;
+  // Volontairement sans couleur ni colonne : le format le plus sûr pour les
+  // logiciels de tri de candidatures.
+  const ink = "#111827";
+  return doc("pure-ats", accent, [
+    section("identity", 64, 64, 666, 70, { style: { fontSize: 26, fontWeight: 700, color: ink } }),
+    section("contact", 64, 140, 666, 22, { style: { fontSize: 10.5, color: ink } }),
+    rule(64, 172, 666, ink, 1),
+
+    heading("Résumé", 64, 190, 666, { style: { color: ink, letterSpacing: 1 } }),
+    section("about", 64, 214, 666, 62, { style: { fontSize: 10.5, color: ink } }),
+
+    heading("Expérience professionnelle", 64, 292, 666, { style: { color: ink, letterSpacing: 1 } }),
+    section("experiences", 64, 316, 666, 350, { style: { fontSize: 10.5, color: ink } }),
+
+    heading("Formation", 64, 690, 666, { style: { color: ink, letterSpacing: 1 } }),
+    section("education", 64, 714, 666, 150, { style: { fontSize: 10.5, color: ink } }),
+
+    heading("Compétences", 64, 888, 666, { style: { color: ink, letterSpacing: 1 } }),
+    section("skills", 64, 912, 666, 140, { style: { fontSize: 10, color: ink } }),
+  ]);
+};
+
+const buildSpecialist = (accent: string): CanvasDocument => {
+  z = 0;
+  return doc("specialist", accent, [
+    shape(0, 0, 236, PAGE_HEIGHT, "#f1f5f9"),
+    section("identity", 24, 56, 188, 96, { style: { fontSize: 23, fontWeight: 800 } }),
+    heading("Contact", 24, 176, 188, { style: { color: accent } }),
+    section("contact", 24, 200, 188, 84, { style: { fontSize: 10 } }),
+    heading("Compétences", 24, 300, 188, { style: { color: accent } }),
+    section("skills", 24, 324, 188, 250, { style: { fontSize: 10 } }),
+    heading("Liens", 24, 592, 188, { style: { color: accent } }),
+    section("socials", 24, 616, 188, 110, { style: { fontSize: 9.5 } }),
+    heading("Formation", 24, 744, 188, { style: { color: accent } }),
+    section("education", 24, 768, 188, 220, { style: { fontSize: 9.5 } }),
+
+    heading("Profil", 274, 60, 456, { style: { color: accent } }),
+    rule(274, 84, 456, accent, 2),
+    section("about", 274, 96, 456, 78),
+    heading("Expérience professionnelle", 274, 196, 456, { style: { color: accent } }),
+    rule(274, 220, 456, accent, 2),
+    section("experiences", 274, 232, 456, 820, { style: { fontSize: 10.5 } }),
+  ]);
+};
+
+const buildCorporate = (accent: string): CanvasDocument => {
+  z = 0;
+  return doc("corporate", accent, [
+    shape(0, 0, PAGE_WIDTH, 158, "#f8fafc"),
+    section("identity", 64, 46, 420, 80, { style: { fontSize: 29, fontWeight: 700 } }),
+    photo(636, 34, 96, 8),
+    section("contact", 400, 50, 216, 78, { style: { fontSize: 10, align: "right" } }),
+    rule(0, 156, PAGE_WIDTH, accent, 4),
+
+    heading("Synthèse", 64, 186, 666, { style: { color: accent } }),
+    section("about", 64, 210, 666, 60, { style: { fontSize: 10.5 } }),
+
+    heading("Expérience", 64, 288, 450, { style: { color: accent } }),
+    section("experiences", 64, 312, 450, 500, { style: { fontSize: 10.5 } }),
+    heading("Formation", 64, 828, 450, { style: { color: accent } }),
+    section("education", 64, 852, 450, 200, { style: { fontSize: 10.5 } }),
+
+    shape(538, 282, 200, 400, "#f8fafc", 8),
+    heading("Compétences", 558, 300, 160, { style: { color: accent } }),
+    section("skills", 558, 324, 160, 336, { style: { fontSize: 10 } }),
+    heading("Liens", 558, 706, 160, { style: { color: accent } }),
+    section("socials", 558, 730, 160, 140, { style: { fontSize: 9.5 } }),
+  ]);
+};
+
 export const canvasPresets: CanvasPreset[] = [
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Une colonne dense et sobre, adaptée à tous les secteurs.",
+    category: "simple",
+    tags: ["Populaire", "ATS"],
+    accent: "#0f172a",
+    swatch: ["#0f172a", "#ffffff"],
+    build: buildClassic,
+  },
+  {
+    id: "traditional",
+    name: "Traditional",
+    description: "Format classique en serif avec filet de couleur.",
+    category: "professionnel",
+    tags: ["ATS"],
+    accent: "#1e3a8a",
+    swatch: ["#1e3a8a", "#ffffff"],
+    build: buildTraditional,
+  },
+  {
+    id: "prime-ats",
+    name: "Prime ATS",
+    description: "Photo discrète et structure linéaire optimisée pour les ATS.",
+    category: "ats",
+    tags: ["ATS", "Avec photo"],
+    accent: "#0d9488",
+    swatch: ["#0d9488", "#f8fafc"],
+    build: buildPrimeAts,
+  },
+  {
+    id: "pure-ats",
+    name: "Pure ATS",
+    description: "Sans couleur ni colonne : le format le plus sûr pour les robots.",
+    category: "ats",
+    tags: ["ATS"],
+    accent: "#111827",
+    swatch: ["#111827", "#ffffff"],
+    build: buildPureAts,
+  },
+  {
+    id: "specialist",
+    name: "Specialist",
+    description: "Colonne latérale claire pour les compétences et le contact.",
+    category: "deux-colonnes",
+    tags: ["Populaire"],
+    accent: "#b91c1c",
+    swatch: ["#b91c1c", "#f1f5f9"],
+    build: buildSpecialist,
+  },
+  {
+    id: "corporate",
+    name: "Corporate",
+    description: "En-tête sobre avec photo et encadré de compétences.",
+    category: "professionnel",
+    tags: ["Avec photo"],
+    accent: "#1d4ed8",
+    swatch: ["#1d4ed8", "#f8fafc"],
+    build: buildCorporate,
+  },
   {
     id: "sidebar",
     name: "Sidebar Moderne",
     description: "Colonne latérale colorée avec photo, contact et compétences.",
-    category: "moderne",
+    category: "deux-colonnes",
     tags: ["Populaire", "Avec photo"],
     accent: "#1e40af",
     swatch: ["#1e40af", "#ffffff"],
@@ -268,7 +495,7 @@ export const canvasPresets: CanvasPreset[] = [
     id: "two-columns",
     name: "Deux Colonnes",
     description: "Bandeau d'en-tête et colonne de droite pour les compétences.",
-    category: "professionnel",
+    category: "deux-colonnes",
     tags: ["Populaire", "ATS"],
     accent: "#0d9488",
     swatch: ["#0d9488", "#f8fafc"],

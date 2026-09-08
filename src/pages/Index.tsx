@@ -24,8 +24,8 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
 import { PAGE_WIDTH } from "@/lib/canvasDocument";
-import { canvasPresets, getPreset } from "@/lib/canvasPresets";
-import { exampleCVs } from "@/lib/exampleCVData";
+import { ACCENT_CHOICES, canvasPresets, getPreset } from "@/lib/canvasPresets";
+import { demoResume, demoResumes } from "@/lib/demoResumes";
 import type { CVData } from "@/pages/CVCreate";
 
 /* ------------------------------------------------------------------ */
@@ -33,9 +33,17 @@ import type { CVData } from "@/pages/CVCreate";
 /* ------------------------------------------------------------------ */
 
 const heroSheets = [
-  { presetId: "sidebar", data: exampleCVs["dev-fullstack"].data },
-  { presetId: "two-columns", data: exampleCVs["data-scientist"].data },
-  { presetId: "creative", data: exampleCVs["ux-designer"].data },
+  { presetId: "classic", data: demoResumes.developpeur },
+  { presetId: "sidebar", data: demoResumes.designer },
+  { presetId: "corporate", data: demoResumes.marketing },
+];
+
+/** Bénéfices affichés en petites cartes sous le compteur. */
+const PERKS = [
+  { icon: WandSparkles, title: "Un CV en 10 minutes", text: "L'éditeur fait le travail de mise en page à votre place." },
+  { icon: ShieldCheck, title: "Zéro erreur de format", text: "Marges, alignements et césures gérés automatiquement." },
+  { icon: LayoutTemplate, title: "Modèles testés ATS", text: "Structures lisibles par les logiciels de tri." },
+  { icon: Download, title: "Export PDF illimité", text: "Téléchargez autant de versions que nécessaire." },
 ];
 
 const NAV_LINKS = [
@@ -81,13 +89,6 @@ const FEATURES = [
     cta: { label: "Voir les modèles ATS", to: "/modeles" },
     icon: ShieldCheck,
   },
-];
-
-const STATS = [
-  { value: "6", label: "mises en page modifiables" },
-  { value: "48", label: "combinaisons de couleurs" },
-  { value: "30", label: "exemples par métier" },
-  { value: "0 €", label: "pour créer et exporter" },
 ];
 
 const TESTIMONIALS = [
@@ -286,8 +287,8 @@ const Index = () => {
       {/* ---------------------------------------------------------- */}
       {/* Héros                                                       */}
       {/* ---------------------------------------------------------- */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-[#eaf2fb]">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:py-24">
+      <section className="bg-white px-3 pt-4 sm:px-6">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 rounded-2xl bg-[#f4f7fb] px-6 py-14 sm:px-12 sm:py-20 lg:grid-cols-[1fr_1.05fr]">
           <div className="relative z-10">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">
               <Sparkles className="h-3.5 w-3.5" /> Gratuit, sans inscription
@@ -318,12 +319,9 @@ const Index = () => {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <div className="flex items-center gap-2">
-                <Stars />
-                <span className="text-sm font-semibold text-slate-600">
-                  4,8/5 — plébiscité par les candidats
-                </span>
-              </div>
+              <span className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
+                <Check className="h-4 w-4 text-emerald-600" /> {canvasPresets.length} modèles modifiables
+              </span>
               <span className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
                 <Check className="h-4 w-4 text-emerald-600" /> Export PDF gratuit
               </span>
@@ -365,28 +363,38 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Bandeau de confiance */}
-      <div className="border-b border-slate-200 bg-[#0d2a50] text-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-10 sm:px-8 lg:grid-cols-4">
-          {STATS.map((stat, index) => (
-            <Reveal key={stat.label} delay={index * 80}>
-              <div className="text-center">
-                <p className="font-display text-3xl font-extrabold text-white sm:text-4xl">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-300">
-                  {stat.label}
-                </p>
-              </div>
-            </Reveal>
-          ))}
+      {/* Compteur et bénéfices */}
+      <div className="bg-white">
+        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
+          <Reveal>
+            {/* Chiffre calculé depuis les modèles réellement disponibles :
+                aucune statistique d'usage n'est inventée ici. */}
+            <p className="text-center font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-[2.75rem]">
+              <span className="text-emerald-600">
+                {(canvasPresets.length * ACCENT_CHOICES.length).toLocaleString("fr-FR")}
+              </span>{" "}
+              mises en page prêtes à l'emploi
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PERKS.map((perk, index) => (
+              <Reveal key={perk.title} delay={index * 70}>
+                <div className="h-full rounded-xl bg-[#f4f7fb] p-5 transition duration-300 hover:-translate-y-1 hover:shadow-md">
+                  <perk.icon className="h-5 w-5 text-emerald-600" />
+                  <h3 className="mt-3 font-display text-[15px] font-bold">{perk.title}</h3>
+                  <p className="mt-1.5 text-[13px] leading-6 text-slate-500">{perk.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ---------------------------------------------------------- */}
       {/* Modèles                                                     */}
       {/* ---------------------------------------------------------- */}
-      <section id="modeles" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+      <section id="modeles" className="bg-[#f4f7fb]"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
         <Reveal>
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">
@@ -409,9 +417,9 @@ const Index = () => {
                 onClick={() => navigate("/editeur", { state: { presetId: preset.id } })}
                 className="group w-full text-left"
               >
-                <div className="relative mx-auto overflow-hidden rounded-xl shadow-sm transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-2xl">
+                <div className="relative mx-auto overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-2xl">
                   <div className="transition-transform duration-500 group-hover:scale-[1.03]">
-                    <Sheet presetId={preset.id} data={exampleCVs["dev-fullstack"].data} width={340} />
+                    <Sheet presetId={preset.id} data={demoResume} width={340} />
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-900/65 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
                     <span className="inline-flex translate-y-2 items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-transform duration-300 group-hover:translate-y-0">
@@ -441,12 +449,12 @@ const Index = () => {
             </button>
           </div>
         </Reveal>
-      </section>
+      </div></section>
 
       {/* ---------------------------------------------------------- */}
       {/* Comment ça marche                                           */}
       {/* ---------------------------------------------------------- */}
-      <section id="etapes" className="border-y border-slate-200 bg-[#fdf5ea]">
+      <section id="etapes" className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
           <Reveal>
             <div className="text-center">
@@ -519,7 +527,7 @@ const Index = () => {
               <div className="flex justify-center rounded-2xl bg-[#f4f6f9] p-8">
                 <Sheet
                   presetId={index === 0 ? "creative" : "executive"}
-                  data={exampleCVs[index === 0 ? "ux-designer" : "data-scientist"].data}
+                  data={index === 0 ? demoResumes.designer : demoResumes.marketing}
                   width={280}
                 />
               </div>
