@@ -14,6 +14,7 @@ import Auth from "./pages/Auth";
 import MyCVs from "./pages/MyCVs";
 import CategoryGallery from "./pages/CategoryGallery";
 import TemplateDetail from "./pages/TemplateDetail";
+import CanvasStudio from "./pages/CanvasStudio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/mes-cv" element={<MyCVs />} />
             <Route path="/share/:shareId" element={<Share />} />
+            <Route path="/editeur" element={<CanvasStudio />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="/__jrtest" element={<JrTest />} />
           <Route path="*" element={<NotFound />} />
