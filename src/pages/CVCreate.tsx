@@ -8,7 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Download, Plus, Trash2, Upload, X, Sparkles, Loader2, ArrowRight, ChevronLeft, ChevronRight, Eye, EyeOff, MapPin, Save, FolderOpen, Clock, FileText, Share2, BarChart3 } from "lucide-react";
 import { CVPreview } from "@/components/CVPreview";
-import { TemplateSelector } from "@/components/TemplateSelector";
+import { CanvasPresetPicker } from "@/components/canvas/CanvasPresetPicker";
+import type { CanvasDocument } from "@/lib/canvasDocument";
+import { buildPresetDocument } from "@/lib/canvasPresets";
 import { toast } from "sonner";
 import { generateAbout, generateExperienceDescription, generateEducationDescription, generateStepContent, generateFullResume, OPENROUTER_MODELS, type OpenRouterModel } from "@/lib/openRouter";
 import { useAuth } from "@/contexts/AuthContext";
@@ -66,6 +68,8 @@ export interface CVData {
   portfolio: string;
   theme: string;
   template: string;
+  /** Mise en page libre produite par l'éditeur canvas (facultative). */
+  canvas?: CanvasDocument;
 }
 
 const CVCreate = () => {
@@ -173,6 +177,19 @@ const CVCreate = () => {
 
   const updateField = (field: keyof CVData, value: any) => {
     setCvData(prev => ({ ...prev, [field]: value }));
+  };
+
+  /**
+   * Applique une mise en page canvas au CV courant. `openEditor` bascule
+   * directement dans le studio d'édition avec les données déjà saisies.
+   */
+  const applyCanvasPreset = (presetId: string, accent: string, openEditor: boolean) => {
+    const canvas = buildPresetDocument(presetId, accent || undefined);
+    const next: CVData = { ...cvData, template: 'canvas', canvas };
+    setCvData(next);
+    if (openEditor) {
+      navigate('/editeur', { state: { cvData: next, canvas } });
+    }
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1234,11 +1251,8 @@ const CVCreate = () => {
               <Card className="p-6 border-border">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-bold text-foreground mb-4">Choisir un Template</h3>
-                    <TemplateSelector 
-                      selectedTemplate={cvData.template || 'minimal'}
-                      onSelectTemplate={(templateId) => updateField('template', templateId)}
-                    />
+                    <h3 className="text-lg font-bold text-foreground mb-4">Choisir une mise en page</h3>
+                    <CanvasPresetPicker cvData={cvData} onApply={applyCanvasPreset} />
                   </div>
                   
                   <div>
