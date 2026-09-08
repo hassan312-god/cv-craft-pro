@@ -15,8 +15,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import { canvasPresets, getPreset } from "@/lib/canvasPresets";
 import { demoResumes } from "@/lib/demoResumes";
 
@@ -82,18 +81,14 @@ const BLOCKS = [
   },
 ];
 
-const Sheet = ({ presetId, data, width = 300 }: { presetId: string; data: typeof demoResumes.designer; width?: number }) => {
+const Sheet = ({ presetId, data }: { presetId: string; data: typeof demoResumes.designer }) => {
   const preset = getPreset(presetId);
-  const doc = preset.build(preset.accent);
   return (
-    <div
-      className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl"
-      style={{ width, height: width * 1.414 }}
-    >
-      <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-        <CanvasRenderer doc={doc} cvData={data} />
-      </div>
-    </div>
+    <ResumeThumb
+      doc={preset.build(preset.accent)}
+      cvData={data}
+      className="rounded-lg border border-slate-200 shadow-xl"
+    />
   );
 };
 
@@ -106,7 +101,7 @@ const Features = () => {
       <SiteHeader />
 
       <section className="bg-[#eef3fb]">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-14 pt-6 sm:px-8 lg:grid-cols-[1fr_0.9fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-14 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
           <div>
             <nav className="flex items-center gap-1 text-xs text-slate-500">
               <button onClick={() => navigate("/")} className="transition-colors hover:text-slate-900">
@@ -138,8 +133,8 @@ const Features = () => {
           </div>
 
           <div className="hidden justify-center lg:flex">
-            <div className="-rotate-3">
-              <Sheet presetId="monaco" data={demoResumes.developpeur} width={280} />
+            <div className="w-full max-w-[280px] -rotate-3">
+              <Sheet presetId="monaco" data={demoResumes.developpeur} />
             </div>
           </div>
         </div>
@@ -194,7 +189,9 @@ const Features = () => {
 
               <Reveal from="scale" delay={120}>
                 <div className="flex justify-center">
-                  <Sheet presetId={block.presetId} data={block.data} />
+                  <div className="w-full max-w-[300px]">
+                    <Sheet presetId={block.presetId} data={block.data} />
+                  </div>
                 </div>
               </Reveal>
             </div>

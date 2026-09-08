@@ -6,8 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { avatarFor } from "@/lib/avatarPlaceholder";
 import { demoResumes } from "@/lib/demoResumes";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import { canvasPresets, getPreset } from "@/lib/canvasPresets";
 import { cvCategories, exampleCVs, type CVCategory } from "@/lib/exampleCVData";
 
@@ -35,7 +34,6 @@ interface CardProps {
 const ExampleCard = ({ id, label, category, index }: CardProps & { index: number }) => {
   const navigate = useNavigate();
   const example = exampleCVs[id];
-  const width = 200;
 
   const doc = useMemo(() => {
     const startId = PRESET_BY_CATEGORY[category] ?? canvasPresets[0].id;
@@ -47,20 +45,14 @@ const ExampleCard = ({ id, label, category, index }: CardProps & { index: number
   return (
     <button
       onClick={() => navigate("/create", { state: { cvData: example.data } })}
-      className="group w-full text-left"
+      className="group w-full min-w-0 text-left"
     >
-      <div className="overflow-hidden rounded-md bg-[#f2f4f7] p-3 transition-colors duration-300 group-hover:bg-[#e8ecf2]">
-        <div
-          className="mx-auto overflow-hidden bg-white shadow-[0_2px_8px_rgba(15,23,42,0.10)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
-          style={{ width, height: width * 1.414 }}
-        >
-          <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-            <CanvasRenderer
-              doc={doc}
-              cvData={{ ...example.data, photo: example.data.photo || avatarFor(id) }}
-            />
-          </div>
-        </div>
+      <div className="rounded-md bg-[#f2f4f7] p-2.5 transition-colors duration-300 group-hover:bg-[#e8ecf2] sm:p-3">
+        <ResumeThumb
+          doc={doc}
+          cvData={{ ...example.data, photo: example.data.photo || avatarFor(id) }}
+          className="shadow-[0_2px_8px_rgba(15,23,42,0.10)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
+        />
       </div>
       <p className="mt-2.5 text-[13px] font-semibold text-slate-700 transition-colors group-hover:text-emerald-700">
         {label}
@@ -117,7 +109,7 @@ const ExamplesByIndustry = () => {
             <span className="font-semibold text-slate-700">Exemples de CV</span>
           </nav>
 
-          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[1fr_0.85fr]">
+          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
             <div className="max-w-xl">
             <Reveal>
               <h1 className="font-display text-3xl font-extrabold leading-tight tracking-[-0.025em] sm:text-[2.75rem]">
@@ -148,17 +140,16 @@ const ExamplesByIndustry = () => {
                 { presetId: "prestige", data: demoResumes.marketing, className: "-mt-8 rotate-3" },
               ].map((sheet) => {
                 const preset = getPreset(sheet.presetId);
-                const doc = preset.build(preset.accent);
-                const width = 168;
                 return (
                   <div
                     key={sheet.presetId}
-                    className={`relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl transition duration-500 hover:-translate-y-2 ${sheet.className}`}
-                    style={{ width, height: width * 1.414 }}
+                    className={`relative w-40 shrink-0 ${sheet.className}`}
                   >
-                    <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-                      <CanvasRenderer doc={doc} cvData={sheet.data} />
-                    </div>
+                    <ResumeThumb
+                      doc={preset.build(preset.accent)}
+                      cvData={sheet.data}
+                      className="rounded-lg border border-slate-200 shadow-xl transition duration-500 hover:-translate-y-2"
+                    />
                   </div>
                 );
               })}
@@ -223,7 +214,7 @@ const ExamplesByIndustry = () => {
                 </p>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-8 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4">
                 {items.map((item, index) => (
                   <Reveal key={item.id} delay={(index % 4) * 70} from="scale">
                     <ExampleCard {...item} index={index} />

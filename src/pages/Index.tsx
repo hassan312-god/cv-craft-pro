@@ -21,8 +21,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
-import { PAGE_WIDTH } from "@/lib/canvasDocument";
+import { ResumeThumb } from "@/components/canvas/ResumeThumb";
 import { ACCENT_CHOICES, canvasPresets, getPreset } from "@/lib/canvasPresets";
 import { demoResume, demoResumes } from "@/lib/demoResumes";
 import type { CVData } from "@/pages/CVCreate";
@@ -132,24 +131,17 @@ const FAQ = [
 interface SheetProps {
   presetId: string;
   data: CVData;
-  width?: number;
 }
 
 /** Vignette A4 d'un modèle, rendue avec un CV d'exemple rempli. */
-const Sheet = ({ presetId, data, width = 220 }: SheetProps) => {
+const Sheet = ({ presetId, data }: SheetProps) => {
   const preset = getPreset(presetId);
-  const doc = preset.build(preset.accent);
-  const scale = width / PAGE_WIDTH;
-
   return (
-    <div
-      className="relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl"
-      style={{ width, height: width * 1.414 }}
-    >
-      <div style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}>
-        <CanvasRenderer doc={doc} cvData={data} />
-      </div>
-    </div>
+    <ResumeThumb
+      doc={preset.build(preset.accent)}
+      cvData={data}
+      className="rounded-lg border border-slate-200 shadow-xl"
+    />
   );
 };
 
@@ -183,13 +175,13 @@ const Index = () => {
       {/* Héros                                                       */}
       {/* ---------------------------------------------------------- */}
       <section className="bg-white px-3 pt-4 sm:px-6">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 rounded-2xl bg-[#f4f7fb] px-6 py-14 sm:px-12 sm:py-20 lg:grid-cols-[1fr_1.05fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 rounded-2xl bg-[#f4f7fb] px-6 py-14 sm:px-12 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <div className="relative z-10">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">
               <Sparkles className="h-3.5 w-3.5" /> Gratuit, sans inscription
             </div>
 
-            <h1 className="font-display text-[2.6rem] font-extrabold leading-[1.04] tracking-[-0.025em] sm:text-6xl lg:text-[4.1rem]">
+            <h1 className="font-display text-[2.1rem] font-extrabold leading-[1.06] tracking-[-0.025em] [overflow-wrap:anywhere] sm:text-5xl lg:text-[4.1rem]">
               Décrochez l'entretien avec un <span className="text-emerald-600">CV percutant</span>.
             </h1>
 
@@ -224,31 +216,31 @@ const Index = () => {
           </div>
 
           {/* Pile de CV animée */}
-          <div className="relative flex min-h-[360px] items-center justify-center lg:min-h-[480px]">
-            <div className="absolute h-72 w-72 rounded-full bg-sky-300/40 blur-3xl" />
-            <div className="relative flex w-full max-w-[560px] items-end justify-center gap-3 sm:gap-6">
+          <div className="relative flex min-w-0 items-center justify-center py-4 lg:min-h-[480px]">
+            <div className="absolute h-56 w-56 rounded-full bg-sky-300/40 blur-3xl sm:h-72 sm:w-72" />
+            <div className="relative flex w-full max-w-[560px] items-end justify-center gap-2 sm:gap-5">
               {heroSheets.map((sheet, index) => (
                 // Deux niveaux : l'animation d'entrée pilote le `transform` du
                 // parent, l'inclinaison et le survol restent sur l'enfant.
                 <div
                   key={sheet.presetId}
-                  className="animate-fade-in"
+                  className="w-1/3 min-w-0 animate-fade-in"
                   style={{ animationDelay: `${index * 140}ms` }}
                 >
                   <button
                     onClick={() => navigate("/editeur", { state: { presetId: sheet.presetId } })}
                     aria-label={`Ouvrir le modèle ${getPreset(sheet.presetId).name}`}
-                    className={`block transition duration-500 hover:z-10 hover:-translate-y-3 hover:rotate-0 hover:scale-[1.06] ${
-                      index === 1 ? "-translate-y-10" : index === 0 ? "-rotate-[7deg]" : "rotate-[7deg]"
+                    className={`block w-full min-w-0 transition duration-500 hover:z-10 hover:-translate-y-3 hover:rotate-0 hover:scale-[1.06] ${
+                      index === 1 ? "-translate-y-6 sm:-translate-y-10" : index === 0 ? "-rotate-[7deg]" : "rotate-[7deg]"
                     }`}
                   >
-                    <Sheet presetId={sheet.presetId} data={sheet.data} width={196} />
+                    <Sheet presetId={sheet.presetId} data={sheet.data} />
                   </button>
                 </div>
               ))}
             </div>
 
-            <div className="absolute bottom-4 left-2 hidden animate-fade-in items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg lg:flex" style={{ animationDelay: "500ms" }}>
+            <div className="absolute -bottom-2 left-0 hidden animate-fade-in items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg xl:flex" style={{ animationDelay: "500ms" }}>
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                 <Check className="h-4 w-4" />
               </span>
@@ -310,11 +302,11 @@ const Index = () => {
             <Reveal key={preset.id} delay={index * 80} from="scale">
               <button
                 onClick={() => navigate("/editeur", { state: { presetId: preset.id } })}
-                className="group w-full text-left"
+                className="group w-full min-w-0 text-left"
               >
                 <div className="relative mx-auto overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 group-hover:-translate-y-1.5 group-hover:shadow-2xl">
                   <div className="transition-transform duration-500 group-hover:scale-[1.03]">
-                    <Sheet presetId={preset.id} data={demoResume} width={340} />
+                    <Sheet presetId={preset.id} data={demoResume} />
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-900/65 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
                     <span className="inline-flex translate-y-2 items-center gap-2 rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-transform duration-300 group-hover:translate-y-0">
@@ -420,11 +412,12 @@ const Index = () => {
 
             <Reveal from="scale" delay={120}>
               <div className="flex justify-center rounded-2xl bg-[#f4f6f9] p-8">
-                <Sheet
-                  presetId={index === 0 ? "creative" : "executive"}
-                  data={index === 0 ? demoResumes.designer : demoResumes.marketing}
-                  width={280}
-                />
+                <div className="w-full max-w-[280px]">
+                  <Sheet
+                    presetId={index === 0 ? "creative" : "executive"}
+                    data={index === 0 ? demoResumes.designer : demoResumes.marketing}
+                  />
+                </div>
               </div>
             </Reveal>
           </div>
