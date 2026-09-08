@@ -410,7 +410,176 @@ const buildCorporate = (accent: string): CanvasDocument => {
   ]);
 };
 
+
+/* --- Modèles premium : mises en page plus travaillées ------------------ */
+
+const buildPrestige = (accent: string): CanvasDocument => {
+  z = 0;
+  const serif = "Georgia, 'Times New Roman', serif";
+  return doc(
+    "prestige",
+    accent,
+    [
+      shape(0, 0, PAGE_WIDTH, 214, "#111827"),
+      shape(0, 210, PAGE_WIDTH, 5, accent),
+      photo(614, 40, 130),
+      section("identity", 64, 56, 520, 92, {
+        style: { fontSize: 36, fontWeight: 700, color: "#ffffff", fontFamily: serif },
+      }),
+      section("contact", 64, 152, 520, 46, {
+        style: { fontSize: 10, color: "rgba(255,255,255,0.78)", fontFamily: serif },
+      }),
+
+      heading("Profil", 64, 248, 440, { style: { fontFamily: serif, color: accent } }),
+      section("about", 64, 274, 440, 74, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      heading("Expérience", 64, 372, 440, { style: { fontFamily: serif, color: accent } }),
+      rule(64, 396, 440, "#e5e7eb", 1),
+      section("experiences", 64, 408, 440, 400, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      heading("Formation", 64, 830, 440, { style: { fontFamily: serif, color: accent } }),
+      rule(64, 854, 440, "#e5e7eb", 1),
+      section("education", 64, 866, 440, 180, { style: { fontFamily: serif, fontSize: 10.5 } }),
+
+      shape(536, 244, 202, 500, "#f8fafc", 6),
+      heading("Compétences", 558, 264, 160, { style: { fontFamily: serif, color: accent } }),
+      section("skills", 558, 290, 160, 300, { style: { fontFamily: serif, fontSize: 10 } }),
+      heading("Liens", 558, 614, 160, { style: { fontFamily: serif, color: accent } }),
+      section("socials", 558, 640, 160, 90, { style: { fontFamily: serif, fontSize: 9.5 } }),
+    ],
+    serif,
+  );
+};
+
+const buildAurora = (accent: string): CanvasDocument => {
+  z = 0;
+  const light = "rgba(255,255,255,0.86)";
+  return doc("aurora", accent, [
+    // Colonne en dégradé : la valeur CSS passe telle quelle dans le style du bloc.
+    shape(0, 0, 268, PAGE_HEIGHT, `linear-gradient(160deg, ${accent} 0%, #111827 100%)`),
+    photo(74, 52, 120),
+    section("identity", 24, 196, 220, 92, {
+      style: { fontSize: 25, fontWeight: 800, color: "#ffffff", align: "center" },
+    }),
+    heading("Contact", 32, 314, 204, { style: { color: light } }),
+    section("contact", 32, 340, 204, 82, { style: { color: light, fontSize: 10 } }),
+    heading("Compétences", 32, 448, 204, { style: { color: light } }),
+    section("skills", 32, 474, 204, 280, { style: { color: "#ffffff", fontSize: 10 } }),
+    heading("Liens", 32, 780, 204, { style: { color: light } }),
+    section("socials", 32, 806, 204, 120, { style: { color: light, fontSize: 9.5 } }),
+
+    heading("Profil", 312, 60, 420, { style: { color: accent } }),
+    rule(312, 84, 42, accent, 3),
+    section("about", 312, 100, 420, 76),
+    heading("Expérience", 312, 206, 420, { style: { color: accent } }),
+    rule(312, 230, 42, accent, 3),
+    section("experiences", 312, 246, 420, 480),
+    heading("Formation", 312, 754, 420, { style: { color: accent } }),
+    rule(312, 778, 42, accent, 3),
+    section("education", 312, 794, 420, 250),
+  ]);
+};
+
+const buildMonaco = (accent: string): CanvasDocument => {
+  z = 0;
+  return doc("monaco", accent, [
+    shape(0, 0, PAGE_WIDTH, 230, "#f8fafc"),
+    shape(0, 226, PAGE_WIDTH, 4, accent),
+    photo(337, 34, 120),
+    section("identity", 137, 164, 520, 60, {
+      style: { fontSize: 27, fontWeight: 700, align: "center" },
+    }),
+    section("contact", 64, 250, 666, 22, { style: { fontSize: 10, align: "center" } }),
+    rule(297, 286, 200, accent, 2),
+
+    heading("Profil", 64, 306, 666, { style: { align: "center", color: accent } }),
+    section("about", 64, 332, 666, 66, { style: { align: "center", fontSize: 10.5 } }),
+
+    heading("Expérience", 64, 424, 400, { style: { color: accent } }),
+    section("experiences", 64, 450, 400, 430, { style: { fontSize: 10.5 } }),
+    heading("Formation", 64, 900, 400, { style: { color: accent } }),
+    section("education", 64, 926, 400, 150, { style: { fontSize: 10.5 } }),
+
+    shape(494, 418, 244, 480, "#f8fafc", 8),
+    heading("Compétences", 516, 438, 200, { style: { color: accent } }),
+    section("skills", 516, 464, 200, 300, { style: { fontSize: 10 } }),
+    heading("Liens", 516, 786, 200, { style: { color: accent } }),
+    section("socials", 516, 812, 200, 80, { style: { fontSize: 9.5 } }),
+  ]);
+};
+
+const buildEditorial = (accent: string): CanvasDocument => {
+  z = 0;
+  const serif = "Georgia, 'Times New Roman', serif";
+  return doc(
+    "editorial",
+    accent,
+    [
+      section("identity", 64, 64, 480, 118, {
+        style: { fontSize: 46, fontWeight: 700, fontFamily: serif, lineHeight: 1.02 },
+      }),
+      shape(64, 196, 120, 6, accent),
+      section("contact", 566, 70, 164, 96, { style: { fontSize: 10, align: "right" } }),
+
+      section("about", 64, 228, 666, 74, { style: { fontSize: 12.5, italic: true, fontFamily: serif } }),
+      rule(64, 322, 666, "#e5e7eb", 1),
+
+      heading("Expérience", 64, 344, 200, { style: { fontFamily: serif } }),
+      section("experiences", 288, 340, 442, 440, { style: { fontSize: 10.5 } }),
+
+      rule(64, 800, 666, "#e5e7eb", 1),
+      heading("Formation", 64, 822, 200, { style: { fontFamily: serif } }),
+      section("education", 288, 818, 442, 130, { style: { fontSize: 10.5 } }),
+
+      rule(64, 962, 666, "#e5e7eb", 1),
+      heading("Compétences", 64, 984, 200, { style: { fontFamily: serif } }),
+      section("skills", 288, 980, 442, 90, { style: { fontSize: 10 } }),
+    ],
+    serif,
+  );
+};
+
 export const canvasPresets: CanvasPreset[] = [
+  {
+    id: "prestige",
+    name: "Prestige",
+    description: "En-tête noir avec photo, colonne de droite et typographie serif.",
+    category: "professionnel",
+    tags: ["Premium", "Avec photo"],
+    accent: "#b45309",
+    swatch: ["#111827", "#b45309"],
+    build: buildPrestige,
+  },
+  {
+    id: "aurora",
+    name: "Aurora",
+    description: "Colonne latérale en dégradé et titres soulignés de couleur.",
+    category: "moderne",
+    tags: ["Premium", "Avec photo"],
+    accent: "#4338ca",
+    swatch: ["#4338ca", "#111827"],
+    build: buildAurora,
+  },
+  {
+    id: "monaco",
+    name: "Monaco",
+    description: "Photo centrée en médaillon et encadré de compétences.",
+    category: "deux-colonnes",
+    tags: ["Premium", "Avec photo"],
+    accent: "#0f766e",
+    swatch: ["#0f766e", "#f8fafc"],
+    build: buildMonaco,
+  },
+  {
+    id: "editorial",
+    name: "Editorial",
+    description: "Composition magazine : très grand nom et colonnes décalées.",
+    category: "creatif",
+    tags: ["Premium"],
+    accent: "#9d174d",
+    swatch: ["#9d174d", "#ffffff"],
+    build: buildEditorial,
+  },
   {
     id: "classic",
     name: "Classic",

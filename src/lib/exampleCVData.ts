@@ -795,6 +795,306 @@ export const exampleCVs: Record<string, CVExample> = {
       theme: "professional-blue",
       template: "classic"
     }
+  },
+  'prof-des-ecoles': {
+    category: "education",
+    colorTheme: "Bleu Éducation",
+    data: {
+      firstName: "Nadia",
+      lastName: "Benali",
+      email: "nadia.benali@email.com",
+      phone: "+33 6 24 55 10 78",
+      address: "Nantes, France",
+      photo: "",
+      about: "Professeure des écoles depuis 9 ans, spécialisée dans l'accompagnement des élèves à besoins particuliers et l'usage raisonné du numérique en classe.",
+      experiences: [
+        { id: "1", company: "Académie de Nantes", position: "Professeure des écoles", startDate: "2019-09", endDate: "", description: "Classe de CM1-CM2 à double niveau, 27 élèves. Mise en place d'un dispositif de tutorat entre pairs." },
+        { id: "2", company: "Académie de Rennes", position: "Professeure des écoles", startDate: "2016-09", endDate: "2019-08", description: "Classes de CP et CE1. Coordination du projet lecture de l'établissement." }
+      ],
+      education: [
+        { id: "1", school: "ESPE de Nantes", degree: "Master MEEF Premier degré", startDate: "2014-09", endDate: "2016-06", description: "Mémoire sur la différenciation pédagogique" },
+        { id: "2", school: "Université de Rennes 2", degree: "Licence Sciences de l'éducation", startDate: "2011-09", endDate: "2014-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Différenciation pédagogique", level: 92 },
+        { id: "2", name: "Gestion de classe", level: 90 },
+        { id: "3", name: "Numérique éducatif", level: 78 },
+        { id: "4", name: "Élèves à besoins particuliers", level: 85 },
+        { id: "5", name: "Travail en équipe", level: 88 }
+      ],
+      linkedin: "linkedin.com/in/nadiabenali",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'responsable-formation': {
+    category: "education",
+    colorTheme: "Vert Formation",
+    data: {
+      firstName: "Étienne",
+      lastName: "Lemoine",
+      email: "etienne.lemoine@email.com",
+      phone: "+33 6 71 02 44 39",
+      address: "Lille, France",
+      photo: "",
+      about: "Responsable formation en entreprise, 11 ans d'expérience dans la conception de parcours et le pilotage du plan de développement des compétences.",
+      experiences: [
+        { id: "1", company: "Groupe Delarue", position: "Responsable formation", startDate: "2020-01", endDate: "", description: "Pilotage du plan de formation pour 1 400 collaborateurs, budget de 900 k€. Taux de satisfaction des sessions porté à 4,6/5." },
+        { id: "2", company: "Cabinet Orion", position: "Consultant formation", startDate: "2016-03", endDate: "2019-12", description: "Conception de parcours sur mesure pour douze clients grands comptes." },
+        { id: "3", company: "CCI Hauts-de-France", position: "Chargé de projets formation", startDate: "2013-09", endDate: "2016-02", description: "Animation du réseau de formateurs régionaux." }
+      ],
+      education: [
+        { id: "1", school: "IAE de Lille", degree: "Master Gestion des ressources humaines", startDate: "2011-09", endDate: "2013-06", description: "Spécialisation développement des compétences" }
+      ],
+      skills: [
+        { id: "1", name: "Ingénierie pédagogique", level: 93 },
+        { id: "2", name: "Pilotage de budget", level: 85 },
+        { id: "3", name: "Digital learning", level: 80 },
+        { id: "4", name: "Animation de réseau", level: 87 },
+        { id: "5", name: "Droit de la formation", level: 76 }
+      ],
+      linkedin: "linkedin.com/in/etiennelemoine",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'kine': {
+    category: "medical",
+    colorTheme: "Bleu Santé",
+    data: {
+      firstName: "Julien",
+      lastName: "Perrot",
+      email: "julien.perrot@email.com",
+      phone: "+33 6 88 41 20 55",
+      address: "Toulouse, France",
+      photo: "",
+      about: "Masseur-kinésithérapeute libéral, 8 ans d'exercice, orienté rééducation post-opératoire et suivi des sportifs amateurs.",
+      experiences: [
+        { id: "1", company: "Cabinet Saint-Cyprien", position: "Masseur-kinésithérapeute associé", startDate: "2018-06", endDate: "", description: "Suivi de 25 patients par jour, spécialisation genou et épaule. Encadrement de deux étudiants par an." },
+        { id: "2", company: "Clinique de l'Union", position: "Kinésithérapeute salarié", startDate: "2015-09", endDate: "2018-05", description: "Rééducation post-chirurgicale en service d'orthopédie." }
+      ],
+      education: [
+        { id: "1", school: "IFMK de Toulouse", degree: "Diplôme d'État de masseur-kinésithérapeute", startDate: "2011-09", endDate: "2015-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Rééducation orthopédique", level: 94 },
+        { id: "2", name: "Thérapie manuelle", level: 90 },
+        { id: "3", name: "Suivi du sportif", level: 86 },
+        { id: "4", name: "Éducation thérapeutique", level: 80 },
+        { id: "5", name: "Gestion de cabinet", level: 72 }
+      ],
+      linkedin: "",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'aide-soignante': {
+    category: "medical",
+    colorTheme: "Vert Soin",
+    data: {
+      firstName: "Fatou",
+      lastName: "Diallo",
+      email: "fatou.diallo@email.com",
+      phone: "+33 6 12 90 33 47",
+      address: "Marseille, France",
+      photo: "",
+      about: "Aide-soignante en service de gériatrie depuis 7 ans, attentive au confort et à la dignité des personnes âgées dépendantes.",
+      experiences: [
+        { id: "1", company: "EHPAD Les Oliviers", position: "Aide-soignante référente", startDate: "2020-02", endDate: "", description: "Accompagnement de 18 résidents. Référente du projet de soins personnalisé et tutrice des nouveaux arrivants." },
+        { id: "2", company: "CHU de Marseille", position: "Aide-soignante", startDate: "2017-01", endDate: "2020-01", description: "Service de médecine interne, travail en équipe pluridisciplinaire." }
+      ],
+      education: [
+        { id: "1", school: "IFAS de Marseille", degree: "Diplôme d'État d'aide-soignant", startDate: "2016-01", endDate: "2016-12", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Soins de nursing", level: 93 },
+        { id: "2", name: "Accompagnement fin de vie", level: 85 },
+        { id: "3", name: "Transmissions ciblées", level: 88 },
+        { id: "4", name: "Manutention des patients", level: 90 },
+        { id: "5", name: "Relation aux familles", level: 91 }
+      ],
+      linkedin: "",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'directeur-artistique-junior': {
+    category: "design",
+    colorTheme: "Violet Créatif",
+    data: {
+      firstName: "Inès",
+      lastName: "Fabre",
+      email: "ines.fabre@email.com",
+      phone: "+33 7 55 20 18 04",
+      address: "Bordeaux, France",
+      photo: "",
+      about: "Graphiste avec 5 ans d'expérience en agence, à l'aise du print à l'animation, attachée à la cohérence des identités visuelles.",
+      experiences: [
+        { id: "1", company: "Agence Volt", position: "Graphiste senior", startDate: "2021-03", endDate: "", description: "Refonte de l'identité de six marques régionales, du logotype aux supports print." },
+        { id: "2", company: "Studio Cassis", position: "Graphiste", startDate: "2019-01", endDate: "2021-02", description: "Création de supports de communication et animation des réseaux sociaux clients." }
+      ],
+      education: [
+        { id: "1", school: "École de Condé", degree: "Bachelor Design graphique", startDate: "2016-09", endDate: "2019-06", description: "Major de promotion" }
+      ],
+      skills: [
+        { id: "1", name: "Illustrator", level: 94 },
+        { id: "2", name: "InDesign", level: 90 },
+        { id: "3", name: "After Effects", level: 76 },
+        { id: "4", name: "Identité visuelle", level: 89 },
+        { id: "5", name: "Direction artistique", level: 82 }
+      ],
+      linkedin: "",
+      github: "",
+      twitter: "",
+      portfolio: "inesfabre.fr",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'responsable-rse': {
+    category: "management",
+    colorTheme: "Vert Impact",
+    data: {
+      firstName: "Claire",
+      lastName: "Vasseur",
+      email: "claire.vasseur@email.com",
+      phone: "+33 6 33 87 55 12",
+      address: "Paris, France",
+      photo: "",
+      about: "Responsable RSE, 9 ans d'expérience dans la structuration de démarches durables et le reporting extra-financier.",
+      experiences: [
+        { id: "1", company: "Groupe Aurea", position: "Responsable RSE", startDate: "2021-01", endDate: "", description: "Construction de la feuille de route bas carbone et publication du premier rapport extra-financier du groupe." },
+        { id: "2", company: "Cabinet Verta", position: "Consultante développement durable", startDate: "2017-04", endDate: "2020-12", description: "Accompagnement de quinze entreprises sur leur bilan carbone." },
+        { id: "3", company: "Association Terrae", position: "Chargée de mission", startDate: "2015-09", endDate: "2017-03", description: "Animation d'un réseau de 40 structures adhérentes." }
+      ],
+      education: [
+        { id: "1", school: "Sciences Po Paris", degree: "Master Politiques environnementales", startDate: "2013-09", endDate: "2015-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Bilan carbone", level: 90 },
+        { id: "2", name: "Reporting extra-financier", level: 88 },
+        { id: "3", name: "Conduite du changement", level: 85 },
+        { id: "4", name: "Achats responsables", level: 78 },
+        { id: "5", name: "Anglais professionnel", level: 86 }
+      ],
+      linkedin: "linkedin.com/in/clairevasseur",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'credit-manager': {
+    category: "finance",
+    colorTheme: "Bleu Finance",
+    data: {
+      firstName: "Marc",
+      lastName: "Olivier",
+      email: "marc.olivier@email.com",
+      phone: "+33 6 47 29 60 81",
+      address: "Lyon, France",
+      photo: "",
+      about: "Credit manager, 10 ans d'expérience dans la maîtrise du poste client et la réduction des délais de paiement.",
+      experiences: [
+        { id: "1", company: "Groupe Sereva", position: "Credit manager", startDate: "2019-05", endDate: "", description: "Encours de 45 M€ suivi. Délai moyen de règlement ramené de 62 à 41 jours en deux ans." },
+        { id: "2", company: "Distrilog", position: "Chargé de recouvrement senior", startDate: "2015-02", endDate: "2019-04", description: "Portefeuille de 300 comptes clients, procédures amiables et contentieuses." }
+      ],
+      education: [
+        { id: "1", school: "IAE de Lyon", degree: "Master Finance d'entreprise", startDate: "2012-09", endDate: "2014-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Analyse financière", level: 90 },
+        { id: "2", name: "Recouvrement", level: 93 },
+        { id: "3", name: "SAP", level: 82 },
+        { id: "4", name: "Négociation", level: 86 },
+        { id: "5", name: "Excel avancé", level: 88 }
+      ],
+      linkedin: "linkedin.com/in/marcolivier",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'responsable-boutique': {
+    category: "sales",
+    colorTheme: "Orange Commerce",
+    data: {
+      firstName: "Sarah",
+      lastName: "Nguyen",
+      email: "sarah.nguyen@email.com",
+      phone: "+33 6 05 74 22 90",
+      address: "Lyon, France",
+      photo: "",
+      about: "Responsable de boutique dans le prêt-à-porter, 8 ans d'expérience en management d'équipe et pilotage du chiffre d'affaires.",
+      experiences: [
+        { id: "1", company: "Maison Lavigne", position: "Responsable de boutique", startDate: "2020-09", endDate: "", description: "Boutique de 320 m², équipe de 9 personnes. Chiffre d'affaires en hausse de 24 % sur deux exercices." },
+        { id: "2", company: "Enseigne Nortis", position: "Adjointe de direction", startDate: "2017-03", endDate: "2020-08", description: "Gestion des plannings, des stocks et de l'animation commerciale." }
+      ],
+      education: [
+        { id: "1", school: "Université Lyon 3", degree: "Licence professionnelle Management de la distribution", startDate: "2015-09", endDate: "2016-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Management d'équipe", level: 92 },
+        { id: "2", name: "Merchandising", level: 87 },
+        { id: "3", name: "Pilotage du CA", level: 89 },
+        { id: "4", name: "Gestion des stocks", level: 84 },
+        { id: "5", name: "Relation client", level: 93 }
+      ],
+      linkedin: "linkedin.com/in/sarahnguyen",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
+  },
+  'charge-relations-presse': {
+    category: "marketing",
+    colorTheme: "Rose Communication",
+    data: {
+      firstName: "Antoine",
+      lastName: "Berger",
+      email: "antoine.berger@email.com",
+      phone: "+33 6 62 18 45 07",
+      address: "Paris, France",
+      photo: "",
+      about: "Chargé de relations presse, 6 ans d'expérience en agence, spécialisé dans les secteurs culturel et technologique.",
+      experiences: [
+        { id: "1", company: "Agence Plume", position: "Chargé de relations presse senior", startDate: "2021-06", endDate: "", description: "Portefeuille de huit clients. Plus de 300 retombées presse obtenues en 2024, dont douze en presse nationale." },
+        { id: "2", company: "Studio Mirage", position: "Attaché de presse junior", startDate: "2019-01", endDate: "2021-05", description: "Rédaction des communiqués et suivi des relations journalistes." }
+      ],
+      education: [
+        { id: "1", school: "CELSA", degree: "Master Communication des organisations", startDate: "2016-09", endDate: "2018-06", description: "" }
+      ],
+      skills: [
+        { id: "1", name: "Relations presse", level: 92 },
+        { id: "2", name: "Rédaction", level: 90 },
+        { id: "3", name: "Gestion de crise", level: 74 },
+        { id: "4", name: "Réseaux sociaux", level: 83 },
+        { id: "5", name: "Anglais courant", level: 85 }
+      ],
+      linkedin: "linkedin.com/in/antoineberger",
+      github: "",
+      twitter: "",
+      portfolio: "",
+      theme: "minimalist-black",
+      template: "canvas"
+    }
   }
 };
 

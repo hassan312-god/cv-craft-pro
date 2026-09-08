@@ -17,6 +17,9 @@ import TemplateDetail from "./pages/TemplateDetail";
 import CanvasStudio from "./pages/CanvasStudio";
 import TemplatesGallery from "./pages/TemplatesGallery";
 import CVWizard from "./pages/CVWizard";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import Faq from "./pages/Faq";
 import ExamplesByIndustry from "./pages/ExamplesByIndustry";
 import NotFound from "./pages/NotFound";
 
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/editeur" element={<CanvasStudio />} />
             <Route path="/modeles" element={<TemplatesGallery />} />
             <Route path="/exemples" element={<ExamplesByIndustry />} />
+            <Route path="/fonctionnalites" element={<Features />} />
+            <Route path="/tarifs" element={<Pricing />} />
+            <Route path="/faq" element={<Faq />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="/__jrtest" element={<JrTest />} />
           <Route path="*" element={<NotFound />} />

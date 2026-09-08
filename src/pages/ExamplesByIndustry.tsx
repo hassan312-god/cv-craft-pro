@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight, Search } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import { avatarFor } from "@/lib/avatarPlaceholder";
+import { demoResumes } from "@/lib/demoResumes";
 import { CanvasRenderer } from "@/components/canvas/CanvasRenderer";
 import { PAGE_WIDTH } from "@/lib/canvasDocument";
-import { canvasPresets } from "@/lib/canvasPresets";
+import { canvasPresets, getPreset } from "@/lib/canvasPresets";
 import { cvCategories, exampleCVs, type CVCategory } from "@/lib/exampleCVData";
 
 /** Modèle de départ de chaque secteur ; les vignettes suivantes tournent à
@@ -52,7 +55,10 @@ const ExampleCard = ({ id, label, category, index }: CardProps & { index: number
           style={{ width, height: width * 1.414 }}
         >
           <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
-            <CanvasRenderer doc={doc} cvData={example.data} />
+            <CanvasRenderer
+              doc={doc}
+              cvData={{ ...example.data, photo: example.data.photo || avatarFor(id) }}
+            />
           </div>
         </div>
       </div>
@@ -98,22 +104,7 @@ const ExamplesByIndustry = () => {
 
   return (
     <main className="min-h-screen bg-white font-sans text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-8">
-          <button
-            onClick={() => navigate("/")}
-            className="font-display text-xl font-extrabold tracking-tight"
-          >
-            CV<span className="text-emerald-600">Craft</span>
-          </button>
-          <button
-            onClick={() => navigate("/create")}
-            className="rounded-lg bg-emerald-600 px-5 py-2.5 text-[15px] font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
-            Créer mon CV
-          </button>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Bandeau d'introduction */}
       <section className="bg-[#eef3fb]">
@@ -126,7 +117,8 @@ const ExamplesByIndustry = () => {
             <span className="font-semibold text-slate-700">Exemples de CV</span>
           </nav>
 
-          <div className="mt-8 max-w-xl">
+          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[1fr_0.85fr]">
+            <div className="max-w-xl">
             <Reveal>
               <h1 className="font-display text-3xl font-extrabold leading-tight tracking-[-0.025em] sm:text-[2.75rem]">
                 {total} exemples de CV <span className="text-emerald-600">par métier</span>
@@ -146,6 +138,31 @@ const ExamplesByIndustry = () => {
                 Créer mon CV
               </button>
             </Reveal>
+            </div>
+
+            {/* Composition de CV : la colonne de droite n'est plus vide */}
+            <div className="relative hidden justify-center lg:flex">
+              <div className="absolute h-56 w-56 rounded-full bg-emerald-200/50 blur-3xl" />
+              {[
+                { presetId: "monaco", data: demoResumes.designer, className: "-rotate-6" },
+                { presetId: "prestige", data: demoResumes.marketing, className: "-mt-8 rotate-3" },
+              ].map((sheet) => {
+                const preset = getPreset(sheet.presetId);
+                const doc = preset.build(preset.accent);
+                const width = 168;
+                return (
+                  <div
+                    key={sheet.presetId}
+                    className={`relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl transition duration-500 hover:-translate-y-2 ${sheet.className}`}
+                    style={{ width, height: width * 1.414 }}
+                  >
+                    <div style={{ transform: `scale(${width / PAGE_WIDTH})`, transformOrigin: "top left" }}>
+                      <CanvasRenderer doc={doc} cvData={sheet.data} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

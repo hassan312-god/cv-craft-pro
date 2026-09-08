@@ -1,3 +1,4 @@
+import { avatarFor } from "@/lib/avatarPlaceholder";
 import type { CVData } from "@/pages/CVCreate";
 
 /**
@@ -9,7 +10,6 @@ import type { CVData } from "@/pages/CVCreate";
  */
 
 const base = {
-  photo: "",
   theme: "minimalist-black",
   template: "canvas",
 } as const;
@@ -17,6 +17,7 @@ const base = {
 export const demoResumes: Record<string, CVData> = {
   developpeur: {
     ...base,
+    photo: avatarFor("developpeur"),
     firstName: "Thomas",
     lastName: "Dubois",
     email: "thomas.dubois@email.com",
@@ -87,6 +88,7 @@ export const demoResumes: Record<string, CVData> = {
 
   marketing: {
     ...base,
+    photo: avatarFor("marketing"),
     firstName: "Camille",
     lastName: "Rousseau",
     email: "camille.rousseau@email.com",
@@ -157,6 +159,7 @@ export const demoResumes: Record<string, CVData> = {
 
   designer: {
     ...base,
+    photo: avatarFor("designer"),
     firstName: "Sophie",
     lastName: "Martin",
     email: "sophie.martin@email.com",
