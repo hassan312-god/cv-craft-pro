@@ -169,8 +169,9 @@ const CanvasStudio = () => {
     setSelectedId(element.id);
   };
 
+  /** Charger un modèle restaure ses couleurs d'origine. */
   const applyPreset = (presetId: string) => {
-    commit(buildPresetDocument(presetId, doc.accent));
+    commit(buildPresetDocument(presetId));
     setSelectedId(null);
   };
 

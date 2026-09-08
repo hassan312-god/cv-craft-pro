@@ -21,7 +21,10 @@ const PREVIEW_SCALE = 0.28;
  */
 export const CanvasPresetPicker = ({ cvData, onApply }: Props) => {
   const currentPreset = cvData.canvas?.presetId;
-  const accent = cvData.canvas?.accent;
+  // Couleur du modèle actuellement retenu ; les autres vignettes gardent
+  // toujours la couleur d'origine de leur modèle.
+  const selected = canvasPresets.find((preset) => preset.id === currentPreset);
+  const accent = cvData.canvas?.accent ?? selected?.accent;
 
   return (
     <div className="space-y-5">
@@ -42,13 +45,16 @@ export const CanvasPresetPicker = ({ cvData, onApply }: Props) => {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Accent :</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            {selected ? `Accent de « ${selected.name} » :` : "Accent :"}
+          </span>
           {ACCENT_CHOICES.map((color) => (
             <button
               key={color}
               type="button"
               aria-label={`Accent ${color}`}
               onClick={() => onApply(currentPreset ?? canvasPresets[0].id, color, false)}
+              disabled={!currentPreset}
               className={`h-6 w-6 rounded-full border-2 transition ${
                 accent === color ? "border-foreground scale-110" : "border-transparent"
               }`}
@@ -60,13 +66,16 @@ export const CanvasPresetPicker = ({ cvData, onApply }: Props) => {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {canvasPresets.map((preset) => {
-          const doc = preset.build(accent ?? preset.accent);
+          // Un modèle sélectionné peut avoir été recoloré ; les autres restent
+          // dans les couleurs d'origine du modèle.
           const isSelected = currentPreset === preset.id;
+          const presetAccent = isSelected ? (accent ?? preset.accent) : preset.accent;
+          const doc = preset.build(presetAccent);
 
           return (
             <Card
               key={preset.id}
-              onClick={() => onApply(preset.id, accent ?? preset.accent, false)}
+              onClick={() => onApply(preset.id, presetAccent, false)}
               className={`cursor-pointer overflow-hidden border transition ${
                 isSelected ? "border-primary ring-2 ring-primary/20" : "border-border hover:border-primary/50"
               }`}
@@ -97,7 +106,7 @@ export const CanvasPresetPicker = ({ cvData, onApply }: Props) => {
                   className="mt-3 w-full"
                   onClick={(event) => {
                     event.stopPropagation();
-                    onApply(preset.id, accent ?? preset.accent, true);
+                    onApply(preset.id, presetAccent, true);
                   }}
                 >
                   <PencilRuler className="mr-1 h-4 w-4" /> Personnaliser

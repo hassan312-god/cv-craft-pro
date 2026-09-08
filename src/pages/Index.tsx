@@ -286,7 +286,7 @@ const Index = () => {
       {/* ---------------------------------------------------------- */}
       {/* Héros                                                       */}
       {/* ---------------------------------------------------------- */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-[#f7f8fa]">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-[#eaf2fb]">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.05fr] lg:py-24">
           <div className="relative z-10">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">
@@ -332,7 +332,7 @@ const Index = () => {
 
           {/* Pile de CV animée */}
           <div className="relative flex min-h-[360px] items-center justify-center lg:min-h-[480px]">
-            <div className="absolute h-72 w-72 rounded-full bg-emerald-200/40 blur-3xl" />
+            <div className="absolute h-72 w-72 rounded-full bg-sky-300/40 blur-3xl" />
             <div className="relative flex w-full max-w-[560px] items-end justify-center gap-3 sm:gap-6">
               {heroSheets.map((sheet, index) => (
                 // Deux niveaux : l'animation d'entrée pilote le `transform` du
@@ -366,15 +366,15 @@ const Index = () => {
       </section>
 
       {/* Bandeau de confiance */}
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-8 sm:px-8 lg:grid-cols-4">
+      <div className="border-b border-slate-200 bg-[#0d2a50] text-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-10 sm:px-8 lg:grid-cols-4">
           {STATS.map((stat, index) => (
             <Reveal key={stat.label} delay={index * 80}>
               <div className="text-center">
-                <p className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
+                <p className="font-display text-3xl font-extrabold text-white sm:text-4xl">
                   {stat.value}
                 </p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-300">
                   {stat.label}
                 </p>
               </div>
@@ -446,7 +446,7 @@ const Index = () => {
       {/* ---------------------------------------------------------- */}
       {/* Comment ça marche                                           */}
       {/* ---------------------------------------------------------- */}
-      <section id="etapes" className="border-y border-slate-200 bg-[#f7f8fa]">
+      <section id="etapes" className="border-y border-slate-200 bg-[#fdf5ea]">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
           <Reveal>
             <div className="text-center">
@@ -516,7 +516,7 @@ const Index = () => {
             </Reveal>
 
             <Reveal from="scale" delay={120}>
-              <div className="flex justify-center rounded-2xl bg-[#f7f8fa] p-8">
+              <div className="flex justify-center rounded-2xl bg-[#f4f6f9] p-8">
                 <Sheet
                   presetId={index === 0 ? "creative" : "executive"}
                   data={exampleCVs[index === 0 ? "ux-designer" : "data-scientist"].data}
@@ -531,7 +531,7 @@ const Index = () => {
       {/* ---------------------------------------------------------- */}
       {/* Témoignages                                                 */}
       {/* ---------------------------------------------------------- */}
-      <section className="border-y border-slate-200 bg-[#f7f8fa]">
+      <section className="border-y border-slate-200 bg-[#e8f5ef]">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-5xl">
@@ -566,7 +566,7 @@ const Index = () => {
       {/* ---------------------------------------------------------- */}
       {/* Tarifs                                                      */}
       {/* ---------------------------------------------------------- */}
-      <section id="tarifs" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+      <section id="tarifs" className="bg-[#fdf5ea]"><div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
         <Reveal>
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Tarifs</p>
@@ -611,12 +611,12 @@ const Index = () => {
             </button>
           </div>
         </Reveal>
-      </section>
+      </div></section>
 
       {/* ---------------------------------------------------------- */}
       {/* FAQ                                                         */}
       {/* ---------------------------------------------------------- */}
-      <section id="faq" className="border-y border-slate-200 bg-[#f7f8fa]">
+      <section id="faq" className="border-y border-slate-200 bg-[#f4f6f9]">
         <div className="mx-auto max-w-3xl px-5 py-20 sm:px-8 sm:py-24">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-extrabold tracking-[-0.02em] sm:text-5xl">
