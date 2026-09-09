@@ -130,12 +130,26 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
               );
             })}
         </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button variant={tierFilter === "all" ? "default" : "outline"} size="sm" className="rounded-full" onClick={() => setTierFilter("all")}>
+            Tous les modèles ({templateConfig.length})
+          </Button>
+          <Button variant={tierFilter === "free" ? "default" : "outline"} size="sm" className="rounded-full" onClick={() => setTierFilter("free")}>
+            Gratuits ({freeCount})
+          </Button>
+          <Button variant={tierFilter === "premium" ? "default" : "outline"} size="sm" className="rounded-full" onClick={() => setTierFilter("premium")}>
+            Premium ({premiumCount})
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filteredTemplates.map((template) => {
           const exampleData = getExampleCVData(template.id);
           const isSelected = selectedTemplate === template.id;
+          const tier = getTemplateTier(template.id);
+          const isLocked = tier === "premium" && !isPremium;
 
           return (
             <Card
@@ -145,22 +159,31 @@ export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: Templat
                   ? 'border-primary ring-2 ring-primary/20 shadow-md'
                   : 'border-border hover:border-primary/50 hover:shadow-md'
               }`}
-              onClick={() => onSelectTemplate(template.id)}
+              onClick={() => handleSelect(template.id)}
             >
               <div className="flex items-center justify-between border-b border-border bg-muted/20 px-4 py-3">
                 <span className="rounded-full border border-border bg-background px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                   {templateCategories[template.category]}
                 </span>
-                {isSelected ? (
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    <Check className="h-4 w-4" />
-                  </div>
-                ) : (
-                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    Pro
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${
+                      tier === "premium"
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-border bg-background text-muted-foreground"
+                    }`}
+                  >
+                    {tier === "premium" && <Lock className="h-3 w-3" />}
+                    {templateTierLabels[tier]}
                   </span>
-                )}
+                  {isSelected && (
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <Check className="h-4 w-4" />
+                    </div>
+                  )}
+                </div>
               </div>
+
 
               <div className="p-4">
                 <div className="mb-3 flex items-start justify-between gap-3">
