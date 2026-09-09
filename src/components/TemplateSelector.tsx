@@ -1,14 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cvBuilderProTemplates, templateConfig, templateCategories, TemplateCategory, getTemplateComponent } from "@/lib/templateConfig";
-import { Check } from "lucide-react";
+import { getTemplateTier, isPremiumTemplate, templateTierLabels } from "@/lib/templateTiers";
+import { useSubscription } from "@/hooks/useSubscription";
+import { toast } from "sonner";
+import { Check, Lock } from "lucide-react";
 import { CVData } from "@/pages/CVCreate";
 
 interface TemplateSelectorProps {
   selectedTemplate: string;
   onSelectTemplate: (templateId: string) => void;
 }
+
 
 // Données d'exemple pour l'aperçu des templates
 const getExampleCVData = (templateId: string): CVData => ({
