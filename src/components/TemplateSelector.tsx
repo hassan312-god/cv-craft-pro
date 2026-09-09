@@ -58,14 +58,33 @@ const getExampleCVData = (templateId: string): CVData => ({
 
 export const TemplateSelector = ({ selectedTemplate, onSelectTemplate }: TemplateSelectorProps) => {
   const [selectedCategory, setSelectedCategory] = useState<TemplateCategory>("all");
+  const [tierFilter, setTierFilter] = useState<"all" | "free" | "premium">("all");
+  const navigate = useNavigate();
+  const { isPremium } = useSubscription();
+
+  const freeCount = templateConfig.filter((t) => !isPremiumTemplate(t.id)).length;
+  const premiumCount = templateConfig.length - freeCount;
+
+  const handleSelect = (templateId: string) => {
+    if (isPremiumTemplate(templateId) && !isPremium) {
+      toast.info("Modèle premium", {
+        description: "Abonnez-vous pour débloquer tous les modèles premium.",
+        action: { label: "Voir les offres", onClick: () => navigate("/tarifs") },
+      });
+      return;
+    }
+    onSelectTemplate(templateId);
+  };
 
   const filteredTemplates = [...templateConfig]
     .filter(template => selectedCategory === "all" || template.category === selectedCategory)
+    .filter(template => tierFilter === "all" || getTemplateTier(template.id) === tierFilter)
     .sort((first, second) => {
       const firstIsLocal = cvBuilderProTemplates.some((template) => template.id === first.id);
       const secondIsLocal = cvBuilderProTemplates.some((template) => template.id === second.id);
       return Number(secondIsLocal) - Number(firstIsLocal);
     });
+
 
   return (
     <div className="space-y-6">
