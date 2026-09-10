@@ -99,6 +99,10 @@ Côté serveur uniquement — à définir dans les secrets Supabase ou de la pla
 ```env
 OPENROUTER_API_KEY=
 OPENROUTER_MODEL=qwen/qwen-2.5-72b-instruct
+
+CANVA_CLIENT_ID=
+CANVA_CLIENT_SECRET=
+CANVA_REDIRECT_URI=https://cv-craft-pro.vercel.app/api/canva/callback
 ```
 
 ### Backend
@@ -121,11 +125,54 @@ supabase functions serve ai-cv --no-verify-jwt
 | `npm run preview` | Prévisualisation du build |
 | `npm run lint` | ESLint sur le dépôt |
 
+## Intégration Canva Connect
+
+Quatre fonctions serverless portent le flux OAuth 2.0 avec PKCE.
+
+| Route | Méthode | Rôle |
+| --- | --- | --- |
+| `/api/canva/authorize` | GET | Génère le couple PKCE et le `state`, redirige vers le consentement Canva |
+| `/api/canva/callback` | GET | **URL de redirection à déclarer dans la console Canva.** Vérifie le `state`, échange le code contre les jetons |
+| `/api/canva/status` | GET | Indique si ce navigateur est connecté, sans jamais exposer le jeton |
+| `/api/canva/disconnect` | POST | Efface les jetons de ce navigateur |
+
+Pour lancer la connexion depuis l'application : `window.location.href = '/api/canva/authorize'`.
+
+Au retour, l'utilisateur arrive sur `/` avec `?canva=connecte`, ou `?canva=error&reason=...` en cas d'échec.
+
+### Configuration
+
+Dans la console Canva, l'URL de redirection doit correspondre **au caractère près** à `CANVA_REDIRECT_URI` :
+
+```
+https://cv-craft-pro.vercel.app/api/canva/callback
+```
+
+Les variables sont listées dans `.env.example`. `CANVA_CLIENT_SECRET` est un secret serveur : il ne doit jamais porter le préfixe `VITE_`, qui l'inlinerait dans le bundle.
+
+### Choix d'implémentation
+
+- **PKCE obligatoire** — le `code_verifier` ne quitte jamais le serveur ; seul son empreinte SHA-256 transite par le navigateur.
+- **`state` vérifié en temps constant** — protège du rejeu et de la falsification de requête.
+- **Secret en authentification Basic** — jamais dans le corps de la requête de jeton.
+- **Jetons en cookie `HttpOnly`, `Secure`, `SameSite=Lax`** — inaccessibles au JavaScript de la page.
+- **Rafraîchissement automatique** — une minute avant expiration, de façon transparente.
+
+### Limite connue
+
+Les jetons vivent dans un cookie, donc dans **un seul navigateur** : ils ne suivent pas l'utilisateur d'un appareil à l'autre et ne sont pas exploitables par une tâche de fond.
+
+Une version multi-appareils demande une table Supabase indexée par utilisateur, avec chiffrement au repos du jeton de rafraîchissement. Le stockage est isolé dans `storeTokens` et `getValidAccessToken` (`api/_canva.ts`) : c'est le seul endroit à reprendre.
+
 ## Structure du projet
 
 ```text
 .
-├── api/                          # Fonctions serverless Vercel (webhooks, OpenRouter)
+├── api/                          # Fonctions serverless Vercel
+│   ├── _canva.ts                 # PKCE, cookies et échange de jeton Canva
+│   ├── canva/                    # Flux OAuth : authorize, callback, status, disconnect
+│   ├── openrouter.ts             # Relais protégeant la clé OpenRouter
+│   └── webhook.ts                # Réception d'événements
 ├── server/                       # Proxy Node.js pour le développement local
 ├── supabase/
 │   ├── functions/ai-cv/          # Edge Function de génération de texte
